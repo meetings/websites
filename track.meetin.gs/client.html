@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+<head>
+<meta charset="utf-8">
+<title></title>
+</head>
+<body>
+<a onClick="myClick()" href="http://google.com">Set event and move</a>
+<a onClick="myClickTrack()" href="#">Track an event</a>
+<input type="text" id="evt_txt" value="Event text" />
+<input type="text" id="evt_txt_move" value="Event text" />
+<script>
+
+
+window.tracker = (function ( d, w ) {
+    var mTracker  = {
+
+        'ready_status' : false,
+        'user_id' : false,
+
+        'iframe' : null,
+
+        'init' : function(user_id){
+
+            // Check support
+            if (document.all && (document.documentMode === undefined)) {
+                alert('ieshit')
+                return;
+            }
+
+            // Set user
+            this.user_id = user_id;
+
+            // Event listener for tracker ready
+            var that = this;
+            if(w.addEventListener) w.addEventListener("message", function(m){ that.setReady(m); }, false);
+            else w.attachEvent("onmessage", function(m){ that.setReady(m); });
+
+            // Create tracking iFrame
+            this.iframe = document.createElement("IFRAME");
+            this.iframe.setAttribute("src", "https://track.meetin.gs?id="+Math.random(0,10));
+            this.iframe.style.width = 1+"px";
+            this.iframe.style.height = 1+"px";
+            this.iframe.display = "none";
+            d.body.appendChild(this.iframe);
+        },
+
+        'setReady' : function(m){
+            if( m.data && m.data == 'tracker_ready'){
+                // TODO: add environment mobile or desktop
+
+                // Send user identity to tracker
+                this.iframe.contentWindow.postMessage( 'init:'+this.user_id , '*');
+
+                // Set tracker ready
+                this.ready_status = true;
+            }
+        },
+
+        'getElementIdentifiers' : function( el ){
+            var ids = '';
+            if( el.id ) ids += '#' + el.id + ' ';
+            if( el.className ) ids += el.className;
+            return ids;
+        },
+
+        'track' : function( node ){
+
+            var ids = this.getElementIdentifiers( node );
+            var track_action = 'event:'+ids;
+
+            // Track event if the tracker has been activated
+            if( this.ready_status ){
+                this.iframe.contentWindow.postMessage( track_action, '*');
+            }
+            // Try again later
+            else{
+                var that = this;
+                setTimeout( function(){
+                    that.track( track_action );
+                }, 200 );
+            }
+        }
+    };
+    return mTracker;
+})( document, window );
+
+function myClick(){
+    window.tracker.track( document.getElementById('evt_txt_move') );
+}
+function myClickTrack(){
+    window.tracker.track( document.getElementById('evt_txt') );
+}
+
+window.tracker.init('user15');
+
+</script>
+</body>
+</html>

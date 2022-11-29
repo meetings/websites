@@ -1,0 +1,56 @@
+<html>
+<meta charset="UTF-8">
+<head><title>platform.meetin.gs</title>
+<style>
+.galleries iframe{
+    background:#fff;
+    border:1px solid #ccc !important;
+    border-radius:6px;
+    margin-left:14px;
+    margin-bottom:14px;
+}
+</style>
+</head><body>
+<script id="mtn_script"  data-api-key="test" defer="defer" src="mtn.src.js" type="text/javascript"></script>
+<script type="text/javascript">
+/*setTimeout( function() {
+         
+MTN.init({ custom_user_data_received_handler : function( node, data, for_self ) {
+        var el = document.createElement('div');
+        el.innerHTML = '<p class="name">'+data['First name']+'</p>';
+        node.parentNode.replaceChild(el, node);
+    }});
+        },500);*/
+ </script>
+
+<h2>Single buttons with info using tokens</h2>
+<div class="singles">
+    <script type="MTN/button" data-token="example_1" data-mode="full" data-type="meetme"></script>
+    <script type="MTN/button" data-token="example_3" data-mode="full" data-type="meetme" data-color="silver"></script>
+    <script type="MTN/button" data-token="missing_1" data-mode="full" §data-type="schedule" data-color="dark"></script>
+</div>
+<h2>Single buttons no info using tokens</h2>
+<div class="singles">
+    <script type="MTN/button" data-token="example_1" data-color="silver" data-type="schedule"></script>
+    <script type="MTN/button" data-token="example_3" data-type="meetme"></script>
+    <script type="MTN/button" data-token="missing_1" data-type="meetme"></script>
+    
+</div>
+
+<h2>Single buttons with just meetme username</h2>
+<div class="singles">
+<script type="MTN/app" data-user="demo" data-scheduler="" data-type="schedule" data-color="blue"></script>
+<script type="MTN/app" data-user="demo" data-scheduler="" data-type="schedule" data-color="silver"></script>
+<script type="MTN/app" data-user="demo" data-scheduler="" data-type="schedule" data-color="gray"></script>
+<script type="MTN/app" data-user="demo" data-scheduler="" data-type="schedule" data-color="dark"></script>
+
+<script type="MTN/app" data-user="demo" data-scheduler="" data-type="meetme" data-color="blue"></script>
+<script type="MTN/app" data-user="demo" data-scheduler="" data-type="meetme" data-color="silver"></script>
+<script type="MTN/app" data-user="demo" data-scheduler="" data-type="meetme" data-color="gray"></script>
+<script type="MTN/app" data-user="demo" data-scheduler="" data-type="meetme" data-color="dark"></script>
+</div>
+<h2>Gallery tests</h2>
+<div class="galleries">
+    <script type="MTN/list"></script>
+</div>
+</body></html>

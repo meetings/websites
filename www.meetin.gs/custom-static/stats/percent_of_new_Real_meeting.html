@@ -1,0 +1,174 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>Meetin.gs Example</title>
+     
+        <script type="text/javascript" src="https://meetingstats.dicole.net/js/stats/jsonv/monthly_first_real_meeting_creators.jsonv"></script>
+       <script type="text/javascript" src="https://meetingstats.dicole.net/js/stats/jsonv/monthly_first_real_meeting_creators_who_had_been_invited_to_a_real_meeting_before.jsonv"></script>
+       
+
+		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+		<script type="text/javascript">
+$(function () {
+    
+    var first_real_meeting_creator = [];
+
+    var old_creator =[];
+
+    var percentage = [];
+
+    var month = [];
+
+
+
+
+
+    for (var key in monthly_first_real_meeting_creators) {
+   var obj = monthly_first_real_meeting_creators[key];
+   for (var prop in obj) {
+
+      if (prop == "count"){
+        first_real_meeting_creator.push(obj[prop]);
+
+      }
+
+   
+
+    if (prop == "month"){
+        month.push(obj[prop]);
+
+      }  
+   
+    //  console.log(prop + " = " + obj[prop]);
+   }
+}
+
+for (var key in monthly_first_real_meeting_creators_who_had_been_invited_to_a_real_meeting_before) {
+   var obj = monthly_first_real_meeting_creators_who_had_been_invited_to_a_real_meeting_before[key];
+   for (var prop in obj) {
+
+      if (prop == "count"){
+        old_creator.push(obj[prop]);
+
+      }
+
+   
+
+    if (prop == "month"){
+        month.push(obj[prop]);
+
+      }  
+   
+    //  console.log(prop + " = " + obj[prop]);
+   }
+}
+
+ 
+for (var i = 0; i < monthly_first_real_meeting_creators.length; i++){
+       
+       percentage[i] = 100 * monthly_first_real_meeting_creators_who_had_been_invited_to_a_real_meeting_before[i].count/monthly_first_real_meeting_creators[i].count;
+       console.log(monthly_first_real_meeting_creators_who_had_been_invited_to_a_real_meeting_before[i],monthly_first_real_meeting_creators[i])
+
+       percentage[i] = parseFloat(percentage[i].toFixed(0))
+
+    }
+//console.log(percentage)
+
+
+    $(document).ready(function() {
+       
+        // function combined_monthly_first_real_meeting_creators_callback(){}
+
+
+        chart = new Highcharts.Chart({
+            chart: {
+                renderTo: 'container',
+                type: 'area',
+                zoomType: 'x',
+                spacingRight: 20,
+                backgroundColor:'#00a0cd'
+            },
+            title: {
+                text: '% of new real meeting organizers who were formerly meeting participants',
+                style: {
+                  color: '#FFFFFF'
+                }
+            },
+            subtitle: {
+                text: 'Source: Meetin.gs',
+                style: {
+                  color: '#FFFFFF'
+                }
+            },
+            xAxis: {
+                categories: month,
+
+                labels: {
+                style: {
+                    color: 'white'
+                }
+            }
+            },
+            yAxis: {
+                title: {
+                    text: '',
+                    style: {
+                  color: '#FFFFFF'
+                }
+                },
+                labels: {
+                format: '{value} %',
+                style: {
+                    color: 'white'
+                }
+            }
+            },
+            tooltip: {
+                enabled: true,
+                formatter: function() {
+                    return '<b>'+ this.series.name +'</b><br/>'+
+                       + this.y + '%' ;
+                }
+            },
+            plotOptions: {
+                area: {
+                    dataLabels: {
+                        format: '{y} %',
+                        borderWidth: 0,
+                        enabled: true,
+                        style: {
+                        fontWeight:'bold'
+                         }
+                    },
+                    stacking: 'normal',
+                    lineColor: '#666666',
+                    lineWidth: 0,
+                    marker: {
+                        lineWidth: 1,
+                        lineColor: '#666666'
+                    },
+                    fillOpacity: 1.0
+                }
+            },
+            series: [
+            { color: '#6c6c6c',
+                name: 'Repeat organizer',
+                data: percentage,
+                dataLabels: {x: -16, y:15,color: 'white'}
+            }]
+        });
+    });
+    
+});
+		</script>
+	</head>
+	<body>
+<script src="http://code.highcharts.com/highcharts.js"></script>
+<script src="http://code.highcharts.com/modules/exporting.js"></script>
+
+<div id="container" style="min-width: 400px; height: 500px; margin: 0 auto"></div>
+
+	</body>
+</html>
+  

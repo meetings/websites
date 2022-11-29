@@ -1,0 +1,1 @@
+UPDATE user SET note_customer_service_notes = '%s' WHERE user_id = %d

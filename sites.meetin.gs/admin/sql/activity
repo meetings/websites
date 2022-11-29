@@ -1,0 +1,10 @@
+SELECT
+  floored_date,
+  user_agent,
+  app_version,
+  ip,
+  country,
+  device
+FROM user_activity
+WHERE unmanned = 0
+AND user_id = %d

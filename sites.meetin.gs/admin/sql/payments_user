@@ -1,0 +1,6 @@
+SELECT
+  payment_date,
+  note_amount,
+  note_country
+FROM user_subscription_transaction
+WHERE user_id = %d

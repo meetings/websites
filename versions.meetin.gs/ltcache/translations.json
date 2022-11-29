@@ -1,0 +1,218 @@
+[
+    {
+        "english": "Greetings from LocalTapiola!\n\nWelcome to a meeting at [[location]].\n\nFrom the following link you can find a map for arrival and more information about our local office (in Finnish): [[location_website]]\n\n[[additional_information]]\n\nYou can cancel the meeting on the web page for the meeting.\n\nSee you soon!\n\nBest regards,\n\n[[organizer_name]]\n\nLocalTapiola [[area]]", 
+        "suomi": "Tervehdys L\u00e4hiTapiolasta!\n\nTervetuloa tapaamiseen kanssani osoitteessa [[location]].\n\nSeuraavan linkin kautta l\u00f6yd\u00e4t toimistomme tarkat yhteystiedot kartan kera: [[location_website]]\n\n[[additional_information]]\n\nMik\u00e4li haluat perua tapaamisen, voit tehd\u00e4 sen tapaamissivustolla.\n\nN\u00e4hd\u00e4\u00e4n pian!\n\nYst\u00e4v\u00e4llisin terveisin\n\n[[organizer_name]]\n\nL\u00e4hiTapiola [[area]]", 
+        "svenska": "H\u00e4lsningar fr\u00e5n LokalTapiola!\n\nV\u00e4lkommen p\u00e5 m\u00f6te med mig i [[location]]. \n\nEn karta till v\u00e5rt kontor hittar du ocks\u00e5 p\u00e5 lahitapiola.fi: [[location_website]] \n\n[[additional_information]]\n\nOm du vill annullera m\u00f6tet, kan du g\u00f6ra det p\u00e5 m\u00f6tessidan. \n\nVi ses snart!\n\nMed v\u00e4nlig h\u00e4lsning\n\n[[organizer_name]]\n\nLokalTapiola [[area]]", 
+        "target": "Agenda"
+    }, 
+    {
+        "english": "Greetings from LocalTapiola!\n\nWelcome to an online meeting with me. \n\nThe meeting requires the Meetnow service available at: https://meet.lahitapiola.fi/webapp/\n\nYou can have thee meeting on your computer, mobile device or tablet.\n\n[[boldstart]]Meeting on computer[[boldend]]\n\nAt the time of the meeting, open the Meetnow service, preferable by using Chrome browser. Also other browsers will do if you have installed Adobe Flash player on your computer. Signing in requires the address of the meeting room: [[organizer_meet_url]]\n\n[[boldstart]]Meeting on tablet or mobile device[[boldend]]\n\nAn online meeting on tablet and mobile device requires the free app Pexip available in the app store of your mobile device (IOS and Android devices and tablets, e.g. iPad and Samsung). Unfortunately the app is not available on Windows phones. Download the app on your device. At the time of meeting, open Pexip.\n\nSigning in requires the address of the meeting room: [[organizer_meet_url]] \n\nTo have an online meeting is easy, but we recommend that you read [[linkstart]]http://www.lahitapiola.fi/henkilo/asiakaspalvelu/verkkotapaaminen/varaa-aika[[linkurlend]]the instructions (in Finnish)[[linkend]] in advance. If you have difficulties signing in to the meeting you can call me on [[organizer_phone]].\n\nSee you soon!\n\nBest regards,\n\n[[organizer_name]]\n\nLocalTapiola [[area]]", 
+        "suomi": "Tervehdys L\u00e4hiTapiolasta!\n\nTervetuloa verkkotapaamiseen kanssani.\n\nVerkkotapaamisessa k\u00e4yt\u00e4mme Meetnow-palvelua, jonka l\u00f6yd\u00e4t osoitteesta: https://meet.lahitapiola.fi/webapp/\n\nVoit osallistua neuvotteluun tietokoneella, mobiililaitteella tai tabletilla. \n\n[[boldstart]]Osallistuminen tietokoneella[[boldend]]\n\nKun tapaamisemme alkaa, avaa Meetnow-palvelu mieluiten Chrome-selaimella. Jos koneessasi ei ole Chrome-selainta, kokous onnistuu my\u00f6s muilla selaimilla edellytt\u00e4en, ett\u00e4 koneeseen on ladattu Adobe Flash player. Kirjautumista varten tarvitset ainoastaan \u201dtapaamishuoneemme\u201d osoitteen, joka on: [[organizer_meet_url]]\n\n[[boldstart]]Osallistuminen tabletilla tai mobiililaitteella[[boldend]]\n\nVerkkotapaamisessa k\u00e4yt\u00e4mme tableteille ja mobiililaitteille tarkoitettua maksutonta Pexip-verkkoneuvottelusovellusta, jonka l\u00f6yd\u00e4t \u00e4lypuhelimesi sovelluskaupasta (IOS- ja Android-puhelimille ja tableteille, kuten iPad ja Samsung). Valitettavasti sovellusta ei ole saatavilla Windows-puhelimille. Lataa sovellus laitteellesi. Kun tapaamisemme alkaa, avaa Pexip-sovellus laitteellasi.\n\nKirjautumista varten tarvitset ainoastaan \u201dtapaamishuoneemme\u201d osoitteen, joka on: [[organizer_meet_url]]\n\nVerkkoneuvottelun aloittaminen on helppoa, mutta suosittelemme kuitenkin, ett\u00e4 luet [[linkstart]]http://www.lahitapiola.fi/henkilo/asiakaspalvelu/verkkotapaaminen/varaa-aika[[linkurlend]]ohjeet[[linkend]] etuk\u00e4teen. Jos sinulla on vaikeuksia p\u00e4\u00e4st\u00e4 kokoukseen, tavoitat minut numerosta [[organizer_phone]].\n\nPian n\u00e4hd\u00e4\u00e4n ja kuullaan!\n\nYst\u00e4v\u00e4llisin terveisin\n\n[[organizer_name]]\n\nL\u00e4hiTapiola [[area]]", 
+        "svenska": "H\u00e4lsningar fr\u00e5n LokalTapiola!\n\nV\u00e4lkommen p\u00e5 e-m\u00f6te med mig.\n\nP\u00e5 e-m\u00f6tet anv\u00e4nds tj\u00e4nsten Meetnow som du hittar p\u00e5: https://meet.lahitapiola.fi/webapp/\n\nDu kan delta i m\u00f6tet via dator, mobil eller pekplatta. \n\n[[boldstart]]Att delta via dator[[boldend]]\n\nN\u00e4r v\u00e5rt m\u00f6te b\u00f6rjar, \u00f6ppnar du tj\u00e4nsten Meetnow helst i Chrome. Har du inte Chrome som webbl\u00e4sare, \u00e4r det m\u00f6jligt att genomf\u00f6ra m\u00f6tet \u00e4ven med andra webbl\u00e4sare under f\u00f6ruts\u00e4ttning att Adobe Flash Player laddats ner. F\u00f6r inloggningen beh\u00f6ver du endast adressen till v\u00e5rt \u201dm\u00f6tesrum\u201d som \u00e4r: [[organizer_meet_url]]\n\n[[boldstart]]Att delta via pekplatta eller mobila enheter[[boldend]]\n\nP\u00e5 e-m\u00f6tet anv\u00e4nder vi den avgiftsfria appen Pexip som du hittar i applikationsaff\u00e4ren f\u00f6r din smarttelefon (f\u00f6r IOS- och Android-telefoner och pekplattor, s\u00e5som iPad och Samsung). Tyv\u00e4rr f\u00e5s applikationen inte f\u00f6r Windows telefoner.  Ladda ner appen till din apparat. N\u00e4r v\u00e5rt m\u00f6te b\u00f6rjar, \u00f6ppna appen Pexip i din apparat.\n\nF\u00f6r inloggningen beh\u00f6ver du bara adressen till v\u00e5rt \u201dm\u00f6tesrum\u201d som \u00e4r: [[organizer_meet_url]]\n\nDet \u00e4r l\u00e4tt att b\u00f6rja ett m\u00f6te p\u00e5 webben men vi rekommenderar \u00e4nd\u00e5 att du p\u00e5 f\u00f6rhand l\u00e4ser igenom [[linkstart]]http://www.lahitapiola.fi/henkilo/asiakaspalvelu/verkkotapaaminen/varaa-aika[[linkurlend]]anvisningarna (p\u00e5 finska)[[linkend]]. Om du har problem med att delta i m\u00f6tet, n\u00e5r du mig per nummer [[organizer_phone]].\n\nVi ses och h\u00f6rs snart!\n\nMed v\u00e4nlig h\u00e4lsning\n\n[[organizer_name]]\n\nLokalTapiola [[area]]", 
+        "target": "Agenda Verkkotapaaminen"
+    }, 
+    {
+        "english": "Hello from LocalTapiola!\n\nI am looking forward to our telephone meeting.\n\nYou can cancel the meeting on the meeting web page.\n\nWe shall be in touch soon!\n\nBest regards,\n\n[[organizer_name]]\n\nLocalTapiola [[area]]", 
+        "suomi": "Tervehdys L\u00e4hiTapiolasta!\n\nTervetuloa puhelintapaamiseen kanssani.\n\nMik\u00e4li haluat perua tapaamisen, voit tehd\u00e4 sen tapaamissivustolla.\n\nKuulemisiin!\n\nYst\u00e4v\u00e4llisin terveisin\n\n[[organizer_name]]\n\nL\u00e4hiTapiola [[area]]", 
+        "svenska": "H\u00e4lsningar fr\u00e5n LokalTapiola!\n\nV\u00e4lkommen p\u00e5 telefonm\u00f6te med mig.\n\nOm du vill annullera m\u00f6tet, kan du g\u00f6ra det p\u00e5 m\u00f6tessidan.\n\nVi h\u00f6rs snart!\n\nMed v\u00e4nlig h\u00e4lsning\n\n[[organizer_name]]\n\nLokalTapiola [[area]]", 
+        "target": "Agenda Vakuutusturvan kartoitus puhelimella"
+    }, 
+    {
+        "english": "Hello from LocalTapiola!\n\nI shall soon visit you for our meeting.\n\nYou can cancel the meeting on the meeting web page.\n\nSee you soon!\n\nBest regards,\n\n[[organizer_name]]\n\nLocalTapiola [[area]]", 
+        "suomi": "Tervehdys L\u00e4hiTapiolasta!\n\nTapaamisemme l\u00e4hestyy, olen tulossa luoksesi.\n\nMik\u00e4li haluat perua tapaamisen, voit tehd\u00e4 sen tapaamissivustolla.\n\nN\u00e4hd\u00e4\u00e4n pian!\n\nYst\u00e4v\u00e4llisin terveisin\n\n[[organizer_name]]\n\nL\u00e4hiTapiola [[area]]", 
+        "svenska": "H\u00e4lsningar fr\u00e5n LokalTapiola!\n\nV\u00e5rt m\u00f6te n\u00e4rmar sig, jag kommer snart p\u00e5 bes\u00f6k.\n\nOm du vill annullera m\u00f6tet, kan du g\u00f6ra det p\u00e5 m\u00f6tessidan.\n\nVi ses snart!\n\nMed v\u00e4nlig h\u00e4lsning\n\n[[organizer_name]]\n\nLokalTapiola [[area]]", 
+        "target": "Agenda Vakuutusturvan kartoitus kotona"
+    }, 
+    {
+        "english": "Hello from LocalTapiola!\n\nI shall soon visit you for our meeting.\n\nYou can cancel the meeting on the meeting web page.\n\nSee you soon!\n\nBest regards,\n\n[[organizer_name]]\n\nLocalTapiola [[area]]", 
+        "suomi": "Tervehdys L\u00e4hiTapiolasta!\n\nTapaamisemme l\u00e4hestyy, olen tulossa luoksesi.\n\nMik\u00e4li haluat perua tapaamisen, voit tehd\u00e4 sen tapaamissivustolla.\n\nN\u00e4hd\u00e4\u00e4n pian!\n\nYst\u00e4v\u00e4llisin terveisin\n\n[[organizer_name]]\n\nL\u00e4hiTapiola [[area]]", 
+        "svenska": "H\u00e4lsningar fr\u00e5n LokalTapiola!\n\nV\u00e5rt m\u00f6te n\u00e4rmar sig, jag kommer snart p\u00e5 bes\u00f6k.\n\nOm du vill annullera m\u00f6tet, kan du g\u00f6ra det p\u00e5 m\u00f6tessidan.\n\nVi ses snart!\n\nMed v\u00e4nlig h\u00e4lsning\n\n[[organizer_name]]\n\nLokalTapiola [[area]]", 
+        "target": "Agenda Sijoitustapaaminen asiakkaan luona"
+    }, 
+    {
+        "english": "Hello! A meeting has been set up for us [[day]] at [[time]] in the address [[location]]. More information on the reservation and a map for arrival can be found on the meeting confirmation email that you have received. Best regards! [[organizer_name]] / LocalTapiola [[area]]. NOTE: This SMS can not be answered", 
+        "suomi": "Hei! Meille on sovittu tapaaminen [[day]] klo [[time]] osoitteessa [[location]]. Varauksen ja toimistomme tarkemmat tiedot kartan kera l\u00f6ytyv\u00e4t sinulle tulleesta Tapaamisen vahvistus-s\u00e4hk\u00f6postista. Tapaamisiin! [[organizer_name]] / L\u00e4hiTapiola [[area]]. HUOM: T\u00e4h\u00e4n tekstiviestiin ei voi vastata", 
+        "svenska": "Hej! Vi har ett avtalat m\u00f6te p\u00e5 LokalTapiolas kontor [[day]] kl [[time]]. Adressen \u00e4r [[location]]. Noggrannare uppgifter och en karta skickades med bekr\u00e4ftelsemeddelandet. Vi ses! [[organizer_name]], LokalTapiola [[area]]. OBS: Detta SMS kan inte besvaras", 
+        "target": "SMS kutsu"
+    }, 
+    {
+        "english": "Our meeting is getting closer! Welcome to [[location]] tomorrow [[day]] at [[time]]. BR. [[organizer_name]] / LocalTapiola [[area]]. NOTE: This SMS can not be answered", 
+        "suomi": "Tapaamisemme l\u00e4hestyy! Tervetuloa osoitteeseen [[location]] huomenna [[day]] klo [[time]]. T. [[organizer_name]] / L\u00e4hiTapiola [[area]]. HUOM: T\u00e4h\u00e4n tekstiviestiin ei voi vastata", 
+        "svenska": "V\u00e5rt m\u00f6te n\u00e4rmar! V\u00e4lkommen till [[location]] i morgon [[day]] kl [[time]]. H. [[organizer_name]] / LokalTapiola [[area]]. OBS: Detta SMS kan inte besvaras", 
+        "target": "SMS muistutus"
+    }, 
+    {
+        "english": "Hello! We have an online meeting on [[day]] at [[time]]. Detailed information and meeting instructions can be found in the e-mail we have sent you. See you soon! [[organizer_name]], \nLocalTapiola [[area]]. NOTE: This SMS can not be answered", 
+        "suomi": "Hei! Meille on sovittu verkkotapaaminen [[day]] klo [[time]]. Tarkemmat tiedot ja osallistumisohjeet l\u00f6yd\u00e4t sinulle tulleesta Tapaamisen vahvistus-s\u00e4hk\u00f6postista. Tapaamisiin! [[organizer_name]] / L\u00e4hiTapiola [[area]]. HUOM: T\u00e4h\u00e4n tekstiviestiin ei voi vastata", 
+        "svenska": "Hej! Vi har ett avtalat e-m\u00f6te [[day]] kl [[time]]. Noggrannare uppgifter och anvisningar om deltagande hittar du i bekr\u00e4ftelsemeddelandet. Vi ses! [[organizer_name]], LokalTapiola [[area]]. OBS: Detta SMS kan inte besvaras", 
+        "target": "SMS kutsu Verkkotapaaminen"
+    }, 
+    {
+        "english": "Our online meeting is getting closer! See you tomorrow [[day]] at [[time]]. BR. [[organizer_name]] / LocalTapiola [[area]]. NOTE: This SMS can not be answered", 
+        "suomi": "Verkkotapaamisemme l\u00e4hestyy! N\u00e4hd\u00e4\u00e4n ja kuullaan huomenna [[day]] klo [[time]]. T. [[organizer_name]] / L\u00e4hiTapiola [[area]]. HUOM: T\u00e4h\u00e4n tekstiviestiin ei voi vastata", 
+        "svenska": "V\u00e5rt e-m\u00f6te n\u00e4rmar! Ses och h\u00f6rs i morgon [[day]] kl [[time]]. H. [[organizer_name]] / LokalTapiola [[area]]. OBS: Detta SMS kan inte besvaras", 
+        "target": "SMS muistutus Verkkotapaaminen"
+    }, 
+    {
+        "english": "Hello! We have a telephone meeting on [[day]] at [[time]]. Detailed information can be found in the e-mail we have sent you. I am looking forward to the meeting! [[organizer_name]] / LocalTapiola [[area]]. NB! This SMS cannot be replied.", 
+        "suomi": "Hei! Meille on sovittu puhelintapaaminen [[day]] klo [[time]]. Tarkemmat tiedot l\u00f6yd\u00e4t sinulle tulleesta Tapaamisen vahvistus-s\u00e4hk\u00f6postista. Tapaamisiin! [[organizer_name]] / L\u00e4hiTapiola [[area]]. HUOM: T\u00e4h\u00e4n tekstiviestiin ei voi vastata", 
+        "svenska": "Hej! Vi har avtalat ett telefonm\u00f6te [[day]] kl. [[time]]. N\u00e4rmare uppgifter finns i e-postmeddelandet du f\u00e5tt. Vi h\u00f6rs! [[organizer_name]] / LokalTapiola [[area]]. OBS! Det g\u00e5r inte att svara p\u00e5 detta textmeddelande.", 
+        "target": "SMS kutsu Vakuutusturvan kartoitus puhelimella"
+    }, 
+    {
+        "english": "Our telephone meeting is approaching! We shall be in touch tomorrow [[day]] at [[time]]. Best regards, [[organizer_name]] / LocalTapiola [[area]]. NB! This SMS cannot be replied.", 
+        "suomi": "Puhelintapaamisemme l\u00e4hestyy! Kuulemisiin huomenna [[day]] klo [[time]]. T. [[organizer_name]] / L\u00e4hiTapiola [[area]]. HUOM: T\u00e4h\u00e4n tekstiviestiin ei voi vastata", 
+        "svenska": "V\u00e5rt telefonm\u00f6te n\u00e4rmar sig! Vi samtalas i morgon [[day]] kl. [[time]]. Mvh [[organizer_name]] / LokalTapiola [[area]]. OBS! Det g\u00e5r inte att svara p\u00e5 detta textmeddelande.", 
+        "target": "SMS muistutus Vakuutusturvan kartoitus puhelimella"
+    }, 
+    {
+        "english": "Hello! We have meeting at your home on [[day]] at [[time]]. Detailed information can be found in the e-mail we have sent you. See you soon! [[organizer_name]] / LocalTapiola [[area]]. NB! This SMS cannot be replied.", 
+        "suomi": "Hei! Meille on sovittu tapaaminen kotonasi [[day]] klo [[time]]. Tarkemmat tiedot l\u00f6yd\u00e4t sinulle tulleesta Tapaamisen vahvistus-s\u00e4hk\u00f6postista. Tapaamisiin! [[organizer_name]] / L\u00e4hiTapiola [[area]]. HUOM: T\u00e4h\u00e4n tekstiviestiin ei voi vastata", 
+        "svenska": "Hej! Vi har avtalat ett m\u00f6te hemma hos dig [[day]] kl. [[time]]. N\u00e4rmare uppgifter finns i e-postmeddelandet du f\u00e5tt. Vi ses! [[organizer_name]] / LokalTapiola [[area]]. OBS! Det g\u00e5r inte att svara p\u00e5 detta textmeddelande.", 
+        "target": "SMS kutsu Vakuutusturvan kartoitus kotona"
+    }, 
+    {
+        "english": "We shall soon meet! See you tomorrow [[day]] at [[time]]. Best regards, [[organizer_name]] / LocalTapiola [[area]]. NB! This SMS cannot be replied.", 
+        "suomi": "Tapaamisemme l\u00e4hestyy! N\u00e4hd\u00e4\u00e4n huomenna [[day]] klo [[time]]. T. [[organizer_name]] / L\u00e4hiTapiola [[area]]. HUOM: T\u00e4h\u00e4n tekstiviestiin ei voi vastata", 
+        "svenska": "V\u00e5rt m\u00f6te n\u00e4rmar sig! Vi ses i morgon [[day]] kl. [[time]]. Mvh [[organizer_name]] / LokalTapiola [[area]]. OBS! Det g\u00e5r inte att svara p\u00e5 detta textmeddelande.", 
+        "target": "SMS muistutus Vakuutusturvan kartoitus kotona"
+    }, 
+    {
+        "english": "Hello! We have meeting at your place on [[day]] at [[time]]. Detailed information can be found in the e-mail we have sent you. See you soon! [[organizer_name]] / LocalTapiola [[area]]. NB! This SMS cannot be replied.", 
+        "suomi": "Hei! Meille on sovittu tapaaminen [[day]] klo [[time]]. Tarkemmat tiedot l\u00f6yd\u00e4t sinulle tulleesta Tapaamisen vahvistus-s\u00e4hk\u00f6postista. Tapaamisiin! [[organizer_name]] / L\u00e4hiTapiola [[area]]. HUOM: T\u00e4h\u00e4n tekstiviestiin ei voi vastata", 
+        "svenska": "Hej! Vi har avtalat ett m\u00f6te hos dig [[day]] kl. [[time]]. N\u00e4rmare uppgifter finns i e-postmeddelandet du f\u00e5tt. Vi ses! [[organizer_name]] / LokalTapiola [[area]]. OBS! Det g\u00e5r inte att svara p\u00e5 detta textmeddelande.", 
+        "target": "SMS kutsu Sijoitustapaaminen asiakkaan luona"
+    }, 
+    {
+        "english": "We shall soon meet! See you tomorrow [[day]] at [[time]]. Best regards, [[organizer_name]] / LocalTapiola [[area]]. NB! This SMS cannot be replied.", 
+        "suomi": "Tapaamisemme l\u00e4hestyy! N\u00e4hd\u00e4\u00e4n huomenna [[day]] klo [[time]]. T. [[organizer_name]] / L\u00e4hiTapiola [[area]]. HUOM: T\u00e4h\u00e4n tekstiviestiin ei voi vastata", 
+        "svenska": "V\u00e5rt m\u00f6te n\u00e4rmar sig! Vi ses i morgon [[day]] kl. [[time]]. Mvh [[organizer_name]] / LokalTapiola [[area]]. OBS! Det g\u00e5r inte att svara p\u00e5 detta textmeddelande.", 
+        "target": "SMS muistutus Sijoitustapaaminen asiakkaan luona"
+    }, 
+    {
+        "english": "LocalTapiola", 
+        "suomi": "L\u00e4hiTapiola", 
+        "svenska": "LokalTapiola", 
+        "target": "L\u00e4hiTapiola"
+    }, 
+    {
+        "english": "Property insurance", 
+        "suomi": "Omaisuuden vakuuttaminen", 
+        "svenska": "Sakf\u00f6rs\u00e4kring", 
+        "target": "Omaisuuden vakuuttaminen"
+    }, 
+    {
+        "english": "Personal safety insurance", 
+        "suomi": "Henkil\u00f6turvan vakuuttaminen", 
+        "svenska": "Personlig s\u00e4kerhet f\u00f6rs\u00e4kring", 
+        "target": "Henkil\u00f6turvan vakuuttaminen"
+    }, 
+    {
+        "english": "Saving and investing", 
+        "suomi": "S\u00e4\u00e4st\u00e4minen ja sijoittaminen", 
+        "svenska": "Spara och investera", 
+        "target": "S\u00e4\u00e4st\u00e4minen ja sijoittaminen"
+    }, 
+    {
+        "english": "Insurance coverage survey", 
+        "suomi": "Vakuutusturvan kartoitus", 
+        "svenska": "F\u00f6rs\u00e4kringsskydd unders\u00f6kning", 
+        "target": "Vakuutusturvan kartoitus"
+    }, 
+    {
+        "english": "Insurance coverage survey with phone", 
+        "suomi": "Vakuutusturvan kartoitus puhelimella", 
+        "svenska": "F\u00f6rs\u00e4kringsskydd unders\u00f6kning med en telefon", 
+        "target": "Vakuutusturvan kartoitus puhelimella"
+    }, 
+    {
+        "english": "Insurance coverage survey at home", 
+        "suomi": "Vakuutusturvan kartoitus kotona", 
+        "svenska": "F\u00f6rs\u00e4kringsskydd unders\u00f6kning hos hemma", 
+        "target": "Vakuutusturvan kartoitus kotona"
+    }, 
+    {
+        "english": "Virtual meeting", 
+        "suomi": "Verkkotapaaminen", 
+        "svenska": "Virtual m\u00f6te", 
+        "target": "Verkkotapaaminen"
+    }, 
+    {
+        "english": "Other meeting", 
+        "suomi": "Muu tapaaminen", 
+        "svenska": "Annat m\u00f6te", 
+        "target": "Muu tapaaminen"
+    }, 
+    {
+        "english": "Example survey", 
+        "suomi": "Esimerkkikartoitus", 
+        "svenska": "Exempelunders\u00f6kning", 
+        "target": "Esimerkkikartoitus"
+    }, 
+    {
+        "english": "Example meeting", 
+        "suomi": "Esimerkkitapaaminen", 
+        "svenska": "Exempelm\u00f6te", 
+        "target": "Esimerkkitapaaminen"
+    }, 
+    {
+        "english": "P\u00e4\u00e4kaupunkiseutu", 
+        "suomi": "P\u00e4\u00e4kaupunkiseutu", 
+        "svenska": "Huvudstadsregionen", 
+        "target": "P\u00e4\u00e4kaupunkiseutu"
+    }, 
+    {
+        "english": "Pohjanmaa", 
+        "suomi": "Pohjanmaa", 
+        "svenska": "\u00d6sterbotten", 
+        "target": "Pohjanmaa-\u00d6sterbotten"
+    }, 
+    {
+        "english": "Etel\u00e4rannikko", 
+        "suomi": "Etel\u00e4rannikko", 
+        "svenska": "Sydkusten", 
+        "target": "Etel\u00e4rannikko-Sydkusten"
+    }, 
+    {
+        "english": "Uusimaa", 
+        "suomi": "Uusimaa", 
+        "svenska": "Nyland", 
+        "target": "Uusimaa"
+    }, 
+    {
+        "english": "Investment meeting at customer\u2019s", 
+        "suomi": "Sijoitustapaaminen asiakkaan luona", 
+        "svenska": "Placeringsm\u00f6te hos kunden", 
+        "target": "Sijoitustapaaminen asiakkaan luona"
+    }, 
+    {
+        "english": "Saving", 
+        "suomi": "S\u00e4\u00e4st\u00e4minen", 
+        "svenska": "Sparande", 
+        "target": "S\u00e4\u00e4st\u00e4minen"
+    }, 
+    {
+        "english": "Investment (Persons and Companies)", 
+        "suomi": "Sijoittaminen (Henkil\u00f6t ja Yritykset)", 
+        "svenska": "Placerande (Personer och F\u00f6retag)", 
+        "target": "Sijoittaminen (Henkil\u00f6t ja Yritykset)"
+    }, 
+    {
+        "english": "Investment (Company)", 
+        "suomi": "Sijoittaminen (Yritys)", 
+        "svenska": "Placerande (F\u00f6retag)", 
+        "target": "Sijoittaminen (Yritys)"
+    }, 
+    {
+        "english": "Private (Persons)", 
+        "suomi": "Private (Henkil\u00f6t)", 
+        "svenska": "Private (Personer)", 
+        "target": "Private (Henkil\u00f6t)"
+    }, 
+    {
+        "english": "Private (Company)", 
+        "suomi": "Private (Yritys)", 
+        "svenska": "Private (F\u00f6retag)", 
+        "target": "Private (Yritys)"
+    }
+]

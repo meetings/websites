@@ -1,0 +1,18 @@
+SELECT
+    user.user_id,
+    user.first_name,
+    user.last_name,
+    user.email,
+    user.extra_profile_title,
+    user.extra_profile_organization,
+    user.note_meetings_presumed_country_code,
+    user.extra_subscription_type,
+    user.note_tos_accepted,
+    user.extra_real_meetings_created,
+    user.extra_creating_partner_name,
+    CASE WHEN user.note_ios_device_first_login IS NOT NULL THEN 1 ELSE 0 END as ios_activated,
+    ROUND((user.note_meetings_free_trial_expires - UNIX_TIMESTAMP())/(60*60*24)) AS trial_expires_in_days
+FROM user
+WHERE
+  user.email != ''
+  AND user.user_id != 104349

@@ -1,0 +1,19 @@
+SELECT
+  extra_email_domain AS domain,
+  COUNT(user.user_id) users,
+  SUM(user.extra_meetings_created) meetings_created,
+  SUM(user.extra_real_meetings_created) real_meetings_created,
+  SUM(user.extra_invites_sent) invites_sent,
+  COUNT(user.note_ios_device_first_login) ios_users,
+  COUNT(user.note_tos_accepted) tos_accepted,
+  COUNT(IF(extra_subscription_type = '',1,NULL)) subscription_freemium,
+  COUNT(IF(extra_subscription_type = 'trial',1,NULL)) subscription_trial,
+  COUNT(IF(extra_subscription_type = 'user',1,NULL)) subscription_user,
+  COUNT(IF(extra_subscription_type = 'company',1,NULL)) subscription_company,
+  COUNT(IF(extra_subscription_type = 'sponsored',1,NULL)) subscription_sponsored,
+  COUNT(IF(extra_meet_me_path != '',1,NULL)) meet_me,
+  COUNT(note_created_from_appdirect) appdirect,
+  COUNT(note_created_from_quickmeet_id) quickmeet
+FROM user
+WHERE LENGTH(email) > 0
+GROUP BY domain

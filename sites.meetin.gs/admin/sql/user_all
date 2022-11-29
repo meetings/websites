@@ -1,0 +1,7 @@
+SELECT
+  *,
+  extra_email_domain AS domain
+FROM
+  user
+WHERE
+  user.user_id = %d

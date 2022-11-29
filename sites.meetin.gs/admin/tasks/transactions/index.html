@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="myApp">
+<head>
+  <meta charset="UTF-8">
+  <title>Transactions</title>
+
+  <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.1/css/jquery.dataTables.css">
+  <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/colvis/1.1.1/css/dataTables.colVis.css">
+  <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/tabletools/2.2.2/css/dataTables.tableTools.css">
+  <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/plug-ins/725b2a2115b/integration/bootstrap/3/dataTables.bootstrap.css">
+
+  <link rel="stylesheet"  type="text/css" href="/admin/_style/css/main.css" />
+
+  <script src="/_script/lib/angular/angular.min.js"></script>
+
+</head>
+<body>
+
+
+<navi active="/admin/tasks/"></navi>
+
+<div class="container">
+
+  <h2>Transactions</h2>
+  <label class="pull-right"><input type="checkbox" name="globak_regex" id="global_regex"> Search using regex</label>
+  <table id="transactions" class="display">
+    <tbody>
+
+    </tbody>
+    <tfoot>
+      <tr>
+        <th>Filtered<br>( Total )</th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+      </tr>
+    </tfoot>
+  </table>
+
+
+</div>
+
+<script src="//code.jquery.com/jquery-1.10.2.min.js"></script>
+<script src="/_script/lib/bootstrap/bootstrap.min.js"></script>
+<script src="/admin/_script/common.js"></script>
+
+<script src="/_script/lib/phoneformat/phoneformat.js"></script>
+<script src="/_script/lib/lang/lang.js"></script>
+<script src="/_script/lib/momentjs/moment.min.js"></script>
+
+<script src="//cdn.datatables.net/1.10.1/js/jquery.dataTables.js"></script>
+<script src="//cdn.datatables.net/plug-ins/725b2a2115b/integration/bootstrap/3/dataTables.bootstrap.js"></script>
+<script src="//cdn.datatables.net/colvis/1.1.1/js/dataTables.colVis.min.js"></script>
+<script src="//cdn.datatables.net/tabletools/2.2.2/js/dataTables.tableTools.min.js"></script>
+
+
+<script>
+
+var sql_url = getSQLUrl('sql','transactions');
+
+
+function prepareData(data){
+  for ( var i=0, ien=data.length ; i<ien ; i++ ) {
+    data[i]['user'] = '<a href="/admin/users/user/?id='+data[i]['user_id']+'">'+data[i]['user_id']+'</a>';
+    data[i]['payment_date_humanized'] = humanizeDate(data[i]['payment_date']);
+    data[i]['amount'] = "$"+data[i]['note_amount'];
+    data[i]['country'] = countryFlagHtml(data[i]['note_country']);
+
+  }
+  return data
+}
+
+
+$(document).ready( function () {
+  var regexSearch = $('#global_regex').prop('checked');
+  $('#global_regex').on("change",function(){
+    regexSearch = $('#global_regex').prop('checked');
+    var searchString = $('#transactions').DataTable().search();
+    $('#transactions').DataTable().search(searchString,regexSearch,!regexSearch).draw()
+  })
+
+  var table = $('#transactions').DataTable({
+      "order":[0,'asc'],
+      "lengthMenu": [[10, 25, 50, 100, 250, 500, 1000, -1], [10, 25, 50, 100, 250, 500, 1000, "All"]],
+      "dom": 'T<"clear">lCfrtip',
+      "sAjaxDataProp":"",
+      "deferRender": true,
+      "stateSave": true,
+      // "bAutoWidth": false,
+      "ajax": function(data, callback, settings){
+        $.ajax(
+          sql_url,
+          {
+            "dataType": "jsonp",
+            "success": function(json_data){
+              regexSearch = $('#global_regex').prop('checked');
+              if($('#transactions').DataTable().settings()[0].oLoadedState){
+                regexSearch = $('#transactions').DataTable().settings()[0].oLoadedState.search.regex
+              }
+              $('#global_regex').prop('checked', regexSearch )
+              callback(prepareData(json_data));
+            }
+          }
+        );
+      },
+
+
+      columnDefs: [
+        {  mData: 'user',                    title: 'User',          targets:[0] },
+        {  mData: 'first_name',              title: 'First name',    targets:[1] },
+        {  mData: 'last_name',               title: 'Last name',     targets:[2] },
+        {  mData: 'payment_date_humanized',  title: 'Payment Date',  targets:[3] },
+        {  mData: 'amount',                  title: 'Amount',        targets:[4] },
+        {  mData: 'country',                 title: 'Country',       targets:[5] },
+        {  visible: false,                   targets: [] },
+        {  orderable: false,                 targets: [] },
+      ],
+
+      "footerCallback": function ( row, data, start, end, display ) {
+            var api = this.api(), data;
+
+            // Remove the formatting to get integer data for summation
+            var intVal = function ( i ) {
+                return typeof i === 'string' ?
+                    i.replace(/[\$,]/g, '')*1 :
+                    typeof i === 'number' ?
+                        i : 0;
+            };
+
+            function totals(col){
+              // Total over all pages
+              data = api.column( col ).data();
+              total = data.length ?
+                  data.reduce( function (a, b) {
+                          return intVal(a) + intVal(b);
+                  } ) :
+                  0;
+
+              // Total over this page
+              data = api.column( col, { page: 'current'} ).data();
+              pageTotal = data.length ?
+                  data.reduce( function (a, b) {
+                          return intVal(a) + intVal(b);
+                  } ) :
+                  0;
+
+              // Update footer
+              $( api.column( col ).footer() ).html(
+                  '$'+pageTotal +'<br>(&nbsp;$'+ total +'&nbsp;)'
+              );
+
+            }
+
+            totals(4);
+        },
+
+      "tableTools":{
+        "sSwfPath": "/_script/lib/datatables.net/copy_csv_xls.swf",
+        "aButtons": [
+          {
+            "sExtends": "copy",
+            "sButtonText": "Copy",
+            "oSelectorOpts":{
+              "filter": 'applied'
+            }
+          },
+          {
+            "sExtends": "xls",
+            "sButtonText": "xls",
+            "oSelectorOpts":{
+              "filter": 'applied'
+            }
+          }
+        ]
+      }
+    });
+
+
+
+
+} );
+
+</script>
+</body>
+</html>

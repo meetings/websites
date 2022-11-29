@@ -1,0 +1,45 @@
+[
+  {
+    "is_scheduling_template": "1",
+    "available_timespans": [],
+    "background_theme": "12",
+    "buffer": 30,
+    "description": "Hello! I have made my calendar available to you. Please click on the button below to start scheduling the meeting.",
+    "duration": 60,
+    "event_data": {},
+    "last_active_epoch": 0,
+    "location": "",
+    "meeting_type": "2",
+    "name": "Lunch meeting",
+    "online_conferencing_data": {},
+    "online_conferencing_option": null,
+    "planning_buffer": 1800,
+    "slots": [
+      {
+        "begin_second": 39600,
+        "end_second": 46800,
+        "weekday": 0
+      },
+      {
+        "begin_second": 39600,
+        "end_second": 46800,
+        "weekday": 1
+      },
+      {
+        "begin_second": 39600,
+        "end_second": 46800,
+        "weekday": 2
+      },
+      {
+        "begin_second": 39600,
+        "end_second": 46800,
+        "weekday": 3
+      },
+      {
+        "begin_second": 39600,
+        "end_second": 46800,
+        "weekday": 4
+      }
+    ]
+  }
+]

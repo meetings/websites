@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="myApp">
+<head>
+  <meta charset="UTF-8">
+  <title>Domains</title>
+
+  <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.1/css/jquery.dataTables.css">
+  <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/colvis/1.1.1/css/dataTables.colVis.css">
+  <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/tabletools/2.2.2/css/dataTables.tableTools.css">
+  <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/plug-ins/725b2a2115b/integration/bootstrap/3/dataTables.bootstrap.css">
+
+  <link rel="stylesheet"  type="text/css" href="/admin/_style/css/main.css" />
+
+  <script src="/_script/lib/angular/angular.min.js"></script>
+
+</head>
+<body>
+
+
+<navi active="/admin/domains/"></navi>
+
+<div class="container">
+
+  <label class="pull-right"><input type="checkbox" name="globak_regex" id="global_regex"> Search using regex</label>
+  <table id="domains" class="display">
+    <tbody>
+
+    </tbody>
+    <tfoot>
+      <tr>
+        <th>Filtered<br>( Total )</th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+      </tr>
+    </tfoot>
+  </table>
+
+
+</div>
+
+<script src="//code.jquery.com/jquery-1.10.2.min.js"></script>
+<script src="/_script/lib/bootstrap/bootstrap.min.js"></script>
+<script src="/admin/_script/common.js"></script>
+
+<script src="/_script/lib/momentjs/moment.min.js"></script>
+
+<script src="//cdn.datatables.net/1.10.1/js/jquery.dataTables.js"></script>
+<script src="//cdn.datatables.net/plug-ins/725b2a2115b/integration/bootstrap/3/dataTables.bootstrap.js"></script>
+<script src="//cdn.datatables.net/colvis/1.1.1/js/dataTables.colVis.min.js"></script>
+<script src="//cdn.datatables.net/tabletools/2.2.2/js/dataTables.tableTools.min.js"></script>
+
+
+<script>
+
+var sql_url = getSQLUrl('sql','domains');
+
+var maxDomainLength = 33;
+function prepareData(json){
+  for ( var i=0, ien=json.length ; i<ien ; i++ ) {
+    json[i]["domain_orig"] = json[i]["domain"];
+    if(json[i]["domain"]){
+      // json[i]["users"] = json[i]["domain"].length;
+      if(json[i]["domain"].length>maxDomainLength){
+        json[i]["domain"] = json[i]["domain"].substring(0,maxDomainLength);
+      }
+    }
+  }
+  return json
+}
+
+function addDomainEllipses(data, type, full){
+  var title ="";
+  if(full.domain_orig.length > maxDomainLength-3){
+    title = full.domain_orig;
+  }
+  return '<a href="domain/?domain='+encodeURIComponent(full.domain_orig)+'" class="col_ellipses" title="'+title+'">'+data+'</a>';
+}
+
+$(document).ready( function () {
+  var regexSearch = $('#global_regex').prop('checked');
+  $('#global_regex').on("change",function(){
+    regexSearch = $('#global_regex').prop('checked');
+    $('#domains').DataTable().search($('#domains').DataTable().search(),regexSearch,!regexSearch).draw()
+  })
+
+  var table = $('#domains').DataTable({
+      "order":[0,'asc'],
+      "lengthMenu": [[10, 25, 50, 100, 250, 500, 1000, -1], [10, 25, 50, 100, 250, 500, 1000, "All"]],
+      "dom": 'T<"clear">lCfrtip',
+      "sAjaxDataProp":"",
+      "deferRender": true,
+      "stateSave": true,
+      // "bAutoWidth": false,
+      "ajax": function(data, callback, settings){
+        $.ajax(
+          sql_url,
+          {
+            "dataType": "jsonp",
+            "success": function(json){
+              regexSearch = $('#global_regex').prop('checked');
+              if($('#domains').DataTable().settings()[0].oLoadedState){
+                regexSearch = $('#domains').DataTable().settings()[0].oLoadedState.search.regex
+              }
+              $('#global_regex').prop('checked', regexSearch )
+              callback(prepareData(json));
+            }
+          }
+        );
+      },
+
+
+      columnDefs: [
+        { mData: 'domain', title: 'Domain', targets:[0], sClass: 'td_domain', mRender: addDomainEllipses },
+        { mData: 'users', title: 'Users', targets:[1] },
+
+        { mData: 'tos_accepted', title: 'TOS', targets:[2] },
+        { mData: 'subscription_freemium', title: 'Freemium', targets:[3] },
+        { mData: 'subscription_trial', title: 'Trial', targets:[4] },
+        { mData: 'subscription_user', title: 'Pro', targets:[5] },
+        { mData: 'subscription_company', title: 'Company', targets:[6] },
+        { mData: 'subscription_sponsored', title: 'Sponsored', targets:[7] },
+
+        { mData: 'meetings_created', title: 'Meetings created', targets:[8] },
+        { mData: 'real_meetings_created', title: 'Real meetings created', targets:[9] },
+        { mData: 'invites_sent', title: 'Invites sent', targets:[10] },
+        { mData: 'ios_users', title: 'iOS', targets:[11] },
+        { mData: 'meet_me', title: 'MeetMe', targets:[12] },
+        { mData: 'appdirect', title: 'Appdirect', targets:[13] },
+        { mData: 'quickmeet', title: 'Quickmeet', targets:[14] },
+        { visible: false, targets: [8,9,10,11,12,13,14]},
+        { orderable: false, targets: []},
+      ],
+
+      "footerCallback": function ( row, data, start, end, display ) {
+            var api = this.api(), data;
+
+            // Remove the formatting to get integer data for summation
+            var intVal = function ( i ) {
+                return typeof i === 'string' ?
+                    i.replace(/[\$,]/g, '')*1 :
+                    typeof i === 'number' ?
+                        i : 0;
+            };
+
+            function totals(col){
+              // Total over all pages
+              data = api.column( col ).data();
+              total = data.length ?
+                  data.reduce( function (a, b) {
+                          return intVal(a) + intVal(b);
+                  } ) :
+                  0;
+
+              // Total over this page
+              data = api.column( col, { page: 'current'} ).data();
+              pageTotal = data.length ?
+                  data.reduce( function (a, b) {
+                          return intVal(a) + intVal(b);
+                  } ) :
+                  0;
+
+              // Update footer
+              $( api.column( col ).footer() ).html(
+                  pageTotal +'<br>(&nbsp;'+ total +'&nbsp;)'
+              );
+
+            }
+            totals(1);
+            totals(2);
+            totals(3);
+            totals(4);
+            totals(5);
+            totals(6);
+            totals(7);
+            totals(8);
+            totals(9);
+            totals(10);
+            totals(11);
+            totals(12);
+            totals(13);
+            totals(14);
+        },
+
+      "tableTools":{
+        "sSwfPath": "/_script/lib/datatables.net/copy_csv_xls.swf",
+        "aButtons": [
+          {
+            "sExtends": "copy",
+            "sButtonText": "Copy",
+            "oSelectorOpts":{
+              "filter": 'applied'
+            }
+          },
+          {
+            "sExtends": "xls",
+            "sButtonText": "xls",
+            "oSelectorOpts":{
+              "filter": 'applied'
+            }
+          }
+        ]
+      }
+    });
+
+
+
+
+} );
+
+</script>
+</body>
+</html>

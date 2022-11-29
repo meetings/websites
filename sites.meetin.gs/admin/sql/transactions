@@ -1,0 +1,9 @@
+SELECT
+  user.first_name AS first_name,
+  user.last_name AS last_name,
+  user_subscription_transaction.user_id AS user_id,
+  payment_date,
+  note_amount,
+  note_country
+FROM user_subscription_transaction, user
+WHERE user_subscription_transaction.user_id = user.user_id

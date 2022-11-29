@@ -1,0 +1,290 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>Meetin.gs Example</title>
+     
+        <script type="text/javascript" src="https://meetingstats.dicole.net/js/stats/jsonv/combined_monthly_users_with_n_real_created_as_any_user_within_a_3_month_window.jsonv"></script>
+      
+       
+
+		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+		<script type="text/javascript">
+$(function () {
+    
+    var total_meetings_created = [];
+
+    var total_real_meetings_created =[];
+
+    var draft_and_test_meetings = [];
+
+    var month = [];
+
+    var total_real_1 = [];
+    var total_real_2 = [];
+    var total_real_3 = [];
+    var total_real_4 = [];
+    var total_real_5 = [];
+    var total_real_6 = [];
+    var total_real_7 = [];
+    var total_real_8 = [];
+    var total_real_9 = [];
+    var total_real_10 = [];
+    var total_real_11 = [];
+
+    for (var key in combined_monthly_users_with_n_real_created_as_any_user_within_a_3_month_window) {
+   var obj = combined_monthly_users_with_n_real_created_as_any_user_within_a_3_month_window[key];
+   for (var prop in obj) {
+
+      if (prop == "1_real_created"){
+        total_real_1.push(obj[prop]);
+
+      }
+
+      if (prop == "2_real_created"){
+        total_real_2.push(obj[prop]);
+
+      }
+
+      if (prop == "3_real_created"){
+        total_real_3.push(obj[prop]);
+
+      }
+
+      if (prop == "4_real_created"){
+        total_real_4.push(obj[prop]);
+
+      }
+
+      if (prop == "5_real_created"){
+        total_real_5.push(obj[prop]);
+
+      }
+
+      if (prop == "6_real_created"){
+        total_real_6.push(obj[prop]);
+
+      }
+
+      if (prop == "7_real_created"){
+        total_real_7.push(obj[prop]);
+
+      }
+
+      if (prop == "8_real_created"){
+        total_real_8.push(obj[prop]);
+
+      }
+
+      if (prop == "9_real_created"){
+        total_real_9.push(obj[prop]);
+
+      }
+
+      if (prop == "10_real_created"){
+        total_real_10.push(obj[prop]);
+
+      }
+
+      if (prop == "11_real_created"){
+        total_real_11.push(obj[prop]);
+
+      }
+
+    
+
+
+      if (prop == "month"){
+        month.push(obj[prop]);
+
+      } 
+
+      console.log(prop + " = " + obj[prop]);
+   }
+}
+
+
+  
+
+ 
+
+
+
+    //prepare arrays to be shown cumulatively
+    //
+    console.log(total_meetings_created)
+    console.log(total_real_meetings_created)
+   
+   for (var i = 0; i < total_meetings_created.length; i++){
+  
+       draft_and_test_meetings[i] = total_meetings_created[i]-total_real_meetings_created[i];
+       
+
+    }
+   
+
+    $(document).ready(function() {
+       
+        
+
+
+        chart = new Highcharts.Chart({
+            chart: {
+                renderTo: 'container',
+                type: 'line',
+                zoomType: 'x',
+                spacingRight: 20,
+                backgroundColor:'#00a0cd'
+            },
+            title: {
+                text: 'Users registered within 3 months with "n" real meeting',
+                 style: {
+                  color: '#FFFFFF'
+                }
+            },
+            subtitle: {
+                text: 'Source: Meetin.gs',
+                 style: {
+                  color: '#FFFFFF'
+                }
+            },
+            xAxis: {
+                categories: month,
+                labels: {
+                style: {
+                    color: 'white'
+                }
+            }
+            },
+            yAxis: {
+                title: {
+                    text: '',
+                     style: {
+                  color: '#FFFFFF'
+                }
+                },
+                labels: {
+                style: {
+                    color: 'white'
+                }
+            }
+            },
+            tooltip: {
+                enabled: true,
+                formatter: function() {
+                    return '<b>'+ this.series.name +'</b><br/>'+
+                       + this.y + '' ;
+                }
+            },
+            plotOptions: {
+                area: {
+                    dataLabels: {
+                        borderWidth: 0,
+                        enabled: true,
+                        style: {
+                        fontWeight:'bold'
+                         }
+                    },
+                    stacking: 'normal',
+                    lineColor: '#666666',
+                    lineWidth: 0,
+                    marker: {
+                        lineWidth: 1,
+                        lineColor: '#666666'
+                    },
+                    fillOpacity: 1.0
+                }
+            },
+            series: [{ 
+                color: '#acacac',
+                name: 'n=11',
+                data: total_real_11,
+                dataLabels: {x: 0, y:20,color:'white',enabled:true}
+
+            },
+            { 
+                color: '#acacac',
+                name: 'n=10',
+                data: total_real_10,
+                dataLabels: {x: 0, y:20,color:'white',enabled:true}
+
+            },
+            { 
+                color: '#acacac',
+                name: 'n=9',
+                data: total_real_9,
+                dataLabels: {x: 0, y:20,color:'white',enabled:true}
+
+            },
+            { 
+                color: '#acacac',
+                name: 'n=8',
+                data: total_real_8,
+                dataLabels: {x: 0, y:20,color:'white',enabled:true}
+
+            },
+            { 
+                color: '#acacac',
+                name: 'n=7',
+                data: total_real_7,
+                dataLabels: {x: 0, y:20,color:'white',enabled:true}
+
+            },
+            
+            { 
+                color: '#acacac',
+                name: 'n=6',
+                data: total_real_6,
+                dataLabels: {x: 0, y:20,color:'white',enabled:true}
+
+            },
+            { 
+                color: '#acacac',
+                name: 'n=5',
+                data: total_real_5,
+                dataLabels: {x: 0, y:20,color:'white',enabled:true}
+
+            },{ 
+                color: '#acacac',
+                name: 'n=4',
+                data: total_real_4,
+                dataLabels: {x: 0, y:20,color:'white',enabled:true}
+
+            },{ 
+                color: '#e370a9',
+                name: 'n=3',
+                data: total_real_3,
+                dataLabels: {x: 20, y:9,color:'white',enabled:true}
+
+            },{ 
+                color: '#f69d5e',
+                name: 'n=2',
+                data: total_real_2,
+                dataLabels: {x: 20, y:9,color:'white',enabled:true}
+
+            },
+            { color: '#8cc864',
+                name: 'n=1',
+                data: total_real_1,
+                dataLabels: {x: -16, y:15,color:'white',enabled:true},
+            }]
+        });
+      for (var i = 0; i < 7; ++i){
+      chart.series[i].hide();
+  }
+    });
+    
+});
+
+
+
+		</script>
+	</head>
+	<body>
+<script src="http://code.highcharts.com/highcharts.js"></script>
+<script src="http://code.highcharts.com/modules/exporting.js"></script>
+
+<div id="container" style="min-width: 400px; height: 500px; margin: 0 auto"></div>
+
+	</body>
+</html>

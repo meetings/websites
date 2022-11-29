@@ -1,0 +1,1076 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="myApp">
+<head>
+	<meta charset="UTF-8">
+	<title>SwipeToMeet Users</title>
+
+	<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.1/css/jquery.dataTables.css">
+	<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/colvis/1.1.1/css/dataTables.colVis.css">
+	<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/tabletools/2.2.2/css/dataTables.tableTools.css">
+	<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/plug-ins/725b2a2115b/integration/bootstrap/3/dataTables.bootstrap.css">
+
+	<link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/dc/2.0.0-beta.12/dc.css">
+
+	<link rel="stylesheet"  type="text/css" href="/admin/_style/css/main.css" />
+
+	<script src="/_script/lib/angular/angular.min.js"></script>
+
+	<style>
+		#charts{
+			width:940px;
+			margin:0 auto;
+		}
+		#paths-chart.dc-chart g.row text,
+		#countries-chart.dc-chart g.row text,
+		#types-chart.dc-chart g.row text,
+		#quarter-chart.dc-chart g.row text{
+			fill:#000000;
+		}
+		#navigate-chart .axis.y{
+			opacity: 0;
+		}
+		.dc-data-count{
+			float:left;
+		}
+		.var span{
+			font-weight: bold;
+		}
+	</style>
+</head>
+<body>
+
+
+<navi active="/admin/swipetomeet/users/"></navi>
+
+<div class="container">
+
+	<h2>SwipeToMeet Users</h2>
+	<div style="overflow:hidden">
+		<p id='data-count' class="dc-data-count"></p>
+	</div>
+
+	<div id="charts" style="overflow:hidden;clear:left">
+
+
+		<div id="user-chart">
+			<div>
+				Type
+				<span class='reset' style='display: none;'>
+					<span class='filter'></span>
+					<a href="javascript:resetChart('user')">reset</a>
+				</span>
+			</div>
+		</div>
+
+		<div id="paths-chart">
+			<div>
+				Paths
+				<span class='reset' style='display: none;'>
+					<span class='filter'></span>
+					<a href="javascript:resetChart('paths')">reset</a>
+				</span>
+			</div>
+		</div>
+
+		<div id="source-chart">
+			<div>
+				Source
+				<span class='reset' style='display: none;'>
+					<span class='filter'></span>
+					<a href="javascript:resetChart('source')">reset</a>
+				</span>
+			</div>
+		</div>
+
+
+
+		<div id="countries-chart">
+			<div>
+				Top 10 countries based on IP
+				<span class='reset' style='display: none;'>
+					<span class='filter'></span>
+					<a href="javascript:resetChart('countries')">reset</a>
+				</span>
+			</div>
+		</div>
+
+		<div id="quarter-chart">
+			<div>
+				Quarters
+				<span class='reset' style='display: none;'>
+					<span class='filter'></span>
+					<a href="javascript:resetChart('quarter')">reset</a>
+				</span>
+			</div>
+		</div>
+
+		<div id="types-chart">
+			<div>
+				Account type
+				<span class='reset' style='display: none;'>
+					<span class='filter'></span>
+					<a href="javascript:resetChart('types')">reset</a>
+				</span>
+			</div>
+		</div>
+
+		<div id="sourcegraph-chart" style="clear:left;">
+			<div>
+			Source distribution
+				<span class='reset' style='display: none;'>
+					<span class='filter'></span>
+					<a href="javascript:reset2Charts('sourcegraph','navigate')">reset</a>
+				</span>
+			</div>
+		</div>
+
+		<div id="count-chart" style="clear:left;">
+			<div>
+			First seen in SwipeToMeet
+				<span class='reset' style='display: none;'>
+					<span class='filter'></span>
+					<a href="javascript:reset2Charts('count','navigate')">reset</a>
+				</span>
+			</div>
+		</div>
+
+		<div id="navigate-chart" style="clear:left;">
+		</div>
+
+		<div style="float:left;">
+
+			<p class="var">
+				Total reached users: <span id="reachedusers"></span> (Logged in app or were invited to a meeting with scheduling)<br>
+				We first saw these users when they were invited to scheduling: <span id="invitedusers"></span> (<span id="invitedusersP"></span> of total reach)<br>
+				Logged in to application after being invited: <span id="loggedafterinvite"></span> (<span id="loggedafterinviteP"></span> of invited)<br>
+				<br>
+
+				Have logged in to application: <span id="loggedin"></span> (<span id="loggedinP"></span> of reached users)<br>
+				Have accepted TOS: <span id="acceptedtos"></span> (<span id="acceptedtosP"></span> of logged in)<br>
+				Have given email: <span id="givenemail"></span> (<span id="givenemailP"></span> of logged in)<br>
+
+				Have created at least one scheduling (anytime): <span id="onescheduling"></span> (<span id="oneschedulingP"></span> of logged in)<br>
+				<br>
+				Schedulings per organizer (anytime): <span id="schedulings_per_organizer"></span><br>
+				Schedulings count for these users (anytime): <span id="schedulings_total"></span><br>
+			</p>
+		</div>
+
+
+	</div>
+
+	<label class="pull-right"><input type="checkbox" name="global_regex" id="global_regex"> Search using regex</label>
+	<table id="users" class="table table-striped">
+		<tfoot>
+			<tr class="filters">
+				<th></th>
+				<th></th>
+				<th></th>
+				<th></th>
+				<th></th>
+				<th></th>
+				<th></th>
+				<th></th>
+			</tr>
+		</tfoot>
+	</table>
+
+
+</div>
+
+
+<script src="//code.jquery.com/jquery-1.10.2.min.js"></script>
+<script src="/_script/lib/bootstrap/bootstrap.min.js"></script>
+<script src="/admin/_script/common.js"></script>
+
+<script src="/_script/lib/momentjs/moment.min.js"></script>
+<script src="/_script/lib/moment-duration-format/moment-duration-format.js"></script>
+<script src="/_script/lib/phoneformat/phoneformat.js"></script>
+<!-- <script src="/_script/lib/jszip/jszip.js"></script> -->
+
+<script src="//cdn.datatables.net/1.10.1/js/jquery.dataTables.js"></script>
+<script src="//cdn.datatables.net/plug-ins/725b2a2115b/integration/bootstrap/3/dataTables.bootstrap.js"></script>
+<script src="//cdn.datatables.net/colvis/1.1.1/js/dataTables.colVis.min.js"></script>
+<script src="//cdn.datatables.net/tabletools/2.2.2/js/dataTables.tableTools.min.js"></script>
+
+
+<script type="text/javascript" src="/_script/lib/d3/d3_3_5_6.js"></script>
+<!-- <script type="text/javascript" src="/_script/lib/d3/jsonp.js"></script> -->
+<!-- <script type="text/javascript" src="/_script/lib/d3/d3.parsets.js"></script> -->
+<!-- <script type="text/javascript" src="/_script/lib/cal-heatmap/cal-heatmap.min.js"></script> -->
+<!-- <script type="text/javascript" src="/admin/_script/domain.js"></script> -->
+<script type="text/javascript" src="/_script/lib/crossfilter/crossfilter.js"></script>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/dc/2.0.0-beta.18/dc.min.js"></script>
+
+
+
+<script>
+/*jshint -W069 */
+
+var sql_url = getSQLUrl('sql','s2m_users_basic');
+
+
+var maxEmailLength = 53;
+function prepareData(data){
+	$('#global_regex').prop('checked', $('#users').DataTable().settings()[0].oSavedState.search.regex );
+	for ( var i=0, ien=data.length ; i<ien ; i++ ) {
+		if(data[i]["id"]){
+			data[i]["id"] = '<a href="../../users/user/?id='+data[i]["id"]+'">'+data[i]["id"]+'</a>';
+		}
+
+		data[i]['email_domain_link'] = "-";
+		if(data[i]['email_domain']){
+			data[i]['email_domain_link'] = '<a href="../../domains/domain/?domain='+
+				data[i]['email_domain'] + '">' + data[i]['email'] + '</a>';
+		}
+
+		var types = [
+				'Freemium',
+				'Trial',
+				'User',
+				'Company',
+				'Sponsored',
+				'Weird'
+			];
+		data[i]["type"] = types[data[i]["type"]];
+
+		if(data[i]["cc"]){
+			data[i]["cc_original"] = data[i]["cc"];
+			data[i]["cc"] = '<span class="nowrap">'+countryFlagHtml(data[i]["cc"])+'</span>';
+		}
+
+		for(var j in data[i]){
+			if(!data[i][j]){
+				data[i][j] = "-";
+			}
+		}
+	}
+
+	var savedCols = $('#users').DataTable().settings()[0].oSavedState.columns;
+	for(var i=0,l=savedCols.length;i<l;i++){
+		if($('#users .filters th input')[i]){
+			$('#users .filters th input')[i].value = $('#users').DataTable().settings()[0].oSavedState.columns[i].search.search;
+		}
+	}
+
+	window.setTimeout(function(){visualise(data);},100);
+	return data;
+}
+
+function addEmailEllipses(data, type, full){
+	var title ="";
+	if(full.email_orig.length > maxEmailLength-3){
+		title = full.email_orig;
+	}
+	return '<span class="col_ellipses" title="'+title+'">'+data+'</span>';
+}
+var regexSearch;
+var datatable;
+$(document).ready( function () {
+	regexSearch = $('#global_regex').prop('checked');
+	$('#global_regex').on("change",function(){
+		regexSearch = $('#global_regex').prop('checked');
+		$('#users').DataTable().search($('#users').DataTable().search(),regexSearch,!regexSearch).draw();
+	});
+
+	// Setup - add a text input to each footer cell
+	$('#users .filters th').each( function () {
+			$(this).html( '<input type="text" class="filter" />' );
+	} );
+
+	datatable = $('#users').DataTable({
+			"order":[0,'asc'],
+			"lengthMenu": [[10, 25, 50, 100, 250, 500, 1000, 5000], [10, 25, 50, 100, 250, 500, 1000, 5000]],
+			"dom": 'T<"clear">lCfrtip',
+			"sAjaxDataProp":"",
+			"deferRender": true,
+			"stateSave": true,
+			"ajax": function(data, callback, settings){
+					$.ajax(
+						sql_url,
+						{
+							"dataType": "jsonp",
+							"success": function(json){
+								callback(prepareData(json));
+							}
+						}
+					);
+				// }
+			},
+
+
+			columnDefs: [
+				{  mData: "id",            title: "ID",            targets: 0 },
+				{  mData: "first_name",    title: "First",         targets: 1 },
+				{  mData: "last_name",     title: "Last",          targets: 2 },
+				{  mData: "email_domain_link", title: "Domain",        targets: 3 },
+				{  mData: "type",          title: "Type",          targets: 4 },
+				{  mData: "cc",            title: "Country",       targets: 5 },
+				{  mData: "scheduling_count", title: "Scheduled",       targets: 6 },
+				{  mData: "participant_count", title: "Participated",       targets: 7 },
+				// {  mData: "organization",  title: "Organization",  targets: 5 },
+				// {  visible: false,         targets: [6] },
+				{  orderable: false,       targets: [] },
+			],
+
+			"tableTools":{
+				"sSwfPath": "/_script/lib/datatables.net/copy_csv_xls.swf",
+				"aButtons": [
+					{
+						"sExtends": "copy",
+						"sButtonText": "Copy",
+						"oSelectorOpts":{
+							"filter": 'applied'
+						}
+					},
+					{
+						"sExtends": "xls",
+						"sButtonText": "xls",
+						"oSelectorOpts":{
+							"filter": 'applied'
+						}
+					}
+				],
+
+			}
+		});
+
+		// Apply the search
+		datatable.columns().eq( 0 ).each( function ( colIdx ) {
+			$( 'input.filter', datatable.column( colIdx ).footer() ).on( 'keyup change', function () {
+				datatable
+					.column( colIdx )
+					.search( this.value, regexSearch, !regexSearch )
+					.draw();
+			} );
+		} );
+
+
+
+} );
+
+//--------------------------------------------------------------------------------------------------
+
+var charts = {};
+
+function resetChart(chart){
+	charts[chart].filterAll();
+	dc.redrawAll();
+}
+function reset2Charts(chart1,chart2){
+	charts[chart1].filterAll();
+	charts[chart2].filterAll();
+	dc.redrawAll();
+}
+
+function visualise(data){
+	var ndx = crossfilter(data);
+	var all = ndx.groupAll();
+
+	function parseDate(d) {
+		return new Date(d*1000);
+	}
+
+	var statuses = {
+		reached: "1.Reached",
+		started: "2.Started",
+		cancelled: "3.Cancelled",
+		completed: "4.Completed",
+		failed: "5.Failed",
+	};
+	var statuses_length = 0;
+
+/*
+	SELECT
+	  user.user_id AS id,
+	  user.first_name AS first_name,
+	  user.last_name AS last_name,
+	  user.email AS email,
+	  user.extra_email_domain AS email_domain,
+	  CASE WHEN LOWER(user.extra_email_domain) = 'meetin.gs' OR LOWER(user.extra_email_domain) = 'dicole.com' THEN ELSE 0 END AS staff,
+	  user.note_meetings_presumed_country_code AS cc,
+	  user.note_creation_time AS user_created,
+	  user.extra_first_swipetomeet_contact_epoch AS first_contact,
+	  user.extra_first_swipetomeet_device_login_epoch AS first_login,
+	  user.note_tos_accepted AS tos_accepted,
+	  user.extra_first_swipetomeet_scheduling_created_epoch AS first_scheduling,
+	  user.extra_first_swipetomeet_scheduling_participated_epoch AS first_participated,
+	  user.extra_swipetomeet_scheduling_created_count AS scheduling_count,
+	  user.extra_swipetomeet_scheduling_participated_count AS participant_count,
+	  CASE user.extra_subscription_type
+	    WHEN ''          THEN 0
+	    WHEN 'trial'     THEN 1
+	    WHEN 'user'      THEN 2
+	    WHEN 'company'   THEN 3
+	    WHEN 'sponsored' THEN 4
+	    WHEN 'weird'     THEN 5
+	    ELSE 0
+	  END AS type
+	FROM
+	  user
+	WHERE
+	  user.extra_first_swipetomeet_contact_epoch != 0
+	  AND user.note_meetings_merged_to_other_user IS NULL
+*/
+	data.forEach(function(d, i){
+		d.index = i;
+
+		d.date = parseDate(d.first_contact);
+		d.day = d3.time.day(d.date);
+		d.month = d3.time.month(d.date);
+		d.user_chart = (+d.staff == 1)?"Staff":"Customer";
+
+		if(d.cc_original){
+				d.cc_normalized = d.cc_original.toLowerCase();
+			}else{
+				d.cc_normalized = "?";
+			}
+		d.appstore = 0;
+		d.invited = 0;
+		if(d.first_login*1===0 || d.first_contact*1 < d.first_login*1){
+			d.invited = 1;
+			d.source = "Invited";
+		}else if(d.first_login*1!==0){
+			d.appstore = 1;
+			d.source = "Appstore";
+		}else{
+			d.source = "Unknown";
+		}
+
+		d.tags = ["1. Is SwipeToMeet user"];
+
+		d.loggedin = 0;
+		// d.loggedinP = 0;
+		d.givenemail = 0;
+		// d.givenemailP = 0;
+		d.acceptedtos = 0;
+		// d.acceptedtosP = 0;
+		d.onescheduling = 0;
+		// d.oneschedulingP = 0;
+		d.twoscheduling = 0;
+		// d.twoschedulingP = 0;
+		d.threescheduling = 0;
+		// d.threeschedulingP = 0;
+		d.totalschedulings = 0;
+		d.schedulingcount = 0;
+		d.reachedusers = 0;
+		d.invitedusers = d.invited;
+		// d.invitedusersP = 0;
+		d.loggedafterinvite = 0;
+		// d.loggedafterinviteP = 0;
+		d.schedulings_per_organizer = d.scheduling_count*1;
+
+		if(d.invited && d.first_contact*1 < d.first_login*1){
+			d.loggedafterinvite++;
+		}
+
+
+		if(d.first_login*1 !== 0){
+			d.loggedin++;
+			d.tags.push('2. Have logged in to application');
+
+			if(d.tos_accepted !== "-"){
+				d.acceptedtos++;
+				d.tags.push('3. Have accepted TOS');
+			}
+			if(d.email !== "-"){
+				d.givenemail++;
+				d.tags.push('4. Have given email');
+			}
+
+			if(d.scheduling_count*1 < 1){
+				d.tags.push('5. Have created no schedulings');
+			}
+			if(d.scheduling_count*1 == 1){
+				d.onescheduling++;
+				d.tags.push('6. Have created one scheduling (anytime)');
+			}
+			if(d.scheduling_count*1 == 2){
+				d.onescheduling++;
+				d.tags.push('7. Have created two schedulings (anytime)');
+			}
+			if(d.scheduling_count*1 >= 3){
+				d.onescheduling++;
+				d.tags.push('8. Have created at least three schedulings (anytime)');
+			}
+			if(d.scheduling_count*1 >= 1){
+				d.tags.push('9. Have created at least one scheduling (anytime)');
+			}
+
+		}
+
+	});
+
+
+
+	function remove_empty_bins(source_group) {
+		return {
+			all:function () {
+				return source_group.all().filter(function (d) {
+					return d.value !== 0;
+				});
+			}
+		};
+	}
+	function remove_negatives(source_group) {
+		return {
+			all:function () {
+				return source_group.all().filter(function (d) {
+					return (d.key >= 0);
+				});
+			}
+		};
+	}
+
+	charts["user"] = dc.pieChart('#user-chart');
+	charts["source"] = dc.pieChart('#source-chart');
+	charts["quarter"] = dc.rowChart('#quarter-chart');
+	charts["sourcegraph"] = dc.lineChart('#sourcegraph-chart');
+	charts["count"] = dc.lineChart('#count-chart');
+	charts["navigate"] = dc.barChart('#navigate-chart');
+	// charts["navigate2"] = dc.barChart('#navigate-chart2');
+	charts["paths"] = dc.rowChart('#paths-chart');
+	charts["countries"] = dc.rowChart('#countries-chart');
+	charts["types"] = dc.rowChart('#types-chart');
+
+	charts["loggedin"] = dc.numberDisplay('#loggedin');
+	charts["loggedinP"] = dc.numberDisplay('#loggedinP');
+	charts["givenemail"] = dc.numberDisplay('#givenemail');
+	charts["givenemailP"] = dc.numberDisplay('#givenemailP');
+	charts["acceptedtos"] = dc.numberDisplay('#acceptedtos');
+	charts["acceptedtosP"] = dc.numberDisplay('#acceptedtosP');
+	charts["onescheduling"] = dc.numberDisplay('#onescheduling');
+	charts["oneschedulingP"] = dc.numberDisplay('#oneschedulingP');
+
+	charts["reachedusers"] = dc.numberDisplay('#reachedusers');
+	charts["invitedusers"] = dc.numberDisplay('#invitedusers');
+	charts["invitedusersP"] = dc.numberDisplay('#invitedusersP');
+	charts["loggedafterinvite"] = dc.numberDisplay('#loggedafterinvite');
+	charts["loggedafterinviteP"] = dc.numberDisplay('#loggedafterinviteP');
+	charts["schedulings_per_organizer"] = dc.numberDisplay('#schedulings_per_organizer');
+	charts["schedulings_total"] = dc.numberDisplay('#schedulings_total');
+
+//---
+	var isBetween = function(timestamp){
+		filters = charts["navigate"].filters();
+		//No filters
+		if(filters.length===0){
+			return true;
+		}else if(filters.length==1){
+			//Is between filters
+			if(timestamp >= filters[0][0] && timestamp <= filters[0][1]){
+				return true;
+			}
+			return false;
+		}else{
+			//Uknown filter count;
+			alert("Too many filters? count:"+filters.length);
+			return false;
+		}
+	};
+	var textDim = ndx.dimension(function(d){return d;});
+	var textGroup = textDim.groupAll().reduce(
+			function(p, v){
+				p.total++;
+
+				if(v.loggedin && isBetween(parseDate(v.first_login))){
+					p.loggedin += v.loggedin;
+				}
+				p.givenemail += v.givenemail;
+				p.acceptedtos += v.acceptedtos;
+				p.onescheduling += v.onescheduling;
+
+				p.reachedusers += v.reachedusers;
+				p.invitedusers += v.invitedusers;
+				if(v.loggedafterinvite && isBetween(parseDate(v.first_login))){
+					p.loggedafterinvite += v.loggedafterinvite;
+				}
+				p.schedulings_per_organizer += v.schedulings_per_organizer;
+				return p;
+			},
+			function(p, v){
+				p.total--;
+
+				if(v.loggedin && isBetween(parseDate(v.first_login))){
+					p.loggedin -= v.loggedin;
+				}
+				p.givenemail -= v.givenemail;
+				p.acceptedtos -= v.acceptedtos;
+				p.onescheduling -= v.onescheduling;
+
+				p.reachedusers -= v.reachedusers;
+				p.invitedusers -= v.invitedusers;
+				if(v.loggedafterinvite && isBetween(parseDate(v.first_login))){
+					p.loggedafterinvite -= v.loggedafterinvite;
+				}
+				p.schedulings_per_organizer -= v.schedulings_per_organizer;
+				return p;
+			},
+			function(){
+				return {
+					total:0,
+					loggedin:0,
+					givenemail:0,
+					acceptedtos:0,
+					onescheduling:0,
+
+					reachedusers:0,
+					invitedusers:0,
+					loggedafterinvite:0,
+					schedulings_per_organizer:0
+				};
+			}
+		);
+
+	charts["loggedin"]
+		.valueAccessor(function(d){return d.loggedin;})
+		.group(textGroup)
+		.formatNumber(d3.format("d"));
+
+	charts["loggedinP"]
+		.valueAccessor(function(d){return d.loggedin/d.total;})
+		.group(textGroup)
+		.formatNumber(d3.format(".2%"));
+
+	charts["givenemail"]
+		.valueAccessor(function(d){return d.givenemail;})
+		.group(textGroup)
+		.formatNumber(d3.format("d"));
+
+	charts["givenemailP"]
+		.valueAccessor(function(d){return d.givenemail/d.loggedin;})
+		.group(textGroup)
+		.formatNumber(d3.format(".2%"));
+
+	charts["acceptedtos"]
+		.valueAccessor(function(d){return d.acceptedtos;})
+		.group(textGroup)
+		.formatNumber(d3.format("d"));
+
+	charts["acceptedtosP"]
+		.valueAccessor(function(d){return d.acceptedtos/d.loggedin;})
+		.group(textGroup)
+		.formatNumber(d3.format(".2%"));
+
+	charts["onescheduling"]
+		.valueAccessor(function(d){return d.onescheduling;})
+		.group(textGroup)
+		.formatNumber(d3.format("d"));
+
+	charts["oneschedulingP"]
+		.valueAccessor(function(d){return d.onescheduling/d.loggedin;})
+		.group(textGroup)
+		.formatNumber(d3.format(".2%"));
+
+	charts["reachedusers"]
+		.valueAccessor(function(d){return d.total;})
+		.group(textGroup)
+		.formatNumber(d3.format("d"));
+
+	charts["invitedusers"]
+		.valueAccessor(function(d){return d.invitedusers;})
+		.group(textGroup)
+		.formatNumber(d3.format("d"));
+
+	charts["invitedusersP"]
+		.valueAccessor(function(d){return d.invitedusers/d.total;})
+		.group(textGroup)
+		.formatNumber(d3.format(".2%"));
+
+	charts["loggedafterinvite"]
+		.valueAccessor(function(d){return d.loggedafterinvite;})
+		.group(textGroup)
+		.formatNumber(d3.format("d"));
+
+	charts["loggedafterinviteP"]
+		.valueAccessor(function(d){return d.loggedafterinvite/d.invitedusers;})
+		.group(textGroup)
+		.formatNumber(d3.format(".2%"));
+
+	charts["schedulings_per_organizer"]
+		.valueAccessor(function(d){return d.schedulings_per_organizer/d.onescheduling;})
+		.group(textGroup)
+		.formatNumber(d3.format(".2"));
+
+	charts["schedulings_total"]
+		.valueAccessor(function(d){return d.schedulings_per_organizer;})
+		.group(textGroup)
+		.formatNumber(d3.format(".2"));
+
+//---
+	var userDim = ndx.dimension(function(d) {return d.user_chart;});
+	var userGroup=userDim.group();
+
+	charts["user"]
+		.width(200)
+		.height(200)
+		.group(userGroup)
+		.dimension(userDim)
+		.innerRadius(40)
+		.on("filtered", RefreshTable);
+
+//---
+	var sourceDim = ndx.dimension(function(d) {return d.source;});
+	var sourceGroup=sourceDim.group();
+
+	charts["source"]
+		.width(220)
+		.height(200)
+		.group(sourceGroup)
+		.dimension(sourceDim)
+		.innerRadius(40)
+		.colors(d3.scale.category10())
+		.on("filtered", RefreshTable);
+
+//---
+	var quarterDim = ndx.dimension(function(d) {
+		var year = d.date.getYear()+1900;
+		var month = d.date.getMonth();
+		if (month <= 2) {
+			return year+' Q1';
+		} else if (month > 2 && month <= 5) {
+			return year+' Q2';
+		} else if (month > 5 && month <= 8) {
+			return year+' Q3';
+		} else {
+			return year+' Q4';
+		}
+		return d.quarter;
+	});
+	var quarterGroup=quarterDim.group();
+
+	charts["quarter"]
+		.width(300)
+		.height(200)
+		.group(quarterGroup)
+		.dimension(quarterDim)
+		.margins({top: 5, left: 10, right: 10, bottom: 20})
+		// .innerRadius(40)
+		// .colors(d3.scale.category10())
+		.on("filtered", RefreshTable);
+
+//---
+	// tags chart
+	function reduceAdd(p, v) {
+		v.tags.forEach (function(val, idx) {
+			p[val] = (p[val] || 0) + 1; //increment counts
+		});
+		return p;
+	}
+
+	function reduceRemove(p, v) {
+		v.tags.forEach (function(val, idx) {
+			p[val] = (p[val] || 0) - 1; //decrement counts
+		});
+		return p;
+	}
+
+	function reduceInitial() {
+		return [];
+	}
+
+	var pathsDim = ndx.dimension(function(d) {return d.tags;});
+	var paths2Dim = ndx.dimension(function(d) {return d.tags;});
+	var pathsGroupAll = pathsDim.groupAll();
+	var pathsGroup=pathsGroupAll.reduce(reduceAdd, reduceRemove, reduceInitial).value();
+	pathsGroup.all = function() {
+			var newObject = [];
+			for (var key in this) {
+				if (this[key] && key != "all") {
+					newObject.push({
+						key: key,
+						value: this[key]
+					});
+				}
+			}
+			return newObject;
+		};
+
+	charts["paths"]
+		.width(400)
+		.height(200)
+		.renderLabel(true)
+		.labelOffsetY(10)
+		.gap(2)
+		.group(pathsGroup)
+		.dimension(paths2Dim)
+		.elasticX(true)
+		.transitionDuration(1000)
+		.colors(d3.scale.category10())
+		.label(function (d) { return d.key; })
+		.on("filtered", RefreshTable)
+		// .on("filtered", function(c,f) {
+		// 	//paths2Dim.filter(f)
+		// })
+		.filterHandler (
+			function (dimension, filters) {
+				dimension.filter(null);
+				dimension.filterFunction(
+					function (d) {
+						for (var i=0; i < filters.length; i++) {
+							if (d.indexOf(filters[i]) <0) return false;
+						}
+						return true;
+					}
+					);
+				return filters;
+			})
+		.xAxis().ticks(5);
+
+//---
+
+	var countriesDim = ndx.dimension(function(d) {return d.cc_normalized;});
+	var countriesGroup = countriesDim.group().reduceCount();
+
+	charts["countries"]
+		.width(300)
+		.height(200)
+		.margins({top: 5, left: 10, right: 10, bottom: 20})
+		.dimension(countriesDim)
+		.group(countriesGroup)
+		.gap(1)
+		.label(function (d) { return (d.key=="?")?"Unknown":countryCodeToName(d.key.toLowerCase()); })
+		.title(function (d) { return d.value; })
+		// .x(d3.scale.linear().domain([0, 0.25]))
+		.ordering(function(d) { return -d.value; })
+		.on("filtered", RefreshTable);
+	charts["countries"].data(function (group) {
+			return group.top(10);
+		});
+	//---
+
+	var typesDim = ndx.dimension(function(d) {return d.type;});
+	var typesGroup = typesDim.group().reduceCount();
+
+	charts["types"]
+		.width(300)
+		.height(200)
+		.margins({top: 5, left: 10, right: 10, bottom: 20})
+		.dimension(typesDim)
+		.group(typesGroup)
+		.gap(1)
+		.label(function (d) { return d.key; })
+		.title(function (d) { return d.value; })
+		// .x(d3.scale.linear().domain([0, 0.25]))
+		.ordering(function(d) { return -d.value; })
+		.on("filtered", RefreshTable);
+
+
+
+//---
+	var sourcegraphDaysDim = ndx.dimension(function(d){ return d.day;});
+	var sourcegraphStraightLoginsGroup = sourcegraphDaysDim.group().reduce(addCount,removeCount,initCount);
+	var sourcegraphInvitesGroup = sourcegraphDaysDim.group().reduce(addCount,removeCount,initCount);
+
+	var countDaysDim = ndx.dimension(function(d){ return d.day;});
+	var countStraightLoginsGroup = countDaysDim.group().reduce(addCount,removeCount,initCount);
+	var countInvitesGroup = countDaysDim.group().reduce(addCount,removeCount,initCount);
+
+	var navigateDaysGroup = countDaysDim.group().reduceSum(function (d) {return 1;});
+
+	var countMonthsDim = ndx.dimension(function(d){ return d.month;});
+	var navigateMonthsGroup = countMonthsDim.group().reduceSum(function (d) {return 1;});
+
+	var minDate = new Date();
+	var maxDate = new Date();
+	minDate.setTime( countDaysDim.bottom(1)[0].date.getTime() - 7 * 86400000 );
+	maxDate.setTime( countDaysDim.top(1)[0].date.getTime() + 7 * 86400000 );
+
+	function addCount(p, v) {
+		++p.total;
+		p.appstore1 += v.appstore;
+		p.invited1 += v.invited;
+		return p;
+	}
+	function removeCount(p, v) {
+		--p.total;
+		p.appstore1 -= v.appstore;
+		p.invited1 -= v.invited;
+		return p;
+	}
+	function initCount() {
+		return {total:0, invited1: 0, appstore1: 0};
+	}
+
+	charts["sourcegraph"]
+		.renderArea(true)
+		.width(940)
+		.height(100)
+		.transitionDuration(1000)
+		.margins({top: 20, right: 50, bottom: 25, left: 40})
+		.dimension(countDaysDim)
+		// .mouseZoomable(true)
+		.rangeChart(charts["navigate"])
+		.x(d3.time.scale().domain([minDate, maxDate]))
+		.round(d3.time.week.round)
+		.xUnits(d3.time.weeks)
+		.elasticY(true)
+		.renderHorizontalGridLines(true)
+		.legend(dc.legend().x(800).y(0).itemHeight(13).gap(5))
+		.brushOn(false)
+		.group(countInvitesGroup,'Invited')
+			.valueAccessor(function(p){
+				if(p.value.total<=0){return 0;}
+				return 100*p.value.invited1/p.value.total;
+			})
+		.stack(countStraightLoginsGroup, 'Appstore', function(p){
+				if(p.value.total<=0){return 0;}
+				return 100*p.value.appstore1/p.value.total;
+			})
+		.title(function (d) {
+			var value = d.value.invited1 ? Math.round(10000*d.value.invited1/d.value.total)/100 : d.value;
+			if (isNaN(value)) {
+				value = 0;
+			}
+			return d.key + '\n' + value+'% invited users';
+		})
+		.ordinalColors(["#ff7f0e","#1f77b4"])
+		.on("filtered", RefreshTable);
+
+	charts["count"]
+		.renderArea(true)
+		.width(940)
+		.height(200)
+		.transitionDuration(1000)
+		.margins({top: 30, right: 50, bottom: 25, left: 40})
+		.dimension(countDaysDim)
+		// .mouseZoomable(true)
+		.rangeChart(charts["navigate"])
+		.x(d3.time.scale().domain([minDate, maxDate]))
+		.round(d3.time.day.round)
+		.xUnits(d3.time.days)
+		.elasticY(true)
+		.renderHorizontalGridLines(true)
+		.legend(dc.legend().x(800).y(10).itemHeight(13).gap(5))
+		.brushOn(false)
+		.group(countStraightLoginsGroup,'Appstore')
+			.valueAccessor(function(p){
+				return p.value.appstore1;
+			})
+		.stack(countInvitesGroup, 'Invited', function(p){
+				return p.value.invited1;
+			})
+		.title(function (d) {
+			var value = d.value.total ? d.value.total : d.value;
+			if (isNaN(value)) {
+				value = 0;
+			}
+			return d.key + '\n' + value;
+		})
+		.on("filtered", RefreshTable);
+
+	charts["navigate"]
+		.width(940)
+		.height(40)
+		.margins({top: 0, right: 50, bottom: 20, left: 40})
+		.dimension(countDaysDim)
+		.group(navigateDaysGroup)
+		.centerBar(true)
+		// .elasticY(true)
+		.gap(1)
+		.x(d3.time.scale().domain([minDate, maxDate]))
+		.round(d3.time.day.round)
+		.alwaysUseRounding(true)
+		.xUnits(d3.time.day)
+		.on("filtered", function (chart) {
+			dc.events.trigger(function () {
+				console.log(chart.filter());
+				charts["sourcegraph"].focus(chart.filter());
+				charts["count"].focus(chart.filter());
+				dc.redrawAll(chart.chartGroup());
+			});
+		});
+
+	// charts["navigate2"]
+	// 	.width(940)
+	// 	.height(40)
+	// 	.margins({top: 0, right: 50, bottom: 20, left: 40})
+	// 	.dimension(countMonthsDim)
+	// 	.group(navigateMonthsGroup)
+	// 	.centerBar(true)
+	// 	// .elasticY(true)
+	// 	.gap(0)
+	// 	.x(d3.time.scale().domain([minDate, maxDate]))
+	// 	.round(d3.time.month.round)
+	// 	.xUnits(d3.time.month)
+	// 	.alwaysUseRounding(true)
+	// 	.on("filtered", function (chart) {
+	// 		dc.events.trigger(function () {
+	// 			// charts["sourcegraph"].focus(chart.filter());
+	// 			// charts["count"].focus(chart.filter());
+	// 			charts["navigate"].focus(chart.filter());
+	// 			dc.redrawAll();
+	// 		});
+	// 	});
+
+		window.filterPeriod = function(period,subs){
+			var start = moment().startOf(period).subtract(period, subs).toDate();
+			var end = moment().endOf(period).subtract(period, subs).toDate();
+			filterDate(start,end);
+		};
+
+		function filterDate(from,to){
+			// charts["navigate"].filterAll();
+			// charts["sourcegraph"].filterAll();
+			// charts["count"].filterAll();
+			// dc.redrawAll(charts["navigate"].chartGroup());
+			// reset2Charts('count','navigate');
+
+			// window.setTimeout(function(){
+				var filt = dc.filters.RangedFilter(new Date(from), new Date(to));
+				charts["navigate"].filter(filt);
+				// charts["sourcegraph"].focus(charts["navigate"].filter());
+				// charts["count"].focus(charts["navigate"].filter());
+				// dc.redrawAll(charts["navigate"].chartGroup());
+			// }, 500);
+		}
+
+//---
+
+	function momentPrinter(s){
+
+		if(s<60){
+			return s+"s";
+		}
+		if(s<60*60){
+			return '0:'+moment.duration(s, "seconds").format("d[d] h:mm:ss");
+		}
+		return moment.duration(s, "seconds").format("d[d] h:mm:ss");
+	}
+
+	function hourPrinter(s){
+		return s+"h";
+	}
+
+
+	dc.dataCount('.dc-data-count')
+		.dimension(ndx)
+		.group(all)
+		.html({
+			some:'<strong>%filter-count</strong> selected out of <strong>%total-count</strong> users' +
+			' | <a href=\'javascript:dc.filterAll(); dc.renderAll();\'\'>Reset All</a>',
+			all:'Listing all <strong>%total-count</strong> SwipeToMeet users created until last night.'
+		});
+
+	var idDim = ndx.dimension(function(d) {return d.id;});
+	var idGroup=idDim.group();
+
+	function RefreshTable() {
+		dc.events.trigger(function () {
+			alldata = idDim.top(Infinity);
+			datatable.clear();
+			datatable.rows.add(alldata);
+			datatable.draw();
+		});
+	}
+
+
+	dc.renderAll();
+
+}
+
+
+
+</script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+SELECT
+  meeting.event_id,
+  meeting.begin_date,
+  meeting.end_date,
+  creator_users.timezone,
+  CASE WHEN creator_users.extra_email_domain = '%s' THEN 1 ELSE 0 END AS is_internal
+FROM meeting_participant
+  LEFT JOIN user AS all_users ON all_users.user_id = meeting_participant.user_id
+  LEFT JOIN meeting ON meeting_participant.event_id = meeting.event_id
+  LEFT JOIN user AS creator_users ON creator_users.user_id = meeting.creator_id
+WHERE
+  LENGTH(all_users.email) > 0
+  AND meeting.extra_is_real IS NOT NULL
+  AND meeting.extra_is_real != 0
+  AND all_users.extra_email_domain = '%s'

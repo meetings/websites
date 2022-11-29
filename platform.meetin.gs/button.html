@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<script type="text/javascript" src="https://use.typekit.com/pso2gmv.js"></script>
+<script type="text/javascript">try{Typekit.load();}catch(e){}</script>
+<title></title>
+<style>
+body,html{
+    margin:0px;
+    padding:0px;
+    width:100%;
+    height:100%;
+    background:transparent;
+}
+@font-face {
+    font-family: 'icomoon';
+    src:url('fonts/icomoon.eot');
+    src:url('fonts/icomoon.eot?#iefix') format('embedded-opentype'),
+    url('fonts/icomoon.ttf') format('truetype'),
+    url('fonts/icomoon.woff') format('woff'),
+    url('fonts/icomoon.svg#icomoon') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+[class^="icon-"], [class*=" icon-"] {
+    font-family: 'icomoon';
+    speak: none;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+
+    /* Better Font Rendering =========== */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-emblem:before {
+    content: "\e600";
+}
+.blue{
+    color: #fff;
+    background: #7bc8e1;
+    background: -moz-linear-gradient(top, #90d1e6, #66bfdc);
+    background: -webkit-gradient(linear, center top, center bottom, from(#90d1e6), to(#66bfdc));
+    background: -o-linear-gradient(top, #90d1e6, #66bfdc);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#90d1e6', endColorstr='#66bfdc');
+    -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr='#90d1e6', endColorstr='#66bfdc')";
+    background: linear-gradient(top, #90d1e6, #66bfdc);
+}
+.blue:hover {
+    color: #fff;
+    background: #51b7d8;
+    background: -moz-linear-gradient(top, #66bfdc, #3daed3);
+    background: -webkit-gradient(linear, center top, center bottom, from(#66bfdc), to(#3daed3));
+    background: -o-linear-gradient(top, #66bfdc, #3daed3);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#66bfdc', endColorstr='#3daed3');
+    -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr='#66bfdc', endColorstr='#3daed3')";
+    background: linear-gradient(top, #66bfdc, #3daed3);
+}
+
+.silver{
+    color: #4b4b4b;
+    background: #e9e9e9;
+    background: -moz-linear-gradient(top, #eeeeee, #e5e5e5);
+    background: -webkit-gradient(linear, center top, center bottom, from(#eeeeee), to(#e5e5e5));
+    background: -o-linear-gradient(top, #eeeeee, #e5e5e5);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#eeeeee', endColorstr='#e5e5e5');
+    -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr='#eeeeee', endColorstr='#e5e5e5')";
+    background: linear-gradient(top, #eeeeee, #e5e5e5);
+}
+.silver:hover {
+    color: #4b4b4b;
+    background: #e3e3e3;
+    background: -moz-linear-gradient(top, #e5e5e5, #e1e1e1);
+    background: -webkit-gradient(linear, center top, center bottom, from(#e5e5e5), to(#e1e1e1));
+    background: -o-linear-gradient(top, #e5e5e5, #e1e1e1);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#e5e5e5', endColorstr='#e1e1e1');
+    -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr='#e5e5e5', endColorstr='#e1e1e1')";
+    background: linear-gradient(top, #e5e5e5, #e1e1e1);
+}
+
+.gray{
+    color: #4b4b4b;
+    background: #d1d1d1;
+    background: -moz-linear-gradient(top, #dbdbdb, #cacaca);
+    background: -webkit-gradient(linear, center top, center bottom, from(#dbdbdb), to(#cacaca));
+    background: -o-linear-gradient(top, #dbdbdb, #cacaca);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#dbdbdb', endColorstr='#cacaca');
+    -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr='#dbdbdb', endColorstr='#cacaca')";
+    background: linear-gradient(top, #dbdbdb, #cacaca);
+}
+.gray:hover {
+    color: #4b4b4b;
+    background: #cacaca;
+    background: -moz-linear-gradient(top, #cacaca, #c4c4c4);
+    background: -webkit-gradient(linear, center top, center bottom, from(#cacaca), to(#c4c4c4));
+    background: -o-linear-gradient(top, #cacaca, #c4c4c4);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#cacaca', endColorstr='#c4c4c4');
+    -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr='#cacaca', endColorstr='#c4c4c4')";
+    background: linear-gradient(top, #cacaca, #c4c4c4);
+}
+
+.dark{
+    color: #fff;
+    background: #666666;
+    background: -moz-linear-gradient(top, #737373, #595959);
+    background: -webkit-gradient(linear, center top, center bottom, from(#737373), to(#595959));
+    background: -o-linear-gradient(top, #737373, #595959);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#737373', endColorstr='#595959');
+    -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr='#737373', endColorstr='#595959')";
+    background: linear-gradient(top, #737373, #595959);
+}
+.dark:hover {
+    color: #fff;
+    background: #555555i;
+    background: -moz-linear-gradient(top, #595959, #515151);
+    background: -webkit-gradient(linear, center top, center bottom, from(#595959), to(#515151));
+    background: -o-linear-gradient(top, #595959, #515151);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#cacaca', endColorstr='#515151');
+    -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr='#cacaca', endColorstr='#515151')";
+    background: linear-gradient(top, #595959, #515151);
+}
+
+.btn{
+    position: relative;
+    display: inline-block;
+    outline: none;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    font: 14px "museo-sans-n3", "museo-sans", Arial, Helvetica, sans-serif;
+    font-weight: 300;
+    padding: 9px 14px;
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    -khtml-border-radius: 4px;
+    border-radius: 4px;
+}
+.meetme i{
+    margin-right: 14px;
+    font-size: 20px;
+    vertical-align: middle;
+    margin-left: -6px;
+    padding: 0px;
+    float: left;
+    line-height:14px;
+}
+.meetme:before{
+    content:'';
+    position:absolute;
+    top:0px;
+    left:33px;
+    height:100%;
+    border-left:1px solid #ccc;
+    border-left:1px solid rgba(0,0,0,0.1);
+}
+.wrap{
+    height:100%;
+    width:100%;
+    text-align:center;
+}
+.portrait{
+    overflow:hidden;
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    border-radius: 50%;
+    margin:7px 0px 7px 0px;
+}
+.name{
+    font: 16px "museo-sans-n3", "museo-sans", Arial, Helvetica, sans-serif;
+    padding: 9px 14px;
+    margin:0px 0px 7px 0px;
+    padding:0px;
+}
+.company{
+    font: 14px "museo-sans-n3", "museo-sans", Arial, Helvetica, sans-serif;
+    margin:0px;
+    padding:0px;
+    margin:0px 0px 7px 0px;
+}
+#info{
+    height:160px;
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+    <div id="info" style="display:none;">
+    </div>
+    <a id="meetme" class="btn" href="#" target="_parent">Meet Me</a>
+</div>
+<script>
+var getUrlParam = function( name ) {
+    var match = RegExp('[?&]' + name + '=([^&]*)').exec(window.location.search);
+    return match && decodeURIComponent(match[1].replace(/\+/g, ' '));
+};
+
+// Get params
+var u = getUrlParam('u');
+var s = getUrlParam('s');
+var c = getUrlParam('c') || 'blue';
+var t = getUrlParam('t') || 'meetme';
+var m = getUrlParam('m');
+var i_o = getUrlParam('i_o');
+var i_n = getUrlParam('i_n');
+var i_t = getUrlParam('i_t');
+var i_i = getUrlParam('i_i');
+var d_o = getUrlParam('d_o');
+var d_n = getUrlParam('d_n');
+var d_t = getUrlParam('d_t');
+var d_i = getUrlParam('d_i');
+
+// Build url
+var url_from_backend = getUrlParam('url');
+var url = url_from_backend || 'https://meetin.gs/meet/' + u + ( s ? '/'+s : '' ) + '?utm_source=button&utm_medium=schedule&utm_campaign=schedule';
+
+// Set classes & text & url
+var el = document.getElementById('meetme');
+el.className += el.className ? ' '+c : c;
+el.className += el.className ? ' '+t : t;
+el.innerHTML = (t === 'meetme') ? '<i class="icon-emblem"></i> Meet Me' : 'Schedule';
+el.href=url;
+
+// Hide button, for nonexistent users
+if( ! u && ! url_from_backend ) {
+    el.style.display = 'none';
+}
+
+var info_str = '';
+var title_line ='';
+
+if( ! d_i ) {
+    info_str += i_i ? '<img class="portrait" src="'+ i_i +'" width="80" height="80"/>' : '<img class="portrait" src="default_avatar.png" width="80" height="80"/>';
+}
+
+if( i_n && ! d_n ) {
+    info_str += '<h3 class="name">' + i_n + '</h3>';
+}
+
+if( i_t && ! d_t ) {
+    title_line += i_t;
+}
+
+if( i_o && ! d_o ) {
+    if( title_line ) title_line += ', ' + i_o;
+    else title_line += i_o;
+}
+
+if( title_line ) {
+    info_str += '<p class="company">'+title_line+'</p>'
+}
+
+if( info_str && m === 'full' ) {
+    var iel = document.getElementById('info');
+    iel.style.display = 'block';
+    iel.innerHTML = info_str;
+}
+
+</script>
+</body>
+</html>

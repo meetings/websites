@@ -1,0 +1,1 @@
+SELECT email, note_creation_time from user where email = '%s'

@@ -1,0 +1,30 @@
+SELECT
+  user.user_id AS id,
+  user.first_name AS first_name,
+  user.last_name AS last_name,
+  user.extra_email_domain AS email_domain,
+  user.email AS email,
+  CASE WHEN LOWER(user.extra_email_domain) = 'meetin.gs' OR LOWER(user.extra_email_domain) = 'dicole.com' THEN 1 ELSE 0 END AS staff,
+  user.note_meetings_presumed_country_code AS cc,
+  user.note_creation_time AS user_created,
+  user.extra_first_swipetomeet_contact_epoch AS first_contact,
+  user.extra_first_swipetomeet_device_login_epoch AS first_login,
+  user.note_tos_accepted AS tos_accepted,
+  user.extra_first_swipetomeet_scheduling_created_epoch AS first_scheduling,
+  user.extra_first_swipetomeet_scheduling_participated_epoch AS first_participated,
+  user.extra_swipetomeet_scheduling_created_count AS scheduling_count,
+  user.extra_swipetomeet_scheduling_participated_count AS participant_count,
+  CASE user.extra_subscription_type
+    WHEN ''          THEN 0
+    WHEN 'trial'     THEN 1
+    WHEN 'user'      THEN 2
+    WHEN 'company'   THEN 3
+    WHEN 'sponsored' THEN 4
+    WHEN 'weird'     THEN 5
+    ELSE 0
+  END AS type
+FROM
+  user
+WHERE
+  user.extra_first_swipetomeet_contact_epoch != 0
+  AND (user.note_meetings_merged_to_other_user IS NULL OR user.note_meetings_merged_to_other_user = user.user_id)

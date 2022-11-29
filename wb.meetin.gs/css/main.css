@@ -1,0 +1,310 @@
+/* --------------------------------------------------------------
+
+   reset.css
+   * Resets default browser CSS.
+
+-------------------------------------------------------------- */
+html {
+  margin: 0;
+  padding: 0;
+  border: 0; }
+
+body, div, span, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, code,
+del, dfn, em, img, q, dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, dialog, figure, footer, header,
+hgroup, nav, section {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-weight: inherit;
+  font-style: inherit;
+  font-size: 100%;
+  font-family: inherit;
+  vertical-align: baseline; }
+
+/* This helps to make newer HTML5 elements behave like DIVs in older browers */
+article, aside, dialog, figure, footer, header,
+hgroup, nav, section {
+  display: block; }
+
+/* Line-height should always be unitless! */
+body {
+  line-height: 1.5;
+  background: white; }
+
+/* Tables still need 'cellspacing="0"' in the markup. */
+table {
+  border-collapse: separate;
+  border-spacing: 0; }
+
+/* float:none prevents the span-x classes from breaking table-cell display */
+caption, th, td {
+  text-align: left;
+  font-weight: normal;
+  float: none !important; }
+
+table, th, td {
+  vertical-align: middle; }
+
+/* Remove possible quote marks (") from <q>, <blockquote>. */
+blockquote:before, blockquote:after, q:before, q:after {
+  content: ''; }
+
+blockquote, q {
+  quotes: "" ""; }
+
+/* Remove annoying border on linked images. */
+a img {
+  border: none; }
+
+/* Remember to define your own focus styles! */
+:focus {
+  outline: 0; }
+
+@font-face {
+  font-family: 'Museo 300';
+  src: url("/css/fonts/Museo300-Regular.eot?") format("eot"), url("/css/fonts/Museo300-Regular.woff") format("woff"), url("/css/fonts/Museo300-regular.ttf") format("truetype"), url("/css/fonts/Museo300-Regular.svg#Museo 300") format("svg"), url("/css/fonts/Museo300-Regular.otf") format("opentype"); }
+
+@font-face {
+  font-family: 'Museo 700';
+  src: url("/css/fonts/museo700-regular-webfont.eot");
+  src: local("☺"), url("/css/fonts/museo700-regular-webfont.woff") format("woff"), url("/css/fonts/museo700-regular-webfont.ttf") format("truetype"), url("/css/fonts/museo700-regular-webfont.svg#webfontkqhR0CWS") format("svg");
+  font-weight: normal;
+  font-style: normal; }
+
+@font-face {
+  font-family: 'Museo 500';
+  src: url("/css/fonts/museo500-regular-webfont.eot");
+  src: local("☺"), url("/css/fonts/museo500-regular-webfont.woff") format("woff"), url("/css/fonts/museo500-regular-webfont.ttf") format("truetype"), url("/css/fonts/museo500-regular-webfont.svg#webfont6MEeenXF") format("svg");
+  font-weight: normal;
+  font-style: normal; }
+
+html, body {
+  height: 100%; }
+
+a {
+  text-decoration: none; }
+
+img.bg-image {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: -15; }
+
+body {
+  text-align: center;
+  color: #ffffff;
+  font-family: Georgia, "Museo 500", Helvetica, Arial, Arial; 
+  background:#191919;
+}
+
+div#wrapper {
+  min-height: 100%;
+  height: auto !important;
+  height: 100%;
+  margin: 0 auto -30px; 
+  width: 1280px;
+}
+
+.push { height: 30px; }
+
+div#header-wrapper{
+	padding-top:10px;
+}
+
+div#header-bg{
+	width:1250px;
+	height:80px;
+}
+
+div#header-inset{
+	width:1250px;
+	height:80px;
+}
+
+div#live-users-box{
+	width:360px;
+	margin-top:15px;
+	float:left;
+}
+div#users-weekly-box{
+	width:360px;
+	margin-top:15px;
+	float:left;
+}
+div#users-daily-box{
+	width:360px;
+	margin-top:15px;
+	float:left;
+}
+div#events-weekly-box{
+	width:360px;
+	margin-top:15px;
+	float:left;
+}
+div#events-daily-box{
+	width:360px;
+	margin-top:15px;
+	float:left;
+}
+
+div#user-stats-box{
+	width:550px;
+	margin-top:15px;
+	float:left;
+	margin-left:15px;
+}
+
+div#some-stats-box{
+	width:250px;
+	margin-top:15px;
+	float:left;
+	margin-left:15px;
+}
+
+div#funnel-chart-box{
+	width:860px;
+	margin-top:15px;
+	float:left;
+	margin-left:15px;
+}
+
+div#somestats{
+	padding:15px;
+}
+
+h1{
+	font:40px "Museo 500", Helvetica;
+	padding:15px 0 0 0;
+}
+
+.red{
+	-moz-border-radius:2px;
+	-webkit-border-radius:2px;
+	border-radius:2px;
+	/*IE DOES NOT SUPPORT BORDER RADIUS*/
+	-moz-box-shadow:0px 0px 3px #000000;
+	-webkit-box-shadow:0px 0px 3px #000000;
+	box-shadow:0px 0px 3px #000000;
+	/*IE DOES NOT SUPPORT BLUR PROPERTY OF SHADOWS*/
+	background: -moz-linear-gradient(top, #ff1403, #960b00);
+	background: -webkit-gradient(linear, center top, center bottom, from(#ff1403), to(#960b00));
+	background: -o-linear-gradient(top, #ff1403, #960b00);
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff1403', endColorstr='#960b00');
+	/*INNER ELEMENTS MUST NOT BREAK THIS ELEMENTS BOUNDARIES*/
+	/*Element must have a height (not auto)*/
+	/*All filters must be placed together*/
+	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff1403', endColorstr='#960b00')";
+	/*Element must have a height (not auto)*/
+	/*All filters must be placed together*/
+	background: linear-gradient(top, #ff1403, #960b00);
+	/*--IE9 DOES NOT SUPPORT GRADIENT BACKGROUNDS--*/
+	
+}
+.green{
+	-moz-border-radius:2px;
+	-webkit-border-radius:2px;
+	border-radius:2px;
+	/*IE DOES NOT SUPPORT BORDER RADIUS*/
+	-moz-box-shadow:0px 0px 3px #000000;
+	-webkit-box-shadow:0px 0px 3px #000000;
+	box-shadow:0px 0px 3px #000000;
+	/*IE DOES NOT SUPPORT BLUR PROPERTY OF SHADOWS*/
+	background: -moz-linear-gradient(top, #74ff17, #3c8c02);
+	background: -webkit-gradient(linear, center top, center bottom, from(#74ff17), to(#3c8c02));
+	background: -o-linear-gradient(top, #74ff17, #3c8c02);
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#74ff17', endColorstr='#3c8c02');
+	/*INNER ELEMENTS MUST NOT BREAK THIS ELEMENTS BOUNDARIES*/
+	/*Element must have a height (not auto)*/
+	/*All filters must be placed together*/
+	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr='#74ff17', endColorstr='#3c8c02')";
+	/*Element must have a height (not auto)*/
+	/*All filters must be placed together*/
+	background: linear-gradient(top, #74ff17, #3c8c02);
+	/*--IE9 DOES NOT SUPPORT GRADIENT BACKGROUNDS--*/
+}
+.yellow{
+	-moz-border-radius:2px;
+	-webkit-border-radius:2px;
+	border-radius:2px;
+	/*IE DOES NOT SUPPORT BORDER RADIUS*/
+	-moz-box-shadow:0px 0px 3px #000000;
+	-webkit-box-shadow:0px 0px 3px #000000;
+	box-shadow:0px 0px 3px #000000;
+	/*IE DOES NOT SUPPORT BLUR PROPERTY OF SHADOWS*/
+	background: -moz-linear-gradient(top, #fcff03, #abad00);
+	background: -webkit-gradient(linear, center top, center bottom, from(#fcff03), to(#abad00));
+	background: -o-linear-gradient(top, #fcff03, #abad00);
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fcff03', endColorstr='#abad00');
+	/*INNER ELEMENTS MUST NOT BREAK THIS ELEMENTS BOUNDARIES*/
+	/*Element must have a height (not auto)*/
+	/*All filters must be placed together*/
+	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr='#fcff03', endColorstr='#abad00')";
+	/*Element must have a height (not auto)*/
+	/*All filters must be placed together*/
+	background: linear-gradient(top, #fcff03, #abad00);
+	/*--IE9 DOES NOT SUPPORT GRADIENT BACKGROUNDS--*/
+	
+}
+
+.monitor-block{
+	color:#fff;
+	padding:10px;
+}
+.monitor-title{
+	display:block;
+	font: 18px "Museo 500", Helvetica;
+		text-shadow: 1px 1px 1px #000;
+}
+.monitor-subtitle{
+	display:block;	
+	font: 16px "Museo 500", Helvetica;
+		text-shadow: 1px 1px 1px #000;
+}
+.monitor-value{
+	display:block;
+	font: 50px "Museo 500", Helvetica;
+	text-shadow: 2px 2px 2px #000;
+}
+.box-bg{
+	padding:15px;
+	-moz-border-radius:2px;
+	-webkit-border-radius:2px;
+	border-radius:2px;
+	background: -moz-linear-gradient(top, #757575, #343434);
+	background: -webkit-gradient(linear, center top, center bottom, from(#757575), to(#343434));
+	background: -o-linear-gradient(top, #757575, #343434);
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#757575', endColorstr='#343434');
+	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr='#757575', endColorstr='#343434')";
+	background: linear-gradient(top, #757575, #343434);
+}
+
+.box-inset{
+	-moz-border-radius:2px;
+	-webkit-border-radius:2px;
+	border-radius:2px;
+	background: -moz-linear-gradient(top, #353535, #171717);
+	background: -webkit-gradient(linear, center top, center bottom, from(#353535), to(#171717));
+	background: -o-linear-gradient(top, #353535, #171717);
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#353535', endColorstr='#171717');
+	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr='#353535', endColorstr='#171717')";
+	background: linear-gradient(top, #353535, #171717);
+	-moz-box-shadow:0px 0px 5px #333;
+	-webkit-box-shadow:0px 0px 5px #333;
+	box-shadow:0px 0px 5px #333;
+}
+
+div#twitter-stats{float:left; width:400px; font:14px "Museo 500"; padding: 15px 0 0 15px;}
+div#wb-title{float:left; width: 600px;}
+div#facebook-stats{float:right; width:100px; font:14px "Museo 500"; padding: 15px 15px 0 0;}
+
+.tf-info{display:none;}
+.tf-header img{float:left;}
+.tf-header {width:400px;}
+.tf-header h2{text-align:left;}

@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="myApp">
+<head>
+	<meta charset="UTF-8">
+	<title>Schedulings</title>
+
+	<link rel="stylesheet"  type="text/css" href="/admin/_style/css/main.css" />
+
+	<style>
+		.avatar{
+			display:inline-block;
+			border-radius: 50%;
+			background:silver;
+			font-size: 10px;
+			line-height: 16px;
+			height: 16px;
+			width:16px;
+			text-align: center;
+			vertical-align: text-bottom;
+		}
+		.avatar img{
+			height: 16px;
+			width:16px;
+			border-radius: 50%;
+			overflow:hidden;
+
+		}
+		.timestamp{
+			width:180px;
+			text-align: right;
+			padding-right: 8px;
+		}
+		span.timestamp{
+			display: inline-block;
+		}
+
+
+.avatar-bg-0{ background-color: #e3f7e3; }
+.avatar-bg-1{ background-color: #ecf6d5; }
+.avatar-bg-2{ background-color: #f7f1d2; }
+.avatar-bg-3{ background-color: #f9ebdd; }
+.avatar-bg-4{ background-color: #f9dee0; }
+.avatar-bg-5{ background-color: #f6defa; }
+.avatar-bg-6{ background-color: #e5dcf9; }
+.avatar-bg-7{ background-color: #e0eafa; }
+.avatar-bg-8{ background-color: #e0f5f9; }
+.avatar-bg-9{ background-color: #f0f0f0; }
+
+.row{
+	border-radius: 8px;
+}
+.user_state_changed{
+	background: #FFFFB9;
+}
+.instruction_changed{
+	background: #B9FFBD;
+}
+.stamp{
+	background: #cccccc;
+}
+.options{
+	text-align: center;
+}
+.accepted,
+.declined{
+	display: block;
+}
+.accepted{
+	background: #B9FFBD;
+}
+.declined{
+	background: #FFB9B9;
+}
+.status_ok{
+	background: #B9FFBD;
+}
+.status_bad{
+	background: #FFB9B9;
+}
+.table-condensed-extra > thead > tr > th,
+.table-condensed-extra > tbody > tr > th,
+.table-condensed-extra > tfoot > tr > th,
+.table-condensed-extra > thead > tr > td,
+.table-condensed-extra > tbody > tr > td,
+.table-condensed-extra > tfoot > tr > td{
+	padding:2px;
+}
+	</style>
+	<script src="/_script/lib/angular/angular.min.js"></script>
+	<script src="/_script/lib/lodash/lodash.min.js"></script>
+	<script src="/_script/lib/sprintf/sprintf.min.js"></script>
+
+</head>
+<body>
+
+
+<navi active="/admin/schedulings/"></navi>
+
+<div class="container" ng-controller="SchedulingController">
+
+	<ol class="breadcrumb">
+		<li><a href="../../">Home</a></li>
+		<li><a href="../">Schedulings</a></li>
+		<li class="active">#{{meetingId}}/{{schedulingId}}</li>
+	</ol>
+
+<div class="content">
+
+	<div class="row">
+		<div class="col-md-6">
+			<table class="table table-hover">
+				<tbody>
+					<tr><th>Status:</th><td>{{status}}</td></tr>
+
+					<tr><th>Creator:</th><td><a ng-href="/admin/users/user/?id={{creator_id}}">{{creator_name}}</a></td></tr>
+
+					<tr><th>Auto-pick time:</th><td>{{auto_pick_time}}</td></tr>
+					<tr><th>Buffer:</th><td>{{buffer}}</td></tr>
+					<tr><th>Duration:</th><td>{{duration}}</td></tr>
+					<tr><th>Planning_buffer:</th><td>{{planning_buffer}}</td></tr>
+					<tr><th>Last_missing_answers_organizer_notification:</th><td>{{last_missing_answers_organizer_notification}}</td></tr>
+				</tbody>
+			</table>
+		</div>
+		<div class="col-md-6">
+			<table class="table table-hover">
+				<tbody>
+					<tr><th>Time_zone:</th><td>{{time_zone}}</td></tr>
+					<tr><th>Created:</th><td>{{created}}</td></tr>
+					<tr><th>Started:</th><td>{{started}}</td></tr>
+					<tr><th>Completed:</th><td>{{completed}}</td></tr>
+					<tr><th>Cancelled:</th><td>{{cancelled}}</td></tr>
+					<tr><th>Removed:</th><td>{{removed}}</td></tr>
+					<tr><th>Failed:</th><td>{{failed}}</td></tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-md-6">
+			<div class="log"></div>
+		</div>
+		<div class="col-md-6">
+			<div class="options"></div>
+		</div>
+	</div>
+
+</div>
+
+</div>
+
+<script src="//code.jquery.com/jquery-1.10.2.min.js"></script>
+<script src="/_script/lib/bootstrap/bootstrap.min.js"></script>
+<script src="/admin/_script/common.js"></script>
+
+<script src="/_script/lib/momentjs/moment.min.js"></script>
+
+<script>
+
+var dateHelper = {
+
+  // # Thu, April 16, 2015
+  formatDayDateYear: "ddd, DD.MM.YYYY",
+
+  // # April 16, 2015
+  formatDateYear: "DD.MM.YYYY",
+
+  // # April 16
+  formatDate: "DD.MM.YYYY",
+
+  // # 11:30 am, Thu, Apr 16
+  formatTimeDayDate: "H:mm:ss, ddd, DD.MM.YYYY",
+
+  // # 11:30 am, Apr 16
+  formatTimeDate: "H:mm:ss, DD.MM.YYYY",
+
+  // # Thu, Apr 16
+  formatDayDate: "ddd, DD.MM.YYYY",
+
+  // # Thursday
+  formatDayOfWeek: "dddd",
+
+  // # Thu
+  formatDayOfWeekShort: "ddd",
+
+  // # 11:30 am, with unicode non-breaking space, thanks angular!
+  formatTime: "H:mm:ss"
+};
+
+
+var calculateAvatarBgClassName = function(md5) {
+  var bgColorCount;
+  if (md5 === null) {
+    return "";
+  }
+  bgColorCount = 10;
+  return "avatar-bg-" + parseInt(md5.substring(0, 6), 16) % bgColorCount;
+};
+
+var schedulingLog = function() {
+	var that = {};
+
+	that.formatIconHtml = function(paramData) {
+		return "<i class=\"icon icon-" + paramData + "\"></i>";
+	};
+	that.formatNameHtml = function(paramData) {
+		return "<a href=\"/admin/users/user/?id="+paramData.user_id+"\">" + paramData.first_name+ " "+
+		paramData.last_name + "</a>";
+	};
+	that.formatAvatarInitialsHtml = function(paramData) {
+		return "<a href=\"/admin/users/user/?id="+paramData.user_id+"\" class=\"avatar log-avatar "+
+						calculateAvatarBgClassName(paramData.user_id_md5) +"\">"+
+						"<span class=\"avatar-initials\">"+
+						paramData.initials+
+						"</span> </a>";
+	};
+	that.formatAvatarImageHtml = function(paramData) {
+		return "<a href=\"/admin/users/user/?id="+paramData.user_id+"\" class=\"avatar log-avatar "+
+						calculateAvatarBgClassName(paramData.user_id_md5) +"\">"+
+						"<img src=\"" + paramData.image +
+							"\" class=\"avatar-img\" title=\"" + paramData.name +
+							"\" alt=\"" + paramData.name + "\" /> </a>";
+	};
+	that.formatAvatarHtml = function(paramData) {
+		if (paramData.image) {
+			return that.formatAvatarImageHtml(paramData);
+		} else {
+			return that.formatAvatarInitialsHtml(paramData);
+		}
+	};
+	that.formatAvatarNameHtml = function(paramData) {
+		return that.formatAvatarHtml(paramData) + " " + that.formatNameHtml(paramData);
+	};
+	that.formatShortTimestampHtml = function(paramData) {
+		return moment.unix(paramData.epoch).format(dateHelper.formatTimeDate);
+	};
+	that.formatLongTimestampHtml = function(paramData) {
+		return moment.unix(paramData.epoch).format(dateHelper.formatTimeDayDate);
+	};
+	that.formatParams = function(item) {
+		var params;
+		params = [];
+		_.each(item.params, (function(_that) {
+			return function(param) {
+				switch (param.type) {
+					case "icon":
+						return params.push(_that.formatIconHtml(param.data));
+					case "user":
+						if (param.display_hint === "name") {
+							return params.push(_that.formatNameHtml(param.data));
+						} else if (param.display_hint === "avatar") {
+							return params.push(_that.formatAvatarHtml(param.data));
+						} else {
+							return params.push(_that.formatAvatarNameHtml(param.data));
+						}
+						break;
+					case "timestamp":
+						if (param.display_hint === "short") {
+							return params.push(_that.formatShortTimestampHtml(param.data));
+						} else {
+							return params.push(_that.formatLongTimestampHtml(param.data));
+						}
+				}
+			};
+		})(that));
+		return params;
+	};
+	that.sortUserStates = function(userStateChanges) {
+		var userStates;
+		userStates = {
+			invited: [],
+			removed: [],
+			availability_needed: [],
+			common_time_found: []
+		};
+		_(userStateChanges).groupBy(function(stateChange) {
+			return stateChange.data.user_id;
+		}).each((function(_that) {
+			return function(user) {
+				var lastUserState;
+				if (user) {
+					lastUserState = _.max(user, "entry_epoch");
+					return userStates[lastUserState.data.state].push(lastUserState.data);
+				}
+			};
+		})(that)).value();
+		return userStates;
+	};
+	that.formatInstructionChanges = function(instructionChanges) {
+		var lastChange, params;
+		lastChange = _.last(instructionChanges);
+		params = that.formatParams(lastChange);
+		return vsprintf(lastChange.msg, params);
+	};
+
+	that.addOption= function(item){
+		if(!that.participants){that.participants = {};}
+		if(!that.suggestions){that.suggestions = [];}
+
+		item.params.forEach(function(elem,i,arr){
+			if(elem.type === 'user'){
+				var initial = that.participants[elem.data.user_id] || {};
+				that.participants[elem.data.user_id] = _.extend(initial,elem.data);
+				if(!that.participants[elem.data.user_id].entry_types){
+					that.participants[elem.data.user_id].entry_types = {};
+				}
+				if(!that.participants[elem.data.user_id].entry_types[item.entry_type]){
+					that.participants[elem.data.user_id].entry_types[item.entry_type] = 0;
+				}
+				that.participants[elem.data.user_id].entry_types[item.entry_type]++;
+
+				if(item.entry_type == 'user_state_changed'){
+					console.log("User State:",item.data.state,item.msg);
+					that.participants[elem.data.user_id].state = item.data.state;
+				}
+			}
+		});
+		if(item.entry_type == 'suggestion_declined' || item.entry_type == 'suggestion_accepted'){
+			var epoch = item.data.suggestion_epoch*1;
+			if(!that.suggestions[epoch]){
+				that.suggestions[epoch] = {};
+			}
+			that.suggestions[epoch][item.author_id*1] = item;
+		}
+	};
+
+	that.formatLogMessages = function(logData) {
+		var eventLog;
+		eventLog = [];
+
+		logData.sort(function(a,b){
+			return (a.id - b.id);
+		});
+
+		_.each(logData, (function(_that) {
+			return function(item) {
+				var formattedMsg, params;
+				params = _that.formatParams(item);
+				formattedMsg = vsprintf(item.msg, params);
+
+				_that.addOption(item);
+
+				switch (item.entry_type) {
+					// case "instruction_changed":
+					// 	break;
+					default:
+						return eventLog.push({
+							formattedMsg: formattedMsg,
+							timestamp: item.entry_epoch,
+							type: item.entry_type
+						});
+				}
+			};
+		})(that));
+
+
+
+		return eventLog;
+	};
+	return that;
+};
+
+</script>
+
+<script type="text/javascript">
+
+var meetingId = 105757;
+var schedulingId = 89;
+meetingId = getQueryVariable("meeting");
+schedulingId = getQueryVariable("scheduling");
+var url = "https://api-beta.meetin.gs/v1/meetings/"+
+	meetingId+"/schedulings/"+schedulingId+"/log_entries?debug=1&image_size=32&secret="+getMagic();
+
+
+
+var scheduling_sql_url = getSQLUrl('sql','scheduling_background', schedulingId);
+
+
+app.controller('SchedulingController', ['$scope', '$http', '$window', function($scope, $http, $window) {
+
+
+function parseServerDate(dateString){
+	if(dateString === "0" || dateString === null){
+		return "-";
+	}
+	return moment.unix(dateString).format(dateHelper.formatTimeDayDate);
+}
+
+var bgdata_export;
+
+$http({
+	method: 'JSONP',
+	url: scheduling_sql_url+"&callback=JSON_CALLBACK"
+}).success(function(bgdata, status) {
+	// console.log(bgdata);
+	bgdata = bgdata[0];
+
+	if(bgdata){
+		bgdata_export = bgdata;
+
+		$scope.status = bgdata.status;
+
+		$scope.created = parseServerDate(bgdata.created);
+		$scope.started = parseServerDate(bgdata.started);
+		$scope.completed = parseServerDate(bgdata.completed);
+		$scope.cancelled = parseServerDate(bgdata.cancelled);
+		$scope.removed = parseServerDate(bgdata.removed);
+		$scope.failed = parseServerDate(bgdata.failed);
+
+		$scope.creator_id = bgdata.creator_id*1;
+		$scope.creator_name = bgdata.creator_name;
+
+		$scope.buffer = bgdata.buffer*1;
+		$scope.duration = bgdata.duration*1;
+		$scope.planning_buffer = bgdata.planning_buffer*1;
+		$scope.last_missing_answers_organizer_notification = bgdata.last_missing_answers_organizer_notification*1;
+		$scope.time_zone = bgdata.time_zone;
+		$scope.organizer_swiping = bgdata.organizer_swiping*1 == 1;
+
+		if($scope.organizer_swiping){
+			$scope.auto_pick_time = 'No (Organizer swipes)';
+		}else{
+			$scope.auto_pick_time = 'Yes (Organizer can not swipe)';
+		}
+	}
+	// $scope.slots = JSON.parse(bgdata.slots);
+
+
+	$http({
+		method: 'GET',
+		url: url
+	}).success(function(data, status) {
+		$scope.meetingId = meetingId;
+		$scope.schedulingId = schedulingId;
+		var output = "";
+
+		var sl = schedulingLog();
+		var result = sl.formatLogMessages(data);
+
+
+		var usedStamps = {};
+		function addStamp(stampName, logEntry){
+			if(bgdata && bgdata[stampName] != "0" && bgdata[stampName] !== null && !usedStamps[stampName]){
+				if(moment.unix(logEntry)>=moment.unix(bgdata[stampName])){
+					usedStamps[stampName] = true;
+
+					output += '<div class="row stamp stamp-';
+					output += stampName;
+					output += '">';
+					output += '<span class="timestamp">';
+					output += moment.unix(bgdata[stampName]).format(dateHelper.formatTimeDayDate);
+					output += '</span> Scheduling status changed: ';
+					output += stampName;
+					output += '</div>';
+				}
+			}
+		}
+
+		for(var i=0,l=result.length;i<l;i++){
+			addStamp("created",result[i].timestamp);
+			addStamp("started",result[i].timestamp);
+			addStamp("completed",result[i].timestamp);
+			addStamp("cancelled",result[i].timestamp);
+			addStamp("removed",result[i].timestamp);
+			addStamp("failed",result[i].timestamp);
+			output += '<div class="row ';
+			output += result[i].type;
+			output += '">';
+			output += '<span class="timestamp">';
+			output += moment.unix(result[i].timestamp).format(dateHelper.formatTimeDayDate);
+			output += '</span>';
+			output += result[i].formattedMsg;
+			output += '</div>';
+		}
+		addStamp("created",29821298400);
+		addStamp("started",29821298400);
+		addStamp("completed",29821298400);
+		addStamp("cancelled",29821298400);
+		addStamp("removed",29821298400);
+		addStamp("failed",29821298400);
+
+		$('.log').html(output);
+
+
+		//Convert participants Object to sorted Array, as keys are already stored in "id"
+		var sortedParticipants = _.filter(sl.participants, {'id': $scope.creator_id+""});
+		sl.participants = sortedParticipants.concat(_.filter(sl.participants, function(item){
+			return (item.id != $scope.creator_id+"");
+		}));
+
+
+		var translate = {
+			'suggestion_accepted': '<span class="accepted">Accepted</span>',
+			'suggestion_declined': '<span class="declined">Declined</span>'
+		};
+
+
+		//Options table
+		var options = '<table class="options table table-condensed table-condensed-extra">';
+		options += '<tr>';
+			options += '<th>';
+			options += 'Suggestion';
+			options += '</th>';
+		for(var j in sl.participants){
+			options += '<td>';
+			options += sl.participants[j].name;
+			options += '</td>';
+		}
+		options += '</tr>';
+
+		function useStateTranslate(state){
+			var states = {
+				'invited': 'Not yet answered',
+				'common_time_found': 'Common time found',
+				'availability_needed': 'Availability needed',
+				'removed': 'Removed'
+			};
+			return states[state] || state;
+		}
+		options += '<tr>';
+			options += '<th>';
+			options += 'State';
+			options += '</th>';
+		for(var j in sl.participants){
+			options += '<td>';
+			options += useStateTranslate(sl.participants[j].state);
+			options += '</td>';
+		}
+		options += '</tr>';
+
+		function analyzeParticipant(user){
+			user.isAdmin = user.id == $scope.creator_id+"";
+			if(user.isAdmin){
+				if(!$scope.organizer_swiping){
+					return '<div class="status_ok">Waiting for participants</div>';
+				}
+			}
+			if(user.entry_types.suggestion_accepted || user.entry_types.suggestion_declined){
+				return '<div class="status_ok">Has answered</div>';
+			}
+
+			if(user.entry_types.user_removed){
+				return '<div class="status_ok">User was removed</div>';
+			}
+
+			if(user.entry_types.first_scheduling_fetch || user.entry_types.scheduling_opened){
+				return '<div class="status_bad">Has not answered, but page did load</div>';
+			}
+
+			var clickcount = _.chain(user.entry_types)
+					.pick([
+						'user_invited_sms_clicked',
+						'user_invited_push_clicked',
+						'user_invited_email_clicked',
+						'user_more_input_push_clicked',
+						'user_more_input_sms_clicked',
+						'user_more_input_email_clicked'
+					])
+					.reduce(function(total, n){
+						return total + n;
+					})
+					.value();
+			if(clickcount > 0){
+				return '<div class="status_bad">Page did not load after click.</div>';
+			}
+
+			var invitecount = _.chain(user.entry_types)
+					.pick([
+						'user_invited_sms',
+						'user_invited_push',
+						'user_invited_email',
+						'user_more_input_push',
+						'user_more_input_sms',
+						'user_more_input_email'
+					])
+					.reduce(function(total, n){
+						return total + n;
+					})
+					.value();
+			if(invitecount > 0){
+				return '<div class="status_bad">Has not clicked any of '+invitecount+' invites</div>';
+			}
+			return '<div class="status_bad">Has not been invited.</div>';
+		}
+
+		options += '<tr>';
+			options += '<th>';
+			options += 'Status';
+			options += '</th>';
+		for(var j in sl.participants){
+			options += '<td>';
+			options += analyzeParticipant(sl.participants[j]);
+			options += '</td>';
+		}
+		options += '</tr>';
+
+		function translateEntry(entry){
+			var translations = {
+				'user_invited_push': 'Push invites',
+				'user_invited_sms': 'SMS invites',
+				'user_invited_email': 'Email invites',
+				'user_invited_sms_clicked': 'SMS clicked',
+				'user_invited_push_clicked': 'Push clicked',
+				'user_invited_email_clicked': 'Email clicked',
+				'user_more_input_push': 'Push more',
+				'user_more_input_sms': 'SMS more',
+				'user_more_input_email': 'Email more',
+				'user_more_input_push_clicked': 'Push more clicked',
+				'user_more_input_sms_clicked': 'SMS more clicked',
+				'user_more_input_email_clicked': 'Email more clicked',
+				'scheduling_opened': 'Landing page opened',
+				'suggestion_accepted': 'Accepted suggestion',
+				'suggestion_declined': 'Declined suggestion'
+			};
+			return translations[entry] || entry;
+		}
+
+		function infoRow(title, entry_types){
+			var options = "";
+			options += '<tr>';
+				options += '<th>';
+					options += title;
+				options += '</th>';
+			for(var j in sl.participants){
+				var count = 0;
+				var entry_types_title = [];
+				entry_types.forEach(function(entry_type){
+					if(sl.participants[j].entry_types[entry_type]){
+						count += sl.participants[j].entry_types[entry_type];
+						entry_types_title.push(translateEntry(entry_type)+": "+sl.participants[j].entry_types[entry_type]);
+					}
+
+				});
+				options += '<td title="'+entry_types_title.join('\n')+'">';
+				options += count || "-";
+				options += '</td>';
+			}
+			options += '</tr>';
+			return options;
+		}
+
+		for(j in sl.participants){
+			console.log(sl.participants[j].name,sl.participants[j].entry_types);
+		}
+
+		options += infoRow("Invites",['user_invited_push','user_invited_sms','user_invited_email']);
+		options += infoRow("Clicks",['user_invited_push_clicked','user_invited_sms_clicked','user_invited_email_clicked']);
+		options += infoRow("More",['user_more_input_push','user_more_input_sms','user_more_input_email']);
+		options += infoRow("More clicked",['user_more_input_push_clicked','user_more_input_sms_clicked','user_more_input_email_clicked']);
+		options += infoRow("First load",['first_scheduling_fetch']);
+		options += infoRow("Opened",['scheduling_opened']);
+		options += infoRow("Accepted",['suggestion_accepted']);
+		options += infoRow("Declined",['suggestion_declined']);
+
+		for(i in sl.suggestions){
+			options += '<tr>';
+			options += '<td class="timestamp">';
+			options += moment.unix(i).format(dateHelper.formatTimeDayDate);
+			options += '</td>';
+			for(j in sl.participants){
+				var id = sl.participants[j].id*1;
+				options += '<td>';
+				if(sl.suggestions[i][id]){
+					options += translate[sl.suggestions[i][id].entry_type];
+				}else{
+					options += "-";
+				}
+				options += '</td>';
+			}
+
+			options += '</tr>';
+		}
+		options += '</table>';
+		$('.options').html(options);
+		// process( document.getElementsByTagName("div") );
+	});
+
+});
+
+}]);
+
+
+</script>
+
+</body>
+</html>

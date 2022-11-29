@@ -1,0 +1,31 @@
+SELECT
+-- #
+  meeting.event_id AS meeting_id,
+  scheduling.id AS scheduling_id,
+-- Admin
+  creator.user_id AS creator_id,
+  creator.name AS creator_name,
+  creator.first_name AS creator_first_name,
+  creator.last_name AS creator_last_name,
+-- Created
+  scheduling.created_date AS created,
+-- Status
+  scheduling.created_date,
+  scheduling.completed_date,
+  scheduling.cancelled_date,
+  scheduling.note_failed_epoch,
+  scheduling.note_started_epoch,
+-- Participant count
+  meeting.extra_participant_count AS participants,
+-- Duration
+  scheduling.note_duration AS duration
+FROM scheduling
+  INNER JOIN meeting_participant ON meeting_participant.event_id = scheduling.meeting_id
+  LEFT JOIN user AS creator ON creator.user_id = scheduling.creator_id
+  LEFT JOIN meeting ON meeting_participant.event_id = meeting.event_id
+WHERE
+  meeting.extra_is_real IS NOT NULL
+  AND meeting.extra_is_real != 0
+  AND meeting_participant.user_id = %d
+GROUP BY meeting.event_id
+ORDER BY scheduling.created_date DESC

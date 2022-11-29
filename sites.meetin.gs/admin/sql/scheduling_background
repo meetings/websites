@@ -1,0 +1,25 @@
+SELECT
+  IF(creator.name IS NOT NULL, creator.name, CONCAT(creator.first_name, ' ', creator.last_name)) AS creator_name
+  ,creator.user_id AS creator_id
+  ,scheduling.extra_status AS status
+
+  ,scheduling.created_date AS created
+  ,scheduling.note_started_epoch AS started
+  ,scheduling.completed_date AS completed
+  ,scheduling.cancelled_date AS cancelled
+  ,scheduling.removed_date AS removed
+  ,scheduling.note_failed_epoch AS failed
+
+  ,scheduling.note_buffer AS buffer
+  ,scheduling.note_duration AS duration
+  ,scheduling.note_last_missing_answers_organizer_notification AS last_missing_answers_organizer_notification
+  ,scheduling.note_planning_buffer AS planning_buffer
+  ,scheduling.note_slots AS slots
+  ,scheduling.note_time_zone AS time_zone
+  ,(scheduling.note_organizer_swiping_required IS NOT NULL AND scheduling.note_organizer_swiping_required = 'true') AS organizer_swiping
+
+FROM
+  scheduling
+  LEFT JOIN user AS creator ON scheduling.creator_id = creator.user_id
+WHERE
+  scheduling.id = %d

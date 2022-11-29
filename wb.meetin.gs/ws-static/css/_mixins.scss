@@ -1,0 +1,93 @@
+// Rounded corner mixins
+@mixin rounded($amount: 6px) {
+	-moz-border-radius: $amount;
+	-webkit-border-radius: $amount;
+	-khtml-border-radius: $amount;
+	border-radius: $amount;
+	//behavior: url("/css/PIE.htc");
+}
+@mixin rounded-top($amount: 6px){
+	-moz-border-radius: $amount $amount 0 0 ;
+	-webkit-border-radius: $amount $amount 0 0 ;
+	-khtml-border-radius: $amount $amount 0 0 ;
+	border-radius: $amount $amount 0 0 ;
+	//behavior: url("/css/PIE.htc");
+}
+@mixin rounded-bottom($amount: 6px){
+	-moz-border-radius: 0 0 $amount $amount;
+	-webkit-border-radius: 0 0 $amount $amount;
+	-khtml-border-radius: 0 0 $amount $amount;
+	border-radius: 0 0 $amount $amount;
+	//behavior: url("/css/PIE.htc");
+}
+
+@mixin rounded-bottom-left($amount: 6px){
+	-moz-border-radius: 0 0 0 $amount;
+	-webkit-border-radius: 0 0 0 $amount;
+	-khtml-border-radius: 0 0 0 $amount;
+	border-radius: 0 0 0 $amount;
+	//behavior: url("/css/PIE.htc");
+}
+
+// IE Hacked max/min widths/heights
+@mixin minwidth($amount){
+	min-width: $amount;
+	width: auto !important;
+	width: $amount;
+}
+
+@mixin minheight($amount){
+	min-height: $amount;
+	height: auto !important;
+	height: $amount;
+}
+
+@mixin maxwidth($amount){
+	max-width: $amount;
+	width: auto !important;
+	width: expression( document.body.clientWidth > $amount	 ? "$amount" : "auto" );
+}
+
+@mixin maxheight($amount){
+	max-height: $amount;
+	height: auto !important;
+	height: expression( document.body.clientHeight > $amount	 ? "$amount" : "auto" );
+}
+
+
+// Gradients
+@mixin gradient-bg-material-button{
+	background-color:#eeeeee;
+	background-image: -webkit-gradient(
+	linear,
+	left bottom,
+	left top,
+	color-stop(0, rgb(209,208,205)),
+	color-stop(0.15, rgb(223,223,223)),
+	color-stop(1, rgb(255,255,255))
+	);
+	background-image: -moz-linear-gradient(
+	center bottom,
+	rgb(209,208,205) 0%,
+	rgb(223,223,223) 15%,
+	rgb(255,255,255) 100%
+	);
+}
+
+@mixin gradient-bg-normal{
+	background-color:#ffffff;
+	background-image: -webkit-gradient(
+	    linear,
+	    left bottom,
+	    left top,
+	    color-stop(0, #d9d9d9),
+	    color-stop(0.15, #FFFFFF),
+	    color-stop(1, #FFFFFF)
+	);
+	background-image: -moz-linear-gradient(
+	    center bottom,
+	    #d9d9d9 0%,
+	    #FFFFFF 15%,
+	    #FFFFFF 100%
+	);
+}

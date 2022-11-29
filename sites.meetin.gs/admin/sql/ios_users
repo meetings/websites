@@ -1,0 +1,14 @@
+SELECT
+    user.user_id AS id,
+    user.note_creation_time AS creation_time,
+    user.first_name AS first_name,
+    user.last_name AS last_name,
+    user.email as email,
+    user.extra_profile_organization as organization,
+    user.extra_profile_title as title,
+    user.extra_profile_phone as phone,
+    CASE WHEN user.note_ios_device_available IS NOT NULL THEN 1 ELSE 0 END as PUSH
+FROM
+    user
+WHERE
+    user.note_ios_device_first_login IS NOT NULL

@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="myApp">
+<head>
+	<meta charset="UTF-8">
+	<title>Schedulings</title>
+
+	<link rel="stylesheet"  type="text/css" href="/admin/_style/css/main.css" />
+
+	<style>
+		.avatar{
+			display:inline-block;
+			border-radius: 50%;
+			background:silver;
+			font-size: 10px;
+			line-height: 16px;
+			height: 16px;
+			width:16px;
+			text-align: center;
+			vertical-align: text-bottom;
+		}
+		.avatar img{
+			height: 16px;
+			width:16px;
+			border-radius: 50%;
+			overflow:hidden;
+
+		}
+		.timestamp{
+			display: inline-block;
+			width:180px;
+			text-align: right;
+			padding-right: 8px;
+		}
+
+.avatar-bg-0{ background-color: #e3f7e3; }
+.avatar-bg-1{ background-color: #ecf6d5; }
+.avatar-bg-2{ background-color: #f7f1d2; }
+.avatar-bg-3{ background-color: #f9ebdd; }
+.avatar-bg-4{ background-color: #f9dee0; }
+.avatar-bg-5{ background-color: #f6defa; }
+.avatar-bg-6{ background-color: #e5dcf9; }
+.avatar-bg-7{ background-color: #e0eafa; }
+.avatar-bg-8{ background-color: #e0f5f9; }
+.avatar-bg-9{ background-color: #f0f0f0; }
+
+.row{
+	border-radius: 8px;
+}
+.user_state_changed{
+	background: #FFFFB9;
+}
+.instruction_changed{
+	background: #B9FFBD;
+}
+	</style>
+	<script src="/_script/lib/angular/angular.min.js"></script>
+	<script src="/_script/lib/lodash/lodash.min.js"></script>
+	<script src="/_script/lib/sprintf/sprintf.min.js"></script>
+
+</head>
+<body>
+
+
+<navi active="/admin/schedulings/"></navi>
+
+<div class="container" ng-controller="SchedulingController">
+
+	<ol class="breadcrumb">
+		<li><a href="../../">Home</a></li>
+		<li><a href="../live_dev.html">Dev Schedulings</a></li>
+		<li class="active">#{{meetingId}}/{{schedulingId}}</li>
+	</ol>
+
+<h1>DEVELOPMENT SERVER</h1>
+<div class="content">
+
+</div>
+
+</div>
+
+<script src="//code.jquery.com/jquery-1.10.2.min.js"></script>
+<script src="/_script/lib/bootstrap/bootstrap.min.js"></script>
+<script src="/admin/_script/common.js"></script>
+
+<script src="/_script/lib/momentjs/moment.min.js"></script>
+
+<script>
+
+var dateHelper = {
+
+  // # Thu, April 16, 2015
+  formatDayDateYear: "ddd, DD.MM.YYYY",
+
+  // # April 16, 2015
+  formatDateYear: "DD.MM.YYYY",
+
+  // # April 16
+  formatDate: "DD.MM.YYYY",
+
+  // # 11:30 am, Thu, Apr 16
+  formatTimeDayDate: "H:mm:ss, ddd, DD.MM.YYYY",
+
+  // # 11:30 am, Apr 16
+  formatTimeDate: "H:mm:ss, DD.MM.YYYY",
+
+  // # Thu, Apr 16
+  formatDayDate: "ddd, DD.MM.YYYY",
+
+  // # Thursday
+  formatDayOfWeek: "dddd",
+
+  // # Thu
+  formatDayOfWeekShort: "ddd",
+
+  // # 11:30 am, with unicode non-breaking space, thanks angular!
+  formatTime: "H:mm:ss"
+};
+
+
+var calculateAvatarBgClassName = function(md5) {
+  var bgColorCount;
+  if (md5 === null) {
+    return "";
+  }
+  bgColorCount = 10;
+  return "avatar-bg-" + parseInt(md5.substring(0, 6), 16) % bgColorCount;
+};
+
+var schedulingLog = function() {
+	var that = {};
+
+	that.formatIconHtml = function(paramData) {
+		return "<i class=\"icon icon-" + paramData + "\"></i>";
+	};
+	that.formatNameHtml = function(paramData) {
+		return  paramData.first_name+ " "+paramData.last_name;
+	};
+	that.formatAvatarInitialsHtml = function(paramData) {
+		return "<a class=\"avatar log-avatar "+
+						calculateAvatarBgClassName(paramData.user_id_md5) +"\">"+
+						"<span class=\"avatar-initials\">"+
+						paramData.initials+
+						"</span> </a>";
+	};
+	that.formatAvatarImageHtml = function(paramData) {
+		return "<a class=\"avatar log-avatar "+
+						calculateAvatarBgClassName(paramData.user_id_md5) +"\">"+
+						"<img src=\"" + paramData.image +
+							"\" class=\"avatar-img\" title=\"" + paramData.name +
+							"\" alt=\"" + paramData.name + "\" /> </a>";
+	};
+	that.formatAvatarHtml = function(paramData) {
+		if (paramData.image) {
+			return that.formatAvatarImageHtml(paramData);
+		} else {
+			return that.formatAvatarInitialsHtml(paramData);
+		}
+	};
+	that.formatAvatarNameHtml = function(paramData) {
+		return that.formatAvatarHtml(paramData) + " " + that.formatNameHtml(paramData);
+	};
+	that.formatShortTimestampHtml = function(paramData) {
+		return moment.unix(paramData.epoch).format(dateHelper.formatTimeDate);
+	};
+	that.formatLongTimestampHtml = function(paramData) {
+		return moment.unix(paramData.epoch).format(dateHelper.formatTimeDayDate);
+	};
+	that.formatParams = function(item) {
+		var params;
+		params = [];
+		_.each(item.params, (function(_that) {
+			return function(param) {
+				switch (param.type) {
+					case "icon":
+						return params.push(_that.formatIconHtml(param.data));
+					case "user":
+						if (param.display_hint === "name") {
+							return params.push(_that.formatNameHtml(param.data));
+						} else if (param.display_hint === "avatar") {
+							return params.push(_that.formatAvatarHtml(param.data));
+						} else {
+							return params.push(_that.formatAvatarNameHtml(param.data));
+						}
+						break;
+					case "timestamp":
+						if (param.display_hint === "short") {
+							return params.push(_that.formatShortTimestampHtml(param.data));
+						} else {
+							return params.push(_that.formatLongTimestampHtml(param.data));
+						}
+				}
+			};
+		})(that));
+		return params;
+	};
+	that.sortUserStates = function(userStateChanges) {
+		var userStates;
+		userStates = {
+			invited: [],
+			removed: [],
+			availability_needed: [],
+			common_time_found: []
+		};
+		_(userStateChanges).groupBy(function(stateChange) {
+			return stateChange.data.user_id;
+		}).each((function(_that) {
+			return function(user) {
+				var lastUserState;
+				if (user) {
+					lastUserState = _.max(user, "entry_epoch");
+					return userStates[lastUserState.data.state].push(lastUserState.data);
+				}
+			};
+		})(that)).value();
+		return userStates;
+	};
+	that.formatInstructionChanges = function(instructionChanges) {
+		var lastChange, params;
+		lastChange = _.last(instructionChanges);
+		params = that.formatParams(lastChange);
+		return vsprintf(lastChange.msg, params);
+	};
+	that.formatLogMessages = function(logData) {
+		var eventLog;
+		eventLog = [];
+
+		logData.sort(function(a,b){
+			return (a.id - b.id);
+		});
+
+		_.each(logData, (function(_that) {
+			return function(item) {
+				var formattedMsg, params;
+				params = _that.formatParams(item);
+				formattedMsg = vsprintf(item.msg, params);
+				switch (item.entry_type) {
+					// case "instruction_changed":
+					// 	break;
+					default:
+						return eventLog.push({
+							formattedMsg: formattedMsg,
+							timestamp: item.entry_epoch,
+							type: item.entry_type
+						});
+				}
+			};
+		})(that));
+		return eventLog;
+	};
+	return that;
+};
+
+</script>
+
+<script type="text/javascript">
+
+var meetingId = 105757;
+var schedulingId = 89;
+meetingId = getQueryVariable("meeting");
+schedulingId = getQueryVariable("scheduling");
+var url = "https://api-dev.meetin.gs/v1/meetings/"+
+	meetingId+"/schedulings/"+schedulingId+"/log_entries?debug=1&image_size=32&secret="+getMagic();
+
+
+app.controller('SchedulingController', ['$scope', '$http', '$window', function($scope, $http, $window) {
+	$http({
+		method: 'GET',
+		url: url
+	}).success(function(data, status) {
+		$scope.meetingId = meetingId;
+		$scope.schedulingId = schedulingId;
+		var output = "";
+
+		var sl = schedulingLog();
+		var result = sl.formatLogMessages(data);
+
+		for(var i=0,l=result.length;i<l;i++){
+			output += '<div class="row ';
+			output += result[i].type;
+			output += '">';
+			output += '<span class="timestamp">';
+			output += moment.unix(result[i].timestamp).format(dateHelper.formatTimeDayDate);
+			output += '</span>';
+			output += result[i].formattedMsg;
+			output += '</div>';
+		}
+
+		$('.content').html(output);
+
+
+		// process( document.getElementsByTagName("div") );
+	});
+}]);
+
+</script>
+
+</body>
+</html>

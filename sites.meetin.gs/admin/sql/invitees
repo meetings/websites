@@ -1,0 +1,11 @@
+SELECT
+    user.user_id AS id,
+    user.first_name AS first_name,
+    user.last_name AS last_name,
+    user.extra_first_inviter_id AS inviter_id,
+    user.extra_profile_image_is_set AS image_is_set,
+    user.email AS email
+FROM user
+WHERE
+  user.email != ''
+  AND user.extra_first_inviter_id = %d

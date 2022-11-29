@@ -1,0 +1,1465 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="myApp">
+<head>
+	<meta charset="UTF-8">
+	<title>Schedulings</title>
+
+	<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.1/css/jquery.dataTables.css">
+	<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/colvis/1.1.1/css/dataTables.colVis.css">
+	<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/tabletools/2.2.2/css/dataTables.tableTools.css">
+	<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/plug-ins/725b2a2115b/integration/bootstrap/3/dataTables.bootstrap.css">
+
+	<link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/dc/2.0.0-beta.12/dc.css">
+
+	<link rel="stylesheet"  type="text/css" href="/admin/_style/css/main.css" />
+
+	<script src="/_script/lib/angular/angular.min.js"></script>
+
+	<style>
+		#charts{
+			width:940px;
+			margin:0 auto;
+		}
+		#status-chart.dc-chart g.row text,
+		#duration-chart.dc-chart g.row text,
+		#quarter-chart.dc-chart g.row text,
+		#countries-chart.dc-chart g.row text{
+			fill:#000000;
+		}
+		#navigate-chart .axis.y{
+			opacity: 0;
+		}
+		.dc-data-count{
+			float:left;
+		}
+	</style>
+</head>
+<body>
+
+
+<navi active="/admin/schedulings/"></navi>
+
+<div class="container">
+	<ul class="nav nav-tabs" role="tablist">
+		<li class="active"><a href="#">Schedulings</a></li>
+		<li><a href="live.html">Live Schedulings</a></li>
+		<li><a href="live_dev.html">Dev Schedulings</a></li>
+	</ul>
+
+	<h2>Schedulings</h2>
+	<div style="overflow:hidden">
+		<p id='data-count' class="dc-data-count"></p>
+	</div>
+
+	<div id="charts" style="overflow:hidden;clear:left">
+
+
+		<div id="user-chart">
+			<div>
+				Created by
+				<span class='reset' style='display: none;'>
+					<span class='filter'></span>
+					<a href="javascript:resetChart('user')">reset</a>
+				</span>
+			</div>
+		</div>
+
+		<div id="status-chart">
+			<div>
+				Status
+				<span class='reset' style='display: none;'>
+					<a href="javascript:resetChart('status')">reset</a>
+				</span>
+			</div>
+		</div>
+
+		<div id="quarter-chart">
+			<div>
+				Created on quarter
+				<span class='reset' style='display: none;'>
+					<span class='filter'></span>
+					<a href="javascript:resetChart('quarter')">reset</a>
+				</span>
+			</div>
+		</div>
+
+
+		<div id="email-chart">
+			<div>
+				Email filter
+				<div>
+					<textarea name="email_filters" id="email_filters" cols="30" rows="5"></textarea>
+					<button class="btn btn-success" onclick="filterEmailIn()">Only listed</button>
+					<button class="btn btn-danger" onclick="filterEmailIn(true)">All but listed</button>
+				</div>
+			</div>
+		</div>
+
+
+		<div id="status_time-chart" style="clear:left;">
+			<div>
+				Status distribution per week
+				<span class='reset' style='display: none;'>
+					<span class='filter'></span>
+					<a href="javascript:resetChart('status_time');">reset</a>
+				</span>
+			</div>
+		</div>
+
+		<div id="cohort-chart" style="clear:left;">
+			<div>
+				Scheduling cohort (colored by month when creator was first seen)
+				<span class='reset' style='display: none;'>
+					<span class='filter'></span>
+					<a href="javascript:resetChart('cohort');resetChart('navigate')">reset</a>
+				</span>
+			</div>
+		</div>
+
+		<div id="navigate-chart" style="clear:left;"></div>
+
+		<div class="panel-group" id="accordion" style="clear:both">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h4 class="panel-title">
+						<a data-toggle="collapse" href="#collapseFeatures">
+							Scheduling features
+						</a>
+					</h4>
+				</div>
+				<div id="collapseFeatures" class="panel-collapse collapse out">
+					<div class="panel-body">
+
+
+						<div id="duration-chart">
+							<div>
+								Duration
+								<span class='reset' style='display: none;'>
+									<span class='filter'></span>
+									<a href="javascript:resetChart('duration')">reset</a>
+								</span>
+							</div>
+						</div>
+
+						<div id="participants-chart">
+							<div>
+								Participants
+								<span class='reset' style='display: none;'>
+									<span class='filter'></span>
+									<a href="javascript:resetChart('participants')">reset</a>
+								</span>
+							</div>
+						</div>
+						<div id="opened-chart">
+							<div>
+								Opened %
+								<span class='reset' style='display: none;'>
+									<span class='filter'></span>
+									<a href="javascript:resetChart('opened')">reset</a>
+								</span>
+							</div>
+						</div>
+
+						<div id="answered-chart">
+							<div>
+								Answered % of Opened
+								<span class='reset' style='display: none;'>
+									<span class='filter'></span>
+									<a href="javascript:resetChart('answered')">reset</a>
+								</span>
+							</div>
+						</div>
+
+		<div id="success_rate-chart" style="clear:left;">
+			<div>
+				Scheduling completion speed distribution per month
+				<span class='reset' style='display: none;'>
+					<span class='filter'></span>
+					<a href="javascript:resetChart('success_rate');">reset</a>
+				</span>
+			</div>
+		</div>
+
+
+					</div>
+				</div>
+			</div>
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h4 class="panel-title">
+						<a data-toggle="collapse" href="#collapseCretors">
+							Creators
+						</a>
+					</h4>
+				</div>
+				<div id="collapseCretors" class="panel-collapse collapse out">
+					<div class="panel-body">
+						<p>Creators are SwipeToMeet users who have created at least one scheduling.</p>
+
+						<p>
+							Creators:
+						</p>
+
+
+						<div id="creatorsource-chart">
+							<div>
+								Creator found us:
+								<span class='reset' style='display: none;'>
+									<span class='filter'></span>
+									<a href="javascript:resetChart('creatorsource')">reset</a>
+								</span>
+							</div>
+						</div>
+
+						<div id="countries-chart">
+							<div>
+								Top 10 countries based on creator IP:
+								<span class='reset' style='display: none;'>
+									<span class='filter'></span>
+									<a href="javascript:resetChart('countries')">reset</a>
+								</span>
+							</div>
+						</div>
+
+						<div id="realcohort-chart" style="clear:left;">
+							<div>
+								Percentage of users that create at least one scheduling after their first one in following weeks (X-axis). Users are grouped by the month of their first scheduling.
+								<span class='reset' style='display: none;'>
+									<span class='filter'></span>
+									<a href="javascript:resetChart('realcohort');">reset</a>
+								</span>
+							</div>
+						</div>
+
+					</div>
+				</div>
+			</div>
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h4 class="panel-title">
+						<a data-toggle="collapse" href="#collapseRuntime">
+							Runtime
+						</a>
+					</h4>
+				</div>
+				<div id="collapseRuntime" class="panel-collapse collapse out">
+					<div class="panel-body">
+
+
+						<div id="runtime-24h-chart">
+							<div>
+								Runtime on the first day
+								<span class='reset' style='display: none;'>
+									<span class='filter'></span>
+									<a href="javascript:resetChart('runtime-24h')">reset</a>
+								</span>
+							</div>
+						</div>
+
+						<div id="runtime-over24h-chart">
+							<div>
+								Runtime after first day
+								<span class='reset' style='display: none;'>
+									<span class='filter'></span>
+									<a href="javascript:resetChart('runtime-over24h')">reset</a>
+								</span>
+							</div>
+						</div>
+
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+	</div>
+
+
+	<label class="pull-right"><input type="checkbox" name="globak_regex" id="global_regex"> Search using regex</label>
+	<table id="old_schedulings" class="table"></table>
+
+</div>
+
+<script src="//code.jquery.com/jquery-1.10.2.min.js"></script>
+<script src="/_script/lib/bootstrap/bootstrap.min.js"></script>
+<script src="/admin/_script/common.js"></script>
+
+<script src="/_script/lib/momentjs/moment.min.js"></script>
+<script src="/_script/lib/moment-duration-format/moment-duration-format.js"></script>
+
+<script src="/_script/lib/phoneformat/phoneformat.js"></script>
+
+<script src="//cdn.datatables.net/1.10.1/js/jquery.dataTables.js"></script>
+<script src="//cdn.datatables.net/plug-ins/725b2a2115b/integration/bootstrap/3/dataTables.bootstrap.js"></script>
+<script src="//cdn.datatables.net/colvis/1.1.1/js/dataTables.colVis.min.js"></script>
+<script src="//cdn.datatables.net/tabletools/2.2.2/js/dataTables.tableTools.min.js"></script>
+
+
+<script type="text/javascript" src="/_script/lib/d3/d3_3_5_6.js"></script>
+<!-- <script type="text/javascript" src="/_script/lib/d3/jsonp.js"></script> -->
+<!-- <script type="text/javascript" src="/_script/lib/d3/d3.parsets.js"></script> -->
+<!-- <script type="text/javascript" src="/_script/lib/cal-heatmap/cal-heatmap.min.js"></script> -->
+<!-- <script type="text/javascript" src="/admin/_script/domain.js"></script> -->
+<script type="text/javascript" src="/_script/lib/crossfilter/crossfilter.js"></script>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/dc/2.0.0-beta.22/dc.min.js"></script>
+
+
+
+<script>
+/*jshint -W069 */
+var dataElement = '#old_schedulings';
+
+var scheduling_sql_url = getSQLUrl('sql','scheduling');
+
+var datatable;
+
+var maxtimetoschedule = -1;
+
+$(document).ready( function () {
+	var regexSearch = $('#global_regex').prop('checked');
+
+	$('#global_regex').on("change",function(){
+		regexSearch = $('#global_regex').prop('checked');
+		$(dataElement).DataTable().search($(dataElement).DataTable().search(),regexSearch,!regexSearch).draw();
+	});
+
+	function sortByCreated(a,b){
+		return a.created - b.created;
+	}
+
+	function prepareData(data){
+
+		// meeting_id
+		// scheduling_id
+		// creator_id
+
+		// creator_name
+		// creator_first_device_login
+		// creator_email_domain
+		// creator_email
+		// creator_cc
+		// creator_created
+		// creator_first_contact
+		// creator_first_login
+		// creator_tos_accepted
+		// creator_first_scheduling
+		// creator_first_participated
+		// creator_scheduling_count
+		// creator_participant_count
+		// creator_staff
+		// creator_account_type
+
+		// created
+		// participants
+		// duration
+		// completed
+		// cancelled
+		// failed
+		// started
+		// opened
+		// answered
+
+		// id
+		// creator
+		// created_formatted
+		// creator_first_login_formatted
+		// status
+		// complated_in {_, sort}
+		// scheduling_counter
+
+		// index
+		// date
+		// day
+		// duration_chart
+		// status_chart
+		// staff_chart
+		// runtime_24h_chart
+		// completed_in
+		// runtime_over24h_chart
+		// opened_chart
+		// answered_chart
+
+		function formatServerDate(date){
+			if(date*1!==0){
+				return moment(date*1000).format('YYYY-MM-DD HH:mm');
+			}
+			return '-';
+		}
+		function parseServerDate(date){
+			return new Date(date*1000);
+		}
+		data.sort(sortByCreated);
+		var creators = {};
+
+		var testi = 0;
+
+		data.forEach(function(d, i){
+
+			if(d.creator_first_contact*1 === 0){
+				testi++;
+			}
+
+			d.id = '<a href="scheduling/?meeting=' + d.meeting_id + '&scheduling=' + d.scheduling_id +
+							'">' + d.meeting_id + "/" + d.scheduling_id+ '</a>';
+
+			d.creator = '<a href="../users/user/?id='+d.creator_id+'">'+
+														d.creator_id+' '+d.creator_name+'</a>';
+
+			d.created_formatted = formatServerDate(d.created);
+
+			d.creator_first_login_formatted = formatServerDate(d.creator_first_login);
+
+			d.completed_in = {};
+			var completeTime = 0;
+			if(d.started*1 === 0){ //Not started
+				d.completed_in._ = "not started";
+				d.completed_in.sort = -15*60*60;
+			}else{ // Started
+				var prefix = "";
+				var suffix = "";
+				if(d.completed*1 > 0){ // Done
+					prefix = "= ";
+					completeTime = d.completed*1 - d.started*1;
+				}else if(d.cancelled*1 > 0){ // Cancelled
+					prefix = "= ";
+					completeTime = d.cancelled*1 - d.started*1;
+				}else if(d.failed*1 > 0){//Failed
+					prefix = "= ";
+					completeTime = d.failed*1 - d.started*1;
+				}else{ //Running
+					prefix = "> ";
+					completeTime = Math.floor(new Date()/1000 - d.started*1);
+				}
+				d.completed_in._ = prefix;
+				d.completed_in._ += moment.duration(completeTime, "seconds").format("d [days] h:mm:ss");
+				d.completed_in._ += suffix;
+				d.completed_in.sort = completeTime;
+			}
+			d.completed_in.sort += 1000000000;
+			d.completeTime = completeTime;
+
+
+			d.index = i;
+			d.date = parseServerDate(d.created);
+			d.day = d3.time.day(d.date);
+			d.month = d3.time.month(d.date);
+			d.monday = d3.time.monday(d.date);
+			d.duration_chart = +d.duration/60;
+			d.status_chart = statuses[d.status];
+			d.staff_chart = (+d.creator_staff == 1)?"Staff":"Customer";
+
+			// d.success_24h = false;
+
+			// var completeLimit;
+			// completeLimit = 60*60*26;
+			// // completeLimit = 60*60*24;
+			// // completeLimit = 60*60;
+			// // completeLimit = 60*20;
+			// if(d.completeTime <= completeLimit && d.completed*1 > 0){
+			// 	d.success_24h = true;
+			// }
+
+			d.runtime_24h_chart = Math.floor((d.completed_in.sort - 1000000000)/(1))*(1);
+			d.runtime_over24h_chart = null;
+			if(d.runtime_24h_chart > 60*60*24){
+				d.runtime_over24h_chart = d.runtime_24h_chart;
+				d.runtime_24h_chart = -999; // negative values are ignored
+			}
+
+			d.opened_chart = Math.round((100*d.opened / (d.participants - 1)));
+
+			d.answered_chart = Math.round(100*d.answered / (+d.opened));
+
+			d.cfc = d.creator_first_login;
+
+			if(d.creator_first_login*1 !== 0){
+				d.timetoschedule = d.created*1 - d.creator_first_login*1;
+				maxtimetoschedule = Math.max(maxtimetoschedule,d.timetoschedule*1);
+			}else{
+				d.timetoschedule = d.created*1 - d.creator_first_contact*1;
+				maxtimetoschedule = Math.max(maxtimetoschedule,d.timetoschedule*1);
+
+			}
+			if(d.timetoschedule<0){
+				d.timetoschedule = 0;
+			}
+
+
+
+			if(d.creator_first_login*1===0 || d.creator_first_contact*1 < d.creator_first_login*1){
+				d.creator_source = "Invited";
+			}else if(d.creator_first_login*1!==0){
+				d.creator_source = "Appstore";
+			}else{
+				d.creator_source = "Unknown";
+			}
+
+			if(d.creator_cc){
+				d.cc_normalized = d.creator_cc.toLowerCase();
+			}else{
+				d.cc_normalized = "?";
+			}
+
+			if(!creators[d.creator_id]){
+				creators[d.creator_id] = {
+					schedulings:0,
+					first_scheduling:d
+				};
+			}
+			creators[d.creator_id].schedulings++;
+			d.scheduling_counter = creators[d.creator_id].schedulings;
+			d.first_scheduling = creators[d.creator_id].first_scheduling;
+			d.daysSinceFirst = moment(d.created*1000).diff(moment(d.first_scheduling.created*1000),'days');
+			d.weeksSinceFirst = moment(d.created*1000).diff(moment(d.first_scheduling.created*1000),'weeks');
+			d.series = moment(d.first_scheduling.created*1000).startOf('month').unix();
+			creators[d.creator_id].latest_scheduling = d;
+		});
+
+
+		data.forEach(function(d, i){
+			if(creators[d.creator_id].latest_scheduling.index == d.index){
+				d.is_latest_scheduling = true;
+			}
+		});
+
+		window.setTimeout(function(){visualise(data);},100);
+		return data;
+	}
+
+	datatable = $(dataElement).DataTable({
+			"order":[0,'asc'],
+			"lengthMenu": [[10, 25, 50, 100, 250, 500, 1000, -1], [10, 25, 50, 100, 250, 500, 1000, "All"]],
+			"dom": 'T<"clear">lCfrtip',
+			"sAjaxDataProp":"",
+			"deferRender": true,
+			"stateSave": true,
+			// "bAutoWidth": false,
+			"ajax": function(data, callback, settings){
+				$.ajax(
+					scheduling_sql_url,
+					{
+						"dataType": "jsonp",
+						"success": function(json){
+							regexSearch = $('#global_regex').prop('checked');
+							if($(dataElement).DataTable().settings()[0].oLoadedState){
+								regexSearch = $(dataElement).DataTable().settings()[0].oLoadedState.search.regex;
+							}
+							$('#global_regex').prop('checked', regexSearch );
+							callback(prepareData(json));
+						}
+					}
+				);
+			},
+
+
+			columnDefs: [
+				{ mData: "id",         title: '#',         targets: 0 },
+				{ mData: "creator",         title: 'Admin',         targets: 1 },
+				{ mData: "creator_first_login_formatted",         title: 'Joined',         targets: 2 },
+				{ mData: "created_formatted",            title: 'Created',            targets: 3 },
+				{ mData: "status",            title: 'Status',            targets: 4 },
+				{ mData: "duration",           title: 'duration',           targets: 5 },
+				{ mData: "participants",       title: 'Participants',       targets: 6 },
+				{ mData: "opened",           title: 'opened',           targets: 7 },
+				{ mData: "answered",           title: 'answered',           targets: 8 },
+				{ mData: 'completed_in',        title: 'Run time',     targets:[9], render:{ _:'_', sort:'sort'}},
+				{ mData: 'scheduling_counter',        title: 'Count',     targets:10 },
+				{ visible: false,   targets: [] },
+				{ orderable: false, targets: [] },
+			],
+
+			"tableTools":{
+				"sSwfPath": "/_script/lib/datatables.net/copy_csv_xls.swf",
+				"aButtons": [
+					{
+						"sExtends": "copy",
+						"sButtonText": "Copy",
+						"oSelectorOpts":{
+							"filter": 'applied'
+						}
+					},
+					{
+						"sExtends": "xls",
+						"sButtonText": "xls",
+						"oSelectorOpts":{
+							"filter": 'applied'
+						}
+					}
+				],
+			}
+
+		});
+
+});
+
+var charts = {};
+
+function resetChart(chart){
+	charts[chart].filterAll();
+	dc.redrawAll();
+}
+
+
+var statuses = {
+	created: "1.Created",
+	started: "2.Started",
+	cancelled: "3.Cancelled",
+	completed: "4.Completed",
+	failed: "5.Failed",
+};
+
+function visualise(data){
+	var ndx = crossfilter(data);
+	var all = ndx.groupAll();
+
+	var statuses_length = 0;
+
+	var minDur = Number.POSITIVE_INFINITY;
+	var maxDur = Number.NEGATIVE_INFINITY;
+	var maxRun = Number.NEGATIVE_INFINITY;
+	var durs =
+
+	data.forEach(function(d, i){
+		minDur = Math.min(minDur, d.duration_chart);
+		maxDur = Math.max(maxDur, d.duration_chart);
+
+		maxRun = Math.max(maxRun, d.runtime_over24h_chart);
+	});
+
+
+
+	function remove_empty_bins(source_group) {
+		return {
+			all:function () {
+				return source_group.all().filter(function (d) {
+					return d.value !== 0;
+				});
+			}
+		};
+	}
+	function remove_negatives(source_group) {
+		return {
+			all:function () {
+				return source_group.all().filter(function (d) {
+					return (d.key >= 0);
+				});
+			}
+		};
+	}
+
+
+	charts["duration"] = dc.barChart('#duration-chart');
+	charts["participants"] = dc.barChart('#participants-chart');
+	charts["user"] = dc.pieChart('#user-chart');
+	// charts["email"] = dc.pieChart('#email-chart');
+	charts["status"] = dc.rowChart('#status-chart');
+	charts["opened"] = dc.barChart('#opened-chart');
+	charts["answered"] = dc.barChart('#answered-chart');
+	charts["runtime-24h"] = dc.barChart('#runtime-24h-chart');
+	charts["runtime-over24h"] = dc.barChart('#runtime-over24h-chart');
+	charts["quarter"] = dc.rowChart('#quarter-chart');
+	charts["creatorsource"] = dc.pieChart('#creatorsource-chart');
+	charts["countries"] = dc.rowChart('#countries-chart');
+
+	// charts["timetoschedule"] = dc.barChart('#timetoschedule-chart');
+	charts["status_time"] = dc.lineChart('#status_time-chart');
+	charts["success_rate"] = dc.lineChart('#success_rate-chart');
+	charts["realcohort"] = dc.seriesChart('#realcohort-chart');
+	charts["cohort"] = dc.lineChart('#cohort-chart');
+	charts["navigate"] = dc.barChart('#navigate-chart');
+
+
+	//---
+
+	var quarterDim = ndx.dimension(function(d) {
+		var year = d.date.getYear()+1900;
+		var month = d.date.getMonth();
+		if (month <= 2) {
+			return year+' Q1';
+		} else if (month > 2 && month <= 5) {
+			return year+' Q2';
+		} else if (month > 5 && month <= 8) {
+			return year+' Q3';
+		} else {
+			return year+' Q4';
+		}
+		return d.quarter;
+	});
+	var quarterGroup=quarterDim.group();
+
+	charts["quarter"]
+		.width(250)
+		.height(200)
+		.group(quarterGroup)
+		.dimension(quarterDim)
+		.margins({top: 5, left: 10, right: 10, bottom: 20})
+		.on("filtered", RefreshTable);
+
+	//---
+
+	var durationDim = ndx.dimension(function(d) {return d.duration_chart;});
+	var durationGroup = durationDim.group();
+
+	charts["duration"]
+		.width(450)
+		.height(200)
+		.margins({top: 20, left: 30, right: 10, bottom: 20})
+		.group(durationGroup)
+		.dimension(durationDim)
+		.xUnits(dc.units.ordinal)
+		.x(d3.scale.ordinal())
+		.elasticY(true)
+		.on("filtered", RefreshTable);
+
+	//---
+
+	var participantsDim = ndx.dimension(function(d) {return d.participants*1;});
+	var participantsGroup = participantsDim.group();
+
+	charts["participants"]
+		.width(450)
+		.height(200)
+		.margins({top: 20, left: 30, right: 10, bottom: 20})
+		.group(participantsGroup)
+		.dimension(participantsDim)
+		.xUnits(dc.units.ordinal)
+		.x(d3.scale.ordinal())
+		.elasticY(true)
+		.on("filtered", RefreshTable);
+
+	//---
+
+	var userDim = ndx.dimension(function(d) {return d.staff_chart;});
+	var userGroup=userDim.group();
+
+	charts["user"]
+		.width(200)
+		.height(200)
+		.group(userGroup)
+		.dimension(userDim)
+		.innerRadius(40)
+		.on("filtered", RefreshTable);
+
+	//---
+
+	var emailDim = ndx.dimension(function(d) {return d.creator_email;});
+	window.filterEmailIn = function(reverse){
+		reverse = reverse?true:false;
+		var emails = document.getElementById("email_filters").value;
+		emailDim.filterAll();
+		emailDim.filter(function(d){
+			if(emails === ""){
+				return true;
+			}
+			if(emails.indexOf(d)!=-1 && d!==""){
+				console.log("filter:",emails,d);
+				return !reverse;
+			}
+
+			return reverse;
+		});
+		dc.redrawAll();
+		RefreshTable();
+	};
+
+	//---
+
+	var statusDim = ndx.dimension(function(d) {return d.status_chart;});
+	var statusGroup=statusDim.group();
+
+	charts["status"]
+		.width(200)
+		.height(200)
+		.margins({top: 20, left: 10, right: 10, bottom: 20})
+		.group(statusGroup)
+		.dimension(statusDim)
+		.ordinalColors(['#3182bd', '#6baed6', '#F9EF1F', '#9EFF99', '#FF6972', '#9ecae1', '#c6dbef', '#dadaeb'])
+		.label(function (d) {
+			return d.key.split('.')[1];
+		})
+		.title(function (d) {
+			return d.value;
+		})
+		.elasticX(true)
+		.on("filtered", RefreshTable)
+		.xAxis().ticks(4);
+
+	//---
+
+	var openedDim = ndx.dimension(function(d) {return d.opened_chart;});
+	var openedGroup=openedDim.group();
+
+	charts["opened"]
+		.width(450)
+		.height(200)
+		.margins({top: 20, left: 30, right: 10, bottom: 20})
+		.group(openedGroup)
+		.dimension(openedDim)
+		.xUnits(dc.units.ordinal)
+		.x(d3.scale.ordinal())
+		.elasticY(true)
+		.on("filtered", RefreshTable);
+
+	//---
+
+	var answeredDim = ndx.dimension(function(d) {return d.answered_chart;});
+	var answeredGroup=answeredDim.group();
+
+	charts["answered"]
+		.width(450)
+		.height(200)
+		.margins({top: 20, left: 30, right: 10, bottom: 20})
+		.group(answeredGroup)
+		.dimension(answeredDim)
+		// .xUnits(dc.units.ordinal)
+		// .x(d3.scale.ordinal())
+		.x(d3.scale.linear().domain([-1,101]))
+		.xUnits(function(){return 40;})
+		.centerBar(true)
+		.elasticY(true)
+		.on("filtered", RefreshTable);
+
+	//---
+
+	function creatorReduceAdd(d,v){
+		if(!d.creators[v.creator_id]){
+			d.creators[v.creator_id] = 0;
+		}
+		if(d.creators[v.creator_id]===0){
+			d.total++;
+		}
+		d.creators[v.creator_id]++;
+		return d;
+	}
+	function creatorReduceRemove(d,v){
+		d.creators[v.creator_id]--;
+		if(d.creators[v.creator_id] <= 0){
+			d.creators[v.creator_id]=0;
+			d.total--;
+		}
+		return d;
+	}
+	function creatorReduceInit(){
+		return {total:0,creators:{}};
+	}
+
+	var creatorsourceDim = ndx.dimension(function(d) {return d.creator_source;});
+	var creatorsourceGroup=creatorsourceDim.group().reduce(
+			creatorReduceAdd,
+			creatorReduceRemove,
+			creatorReduceInit
+		);
+
+	charts["creatorsource"]
+		.width(200)
+		.height(200)
+		.dimension(creatorsourceDim)
+		.group(creatorsourceGroup)
+		.valueAccessor(function(d){return d.value.total;})
+		.innerRadius(40)
+		.colors(d3.scale.category10())
+		.on("filtered", RefreshTable);
+
+//---
+
+	var countriesDim = ndx.dimension(function(d) {return d.cc_normalized;});
+	// var countriesGroup = countriesDim.group().reduceCount();
+	var countriesGroup = countriesDim.group().reduce(
+			creatorReduceAdd,
+			creatorReduceRemove,
+			creatorReduceInit
+		).order(function(p){return p.total;});
+
+
+	charts["countries"]
+		.width(300)
+		.height(200)
+		.margins({top: 5, left: 10, right: 10, bottom: 20})
+		.dimension(countriesDim)
+		.group(countriesGroup)
+		.valueAccessor(function(d){return d.value.total;})
+		.gap(1)
+		.label(function (d) { return (d.key=="?")?"Unknown":countryCodeToName(d.key.toLowerCase()); })
+		.title(function (d) { return d.value.total; })
+		// .x(d3.scale.linear().domain([0, 0.25]))
+		.on("filtered", RefreshTable);
+		charts["countries"].data(function (group) {
+			return group.top(10);
+		});
+
+	//---
+
+	var dates = {};
+	function getRange(year,month){
+		if(!dates[year+"-"+month]){
+			var startDate = moment([year, month - 1]);
+			var endDate = moment(startDate).endOf('month');
+			dates[year+"-"+month] = [startDate,endDate];
+		}
+		return dates[year+"-"+month];
+	}
+
+	function getMonthVal(year,month,v){
+		var range = getRange(year,month);
+		var date = v.cfc*1000;
+		if(range[0] <= date && date <= range[1]){
+			return 1;
+		}
+		return 0;
+	}
+	function noZero(d){
+		return d.value!==0;
+	}
+
+	var schedulingsDim = ndx.dimension(function(d){return d.day;});
+
+	var schedulingsGroupTest = schedulingsDim.group().reduce(
+			function(d,v){
+				var timestamp = moment(v.cfc * 1000);
+				var year = timestamp.get("year");
+				var month =  timestamp.get("month")+1;
+				if(!d.count[year]){
+					d.count[year] = {};
+				}
+				if(!d.count[year][month]){
+					d.count[year][month] = 0;
+				}
+				d.count[year][month]++;
+				return d;
+			},
+			function(d,v){
+				var timestamp = moment(v.cfc * 1000);
+				var year = timestamp.get("year");
+				var month =  timestamp.get("month")+1;
+				if(!d.count[year]){
+					d.count[year] = {};
+				}
+				if(!d.count[year][month]){
+					d.count[year][month] = 0;
+				}
+				d.count[year][month]--;
+				return d;
+			},
+			function(){return {total:0,count:{}};}
+		);
+	var minDate = new Date();
+	var maxDate = new Date();
+	minDate.setTime( schedulingsDim.bottom(1)[0].date.getTime() - 1 * 86400000 );
+	maxDate.setTime( schedulingsDim.top(1)[0].date.getTime() + 1 * 86400000 );
+
+
+
+	var status_timeDim = ndx.dimension(function(d){return d.monday;});
+	var status_timeGroup = status_timeDim.group().reduce(
+			function(d,v){
+				d.total++;
+				d[v.status]++;
+				return d;
+			},
+			function(d,v){
+				d.total--;
+				d[v.status]--;
+				return d;
+			},
+			function(){
+				return {total:0,created:0,started:0,cancelled:0,completed:0,failed:0};
+			}
+		);
+
+	charts["status_time"]
+		.group(status_timeGroup, "Created", function(p){if(!p.value.total){return 0;}return 100*p.value.created/p.value.total;})
+		.stack(status_timeGroup, "Started", function(p){if(!p.value.total){return 0;}return 100*p.value.started/p.value.total;})
+		.stack(status_timeGroup, "Cancelled", function(p){if(!p.value.total){return 0;}return 100*p.value.cancelled/p.value.total;})
+		.stack(status_timeGroup, "Completed", function(p){if(!p.value.total){return 0;}return 100*p.value.completed/p.value.total;})
+		.stack(status_timeGroup, "Failed", function(p){if(!p.value.total){return 0;}return 100*p.value.failed/p.value.total;})
+		.renderArea(true)
+		.width(940)
+		.height(200)
+		.margins({top: 30, right: 50, bottom: 25, left: 40})
+		.dimension(status_timeDim)
+		.x(d3.time.scale().domain([minDate, maxDate]))
+		.round(d3.time.monday.round)
+		.xUnits(d3.time.mondays)
+		.elasticY(true)
+		// .elasticX(true)
+		.renderHorizontalGridLines(true)
+		.brushOn(false)
+		// .interpolate('step-after')
+		// .colors(d3.scale.category20())
+		.ordinalColors(['#3182bd', '#6baed6', '#F9EF1F', '#9EFF99', '#FF6972', '#9ecae1', '#c6dbef', '#dadaeb'])
+		.legend(dc.legend().x(880).y(10).itemHeight(13).gap(5))
+		.title(function (d) {
+			if(d.total<=0){
+				return "No data for"+
+				"week "+moment(d.key).format("W")+" starting on "+moment(d.key).format("DD.MM.YYYY")+"\n";
+			}
+			var r = "";
+			r += "week "+moment(d.key).format("W")+" starting on "+moment(d.key).format("DD.MM.YYYY")+"\n";
+			r += "Created: "+d.value.created+" ("+(Math.round(10*100*d.value.created/d.value.total)/10)+"%)\n";
+			r += "Started: "+d.value.started+" ("+(Math.round(10*100*d.value.started/d.value.total)/10)+"%)\n";
+			r += "Cancelled: "+d.value.cancelled+" ("+(Math.round(10*100*d.value.cancelled/d.value.total)/10)+"%)\n";
+			r += "Completed: "+d.value.completed+" ("+(Math.round(10*100*d.value.completed/d.value.total)/10)+"%)\n";
+			r += "Failed: "+d.value.failed+" ("+(Math.round(10*100*d.value.failed/d.value.total)/10)+"%)\n";
+			r += "\nTotal: "+d.value.total;
+			return r;
+		})
+		.on("filtered", RefreshTable);
+
+
+	//---
+	var summing;
+	summing = {
+		dim:'month',
+		round:d3.time.month.round,
+		xUnits:d3.time.months,
+		format:"MMMM"
+	};
+	// summing = {
+	// 	dim:'monday',
+	// 	round:d3.time.monday.round,
+	// 	xUnits:d3.time.mondays,
+	// 	format:"W"
+	// };
+	// summing = {
+	// 	dim:'day',
+	// 	round:d3.time.day.round,
+	// 	xUnits:d3.time.days,
+	// 	format:"dddd"
+	// };
+
+	function modifyD(d,v,direction){
+		d.total += direction;
+		if(v.completed*1>0){
+			if(v.completeTime <= 60*20){
+				d.in20min += direction;
+			}else if(v.completeTime <= 60*60){
+				d.in1hour += direction;
+			}else if(v.completeTime <= 60*60*8){
+				d.in8hours += direction;
+			}else if(v.completeTime <= 60*60*24){
+				d.in24hours += direction;
+			}else{
+				d.morethan24h += direction;
+			}
+		}else{
+			d.others += direction;
+		}
+		return d;
+	}
+
+	var success_rateDim = ndx.dimension(function(d){return d[summing.dim];});
+	var success_rateGroup = success_rateDim.group().reduce(
+			function(d,v){
+				return modifyD(d,v,1);
+			},
+			function(d,v){
+				return modifyD(d,v,-1);
+			},
+			function(){
+				return {
+					total:0,
+					in20min:0,
+					in1hour:0,
+					in8hours:0,
+					in24hours:0,
+					morethan24h:0,
+					others:0
+				};
+			}
+		);
+
+	charts["success_rate"]
+		.group(success_rateGroup, "≤ 20m",
+			function(p){if(!p.value.total){return 0;}return 100*p.value.in20min/p.value.total;})
+		.stack(success_rateGroup, "≤ 1h",
+			function(p){if(!p.value.total){return 0;}return 100*p.value.in1hour/p.value.total;})
+		.stack(success_rateGroup, "≤ 8h",
+			function(p){if(!p.value.total){return 0;}return 100*p.value.in8hours/p.value.total;})
+		.stack(success_rateGroup, "≤ 24h",
+			function(p){if(!p.value.total){return 0;}return 100*p.value.in24hours/p.value.total;})
+		.stack(success_rateGroup, "> 24h",
+			function(p){if(!p.value.total){return 0;}return 100*p.value.morethan24h/p.value.total;})
+		.stack(success_rateGroup, "Others",
+			function(p){if(!p.value.total){return 0;}return 100*p.value.others/p.value.total;})
+		.renderArea(true)
+		.width(900)
+		.height(200)
+		.margins({top: 30, right: 50, bottom: 25, left: 40})
+		.dimension(success_rateDim)
+		.x(d3.time.scale().domain([minDate, maxDate]))
+		.round(summing.round)
+		.xUnits(summing.xUnits)
+		.elasticY(true)
+		// .elasticX(true)
+		.renderHorizontalGridLines(true)
+		.brushOn(false)
+		// .interpolate('step-after')
+		// .colors(d3.scale.category20())
+		.ordinalColors(['#0dff00','#54ff4b','#85ff7f','#adffa9','#d8ffd6', '#FF6972'])
+		.legend(dc.legend().x(820).y(10).itemHeight(13).gap(5))
+		.title(function (d) {
+			if(d.total<=0){
+				return "No data for"+
+				moment(d.key).format(summing.format)+"\n";
+			}
+			var lt20min = d.value.in20min;
+			var lt1hour = lt20min + d.value.in1hour;
+			var lt8hours = lt1hour + d.value.in8hours;
+			var lt24hours = lt8hours + d.value.in24hours;
+			var lt2days = lt24hours + d.value.morethan24h;
+			var r = "";
+			r += moment(d.key).format(summing.format)+"\n";
+			r += "≤ 20m: "+lt20min+" ("+(Math.round(10*100*lt20min/d.value.total)/10)+"%)\n";
+			r += "≤ 1h: "+lt1hour+" ("+(Math.round(10*100*lt1hour/d.value.total)/10)+"%)\n";
+			r += "≤ 8h: "+lt8hours+" ("+(Math.round(10*100*lt8hours/d.value.total)/10)+"%)\n";
+			r += "≤ 24h: "+lt24hours+" ("+(Math.round(10*100*lt24hours/d.value.total)/10)+"%)\n";
+			r += "> 24h: "+lt2days+" ("+(Math.round(10*100*lt2days/d.value.total)/10)+"%)\n";
+			r += "Others: "+(d.value.others)+" ("+(Math.round(10*100*d.value.others/d.value.total)/10)+"%)\n";
+			r += "\nTotal: "+d.value.total;
+			return r;
+		})
+		.on("filtered", RefreshTable);
+
+	//---
+
+
+	var realcohortDim = ndx.dimension(function(d){return [d.weeksSinceFirst, d.series];});
+
+	var globalAuthors = [];
+
+	function groupify(d,v,direction){
+		d.total += direction;
+
+		//Init with current data if needed.
+		if(!d.authors[v.creator_id]){
+			d.authors[v.creator_id] = 0;
+		}
+
+		//If author count would become 1 or 0, change cohortTime count accordingly
+		if(d.authors[v.creator_id] === 0 && direction == 1){
+			d.count++;
+		}else if(d.authors[v.creator_id] == 1 && direction == -1){
+			d.count--;
+		}
+
+		if(v.weeksSinceFirst === 0){
+			globalAuthors[v.series] = d.count;
+		}
+
+		//Update author count
+		d.authors[v.creator_id] += direction;
+		return d;
+	}
+	var realcohortGroup = realcohortDim.group().reduce(
+			function(d,v){return groupify(d,v,1);},
+			function(d,v){return groupify(d,v,-1);},
+			function(){
+				return {
+					total:0,
+					count: 0,
+					authorTotal: 0,
+					authors: {}
+				};
+			}
+		);
+
+	charts["realcohort"]
+		.group(realcohortGroup)
+		.seriesAccessor(function(d) {
+			return moment.unix(d.key[1]).format("YYYY MM")+" ("+globalAuthors[d.key[1]]+")";})
+		.keyAccessor(function(d) {
+			return +d.key[0];}
+		)
+		.valueAccessor(function(d,v) {
+			if(Number.isNaN(100*d.value.count / globalAuthors[d.key[1]])){
+				return 0;
+			}
+			return 100*d.value.count / globalAuthors[d.key[1]];
+		})
+		// .renderArea(true)
+		.width(900)
+		.height(500)
+		.margins({top: 30, right: 50, bottom: 25, left: 40})
+		.dimension(realcohortDim)
+		// .x(d3.time.scale().domain([minDate, maxDate]))
+		// .round(summing.round)
+		// .xUnits(summing.xUnits)
+		.x(d3.scale.linear().domain([-1,52]))
+		.elasticY(true)
+		// .elasticX(true)
+		.renderHorizontalGridLines(true)
+		.brushOn(false)
+		// .interpolate('step-after')
+		.colors(d3.scale.category20())
+		// .ordinalColors(['#0dff00','#54ff4b','#85ff7f','#adffa9','#d8ffd6', '#FF6972'])
+		.legend(dc.legend().x(810).y(10).itemHeight(13).gap(5))
+		// .title(function (d) {
+		// 	if(d.total<=0){
+		// 		return "No data for"+
+		// 		moment(d.key).format(summing.format)+"\n";
+		// 	}
+		// 	var lt20min = d.value.in20min;
+		// 	var lt1hour = lt20min + d.value.in1hour;
+		// 	var lt8hours = lt1hour + d.value.in8hours;
+		// 	var lt24hours = lt8hours + d.value.in24hours;
+		// 	var lt2days = lt24hours + d.value.morethan24h;
+		// 	var r = "";
+		// 	r += moment(d.key).format(summing.format)+"\n";
+		// 	r += "≤ 20m: "+lt20min+" ("+(Math.round(10*100*lt20min/d.value.total)/10)+"%)\n";
+		// 	r += "≤ 1h: "+lt1hour+" ("+(Math.round(10*100*lt1hour/d.value.total)/10)+"%)\n";
+		// 	r += "≤ 8h: "+lt8hours+" ("+(Math.round(10*100*lt8hours/d.value.total)/10)+"%)\n";
+		// 	r += "≤ 24h: "+lt24hours+" ("+(Math.round(10*100*lt24hours/d.value.total)/10)+"%)\n";
+		// 	r += "> 24h: "+lt2days+" ("+(Math.round(10*100*lt2days/d.value.total)/10)+"%)\n";
+		// 	r += "Others: "+(d.value.others)+" ("+(Math.round(10*100*d.value.others/d.value.total)/10)+"%)\n";
+		// 	r += "\nTotal: "+d.value.total;
+		// 	return r;
+		// })
+		.on("filtered", RefreshTable);
+
+		//---
+
+
+	charts["cohort"]
+		.renderArea(true)
+		.width(940)
+		.height(400)
+		.margins({top: 30, right: 50, bottom: 25, left: 40})
+		.dimension(schedulingsDim)
+		.rangeChart(charts["navigate"])
+		.x(d3.time.scale().domain([minDate, maxDate]))
+		.round(d3.time.day.round)
+		.xUnits(d3.time.days)
+		.elasticY(true)
+		// .elasticX(true)
+		.renderHorizontalGridLines(true)
+		.brushOn(false)
+		// .interpolate('step-after')
+		.colors(d3.scale.category20())
+		.legend(dc.legend().x(880).y(10).itemHeight(13).gap(5))
+		.on("filtered", RefreshTable);
+
+	var nowYear = moment().year();
+	var nowMonth = moment().month()+1;
+	var srcYear = 2014;
+	var srcMonth = 11;
+	var steps = (nowYear-srcYear)*12+(nowMonth-srcMonth);
+	function createAccessor(yearX,monthX){
+		return function(p){
+			if(p.value.count[yearX] && p.value.count[yearX][monthX]){
+				return p.value.count[yearX][monthX];
+			}
+			return 0;
+		};
+	}
+	for(var i=0;i<=steps;i++){
+		var time = moment().add("month",-i);
+		var targetYear = time.year();
+		var targetMonth = time.month()+1;
+		var label = targetMonth+"/"+targetYear;
+		if(i===0){
+			charts["cohort"].group(schedulingsGroupTest,label,createAccessor(targetYear,targetMonth));
+		}else{
+			charts["cohort"].stack(schedulingsGroupTest,label,createAccessor(targetYear,targetMonth));
+		}
+	}
+
+
+	var navigateDaysGroup = schedulingsDim.group();
+
+
+	charts["navigate"]
+		.width(940)
+		.height(40)
+		.margins({top: 0, right: 50, bottom: 20, left: 40})
+		.dimension(schedulingsDim)
+		.group(navigateDaysGroup)
+		.centerBar(true)
+		// .elasticY(true)
+		.gap(1)
+		.x(d3.time.scale().domain([minDate, maxDate]))
+		.round(d3.time.day.round)
+		.alwaysUseRounding(true)
+		.xUnits(d3.time.day)
+		.on("filtered", function (chart) {
+			dc.events.trigger(function () {
+				charts["status_time"].focus(chart.filter());
+				charts["success_rate"].focus(chart.filter());
+				charts["cohort"].focus(chart.filter());
+				dc.redrawAll(chart.chartGroup());
+				charts["status_time"].filterAll();
+				charts["success_rate"].filterAll();
+				// dc.redrawAll();
+			});
+		});
+
+	//---
+
+	function momentPrinter(s){
+
+		if(s<60){
+			return s+"s";
+		}
+		if(s<60*60){
+			return '0:'+moment.duration(s, "seconds").format("d[d] h:mm:ss");
+		}
+		return moment.duration(s, "seconds").format("d[d] h:mm:ss");
+	}
+
+
+
+	var runtime_24hDim = ndx.dimension(function(d) {return d.runtime_24h_chart/(60*60);});
+	var runtime_24hGroup=runtime_24hDim.group(
+		function(d){
+			return (Math.ceil(d/(10/60))*10/60 - 5/60);
+		}
+	);
+
+
+	function hourPrinter(s){
+		return s+"h";
+	}
+
+	charts["runtime-24h"]
+		.width(910)
+		.height(200)
+		.margins({top: 20, left: 30, right: 10, bottom: 20})
+		.group(remove_empty_bins(remove_negatives(runtime_24hGroup)))
+		.dimension(runtime_24hDim)
+		.centerBar(true)
+		.gap(33)
+
+		.x(d3.scale.linear().domain([0,24]))
+		// .elasticX(true)
+		.elasticY(true)
+		.filterPrinter(function (filters) {
+			// console.log(filters);
+			var filter = filters[0], s = '';
+			s += momentPrinter(filter[0]*60*60) + ' -> ' + momentPrinter(filter[1]*60*60) + '';
+			return s;
+		})
+		.on("filtered", RefreshTable)
+		.xAxis().tickFormat(hourPrinter);
+
+
+
+
+
+	var runtime_over24h_Dim = ndx.dimension(function(d) {
+		return Math.round(d.runtime_over24h_chart/(24*60*60));});
+	var runtime_over24h_Group=runtime_over24h_Dim.group()
+	// .group(
+	// 	function(d){
+	// 		if(d<1){
+	// 			return 0;
+	// 		}
+	// 		return Math.round(d);
+	// 	}
+	// );
+	.reduceSum(function(d,v){
+		if(d.runtime_over24h_chart/(24*60*60)<1){
+			return 0;
+		}
+		return 1;
+	});
+
+	charts["runtime-over24h"]
+		.width(910)
+		.height(200)
+		.margins({top: 20, left: 30, right: 10, bottom: 20})
+		.group(remove_empty_bins(remove_negatives(runtime_over24h_Group)))
+		.dimension(runtime_over24h_Dim)
+		.gap(1)
+
+		// .xUnits(dc.units.ordinal)
+		// .x(d3.scale.ordinal())
+		.x(d3.scale.linear().domain([1,maxRun/(24*60*60)]))
+		.elasticX(true)
+		.elasticY(true)
+		.filterPrinter(function (filters) {
+			var filter = filters[0], s = '';
+			s += momentPrinter(filter[0]*24*60*60) + ' -> ' + momentPrinter(filter[1]*24*60*60) + '';
+			return s;
+		})
+		.on("filtered", RefreshTable)
+		.xAxis().tickFormat(function(d){
+			if(d%1 === 0){
+				return d+"d";
+			}
+			return null;
+		});
+
+	//---
+
+
+
+
+
+
+
+	// var timetoscheduleDim = ndx.dimension(function(d){
+	// 	// if(d.is_latest_scheduling && d.creator_staff*1==0){
+	// 		return Math.floor(d.timetoschedule/(4*7*24*60*60));
+	// 	// }
+	// 	// return -1;
+	// });
+	// timetoscheduleDim.filter([0,Infinity]);
+	// console.log(timetoscheduleDim.groupAll().value());
+	// var timetoscheduleGroup = timetoscheduleDim.group()
+	// .reduceSum(
+	// 	function(d){
+	// 		if(d.is_latest_scheduling){
+	// 			return 1;
+	// 		}
+	// 		return 0;
+	// 	})
+	// 	;
+
+	// charts["timetoschedule"]
+	// 	.width(940)
+	// 	.height(200)
+	// 	.margins({top: 30, right: 50, bottom: 25, left: 40})
+	// 	.dimension(timetoscheduleDim)
+	// 	.group(timetoscheduleGroup)
+	// 	.x(d3.time.scale().domain([0,maxtimetoschedule/(4*7*24*60*60)+1]))
+	// 	.elasticY(true)
+	// 	.renderHorizontalGridLines(true)
+	// 	.brushOn(false)
+	// 	.on("filtered", RefreshTable);
+
+
+
+
+
+
+
+
+
+
+	dc.dataCount('.dc-data-count')
+		.dimension(ndx)
+		.group(all)
+		.html({
+			some:'<strong>%filter-count</strong> selected out of <strong>%total-count</strong> schedulings' +
+			' | <a href=\'javascript:dc.filterAll(); dc.renderAll();\'\'>Reset All</a>',
+			all:'Listing all <strong>%total-count</strong> schedulings as captured until last night.'
+		});
+
+	var idDim = ndx.dimension(function(d) {return d.id;});
+	var idGroup=idDim.group();
+
+	function RefreshTable() {
+		dc.events.trigger(function () {
+			alldata = idDim.top(Infinity);
+			datatable.clear();
+			datatable.rows.add(alldata);
+			datatable.draw();
+		});
+	}
+
+
+	dc.renderAll();
+
+}
+</script>
+</body>
+</html>

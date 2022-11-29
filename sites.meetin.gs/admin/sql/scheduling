@@ -1,0 +1,45 @@
+SELECT
+  meeting.event_id AS meeting_id,
+  scheduling.id AS scheduling_id,
+  creator.user_id AS creator_id,
+  IF(creator.name IS NOT NULL, creator.name, CONCAT(creator.first_name, ' ', creator.last_name)) AS creator_name,
+  creator.extra_first_swipetomeet_device_login_epoch AS creator_first_device_login,
+  creator.extra_email_domain AS creator_email_domain,
+  creator.email AS creator_email,
+  creator.note_meetings_presumed_country_code AS creator_cc,
+  creator.note_creation_time AS creator_created,
+  creator.extra_first_swipetomeet_contact_epoch AS creator_first_contact,
+  creator.extra_first_swipetomeet_device_login_epoch AS creator_first_login,
+  creator.note_tos_accepted AS creator_tos_accepted,
+  creator.extra_first_swipetomeet_scheduling_created_epoch AS creator_first_scheduling,
+  creator.extra_first_swipetomeet_scheduling_participated_epoch AS creator_first_participated,
+  creator.extra_swipetomeet_scheduling_created_count AS creator_scheduling_count,
+  creator.extra_swipetomeet_scheduling_participated_count AS creator_participant_count,
+  CASE WHEN LOWER(creator.extra_email_domain) = 'meetin.gs' OR LOWER(creator.extra_email_domain) = 'dicole.com' THEN 1 ELSE 0 END AS creator_staff,
+  CASE creator.extra_subscription_type
+    WHEN ''          THEN 0
+    WHEN 'trial'     THEN 1
+    WHEN 'user'      THEN 2
+    WHEN 'company'   THEN 3
+    WHEN 'sponsored' THEN 4
+    WHEN 'weird'     THEN 5
+    ELSE 0
+  END AS creator_account_type,
+  scheduling.created_date AS created,
+  meeting.extra_participant_count AS participants,
+  scheduling.note_duration AS duration,
+  scheduling.completed_date AS completed,
+  scheduling.cancelled_date AS cancelled,
+  scheduling.note_failed_epoch AS failed,
+  scheduling.note_started_epoch AS started,
+  scheduling.extra_status as status,
+  COUNT(IF(meeting_participant.note_scheduling_disabled, NULL, meeting_participant.note_scheduling_opened)) AS opened,
+  COUNT(IF(meeting_participant.note_scheduling_disabled, NULL, meeting_participant.note_scheduling_answered)) AS answered
+FROM scheduling
+  INNER JOIN meeting_participant ON meeting_participant.event_id = scheduling.meeting_id
+  LEFT JOIN user AS creator ON creator.user_id = scheduling.creator_id
+  LEFT JOIN meeting ON scheduling.meeting_id = meeting.event_id
+WHERE
+   (creator.note_meetings_merged_to_other_user IS NULL OR creator.note_meetings_merged_to_other_user = creator.user_id)
+GROUP BY scheduling.id
+ORDER BY scheduling.created_date DESC

@@ -1,0 +1,1091 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="myApp">
+<head>
+  <meta charset="UTF-8">
+  <title>Domain</title>
+
+  <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.1/css/jquery.dataTables.css">
+  <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/colvis/1.1.1/css/dataTables.colVis.css">
+  <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/tabletools/2.2.2/css/dataTables.tableTools.css">
+  <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/plug-ins/725b2a2115b/integration/bootstrap/3/dataTables.bootstrap.css">
+
+  <link rel="stylesheet"  type="text/css" href="/admin/_style/css/main.css" />
+
+  <script src="/_script/lib/angular/angular.min.js"></script>
+    <style>
+    .node circle {
+      fill: steelblue;
+      cursor: pointer;
+    }
+    .node circle.external {
+      fill: red;
+    }
+
+    .node text {
+      font: 12px sans-serif;
+      cursor: pointer;
+    }
+
+    .link {
+      fill: none;
+      stroke: #ccc;
+      stroke-width: 2px;
+    }
+    .src_depth_0,
+    .depth_0{
+      visibility: hidden;
+    }
+    .caption{
+      font-size: 14px;
+      font-family: Georgia, serif;
+    }
+    .tooltip{
+      font-size: 12px;
+    }
+    .tooltip_bg{
+      fill: white;
+      stroke: black;
+      stroke-width: 1;
+      opacity: 0.85;
+    }
+
+
+
+
+
+
+    rect.bordered {
+      stroke: #E6E6E6;
+      stroke-width:2px;
+    }
+
+    text.mono {
+      font-size: 9pt;
+      font-family: Consolas, courier;
+      fill: #aaa;
+    }
+
+    text.axis-workweek {
+      fill: #000;
+    }
+
+    text.axis-worktime {
+      fill: #000;
+    }
+
+
+
+/*body {
+  font: 10px sans-serif;
+  shape-rendering: crispEdges;
+}
+*/
+.day {
+  fill: #fff;
+  stroke: #ccc;
+}
+
+.month {
+  fill: none;
+  stroke: #929292;
+  stroke-width: 1px;
+}
+/*#ffffff, #caf6f6, #99e8f3, #7be1ef, #5bc7e3, #51a1d3, #4f86bd, #4a5abb, #26129d*/
+.weekday_1,
+.weekday_2,
+.weekday_3,
+.weekday_4,
+.weekday_5{
+  fill:#ffffff;
+}
+
+.weekday_6,
+.weekday_0{
+  fill:#EBEBEB;
+}
+/*{fill:#ffffff;}*/
+.RdYlGn .q0-9{fill:#caf6f6;}
+.RdYlGn .q1-9{fill:#99e8f3;}
+.RdYlGn .q2-9{fill:#7be1ef;}
+.RdYlGn .q3-9{fill:#5bc7e3;}
+.RdYlGn .q4-9{fill:#51a1d3;}
+.RdYlGn .q5-9{fill:#4f86bd;}
+.RdYlGn .q6-9{fill:#4a5abb;}
+.RdYlGn .q7-9{fill:#26129d;}
+.RdYlGn .q8-9{fill:#202023;}
+
+
+.today{
+  fill: #F00!important;
+}
+
+.piechart {
+  font: 10px sans-serif;
+}
+
+.piechart .arc path {
+  stroke: #fff;
+}
+
+.pie-label{
+}
+.pie-label span{
+  display: inline-block;
+  margin-left: 0.5em;
+  color:#333333;
+}
+
+.dimension { cursor: ns-resize; }
+.category { cursor: ew-resize; }
+.dimension tspan.name { font-size: 1.5em; fill: #333; font-weight: bold; }
+.dimension tspan.sort { fill: #000; cursor: pointer; opacity: 0; }
+.dimension tspan.sort:hover { fill: #333; }
+.dimension:hover tspan.name { fill: #000; }
+.dimension:hover tspan.sort { opacity: 1; }
+.dimension line { stroke: #000; }
+.dimension rect { stroke: none; fill-opacity: 0; }
+.dimension > rect, .category-background { fill: #fff; }
+.dimension > rect { display: none; }
+.category:hover rect { fill-opacity: .3; }
+.dimension:hover > rect { fill-opacity: .3; }
+.ribbon path { stroke-opacity: 0; fill-opacity: .5; }
+.ribbon path.active { fill-opacity: .9; }
+.ribbon-mouse path { fill-opacity: 0; }
+
+.category-0 { fill: #67cfe9; stroke: #67cfe9; }
+.category-1 { fill: #57c9a2; stroke: #57c9a2; }
+.category-2 { fill: #a5c787; stroke: #a5c787; }
+.category-3 { fill: #dcd587; stroke: #dcd587; }
+.category-4 { fill: #f4a87e; stroke: #f4a87e; }
+.category-5 { fill: #f48b7f; stroke: #f48b7f; }
+.category-6 { fill: #ec96aa; stroke: #ec96aa; }
+.category-7 { fill: #ab93c6; stroke: #ab93c6; }
+.category-8 { fill: #778dd6; stroke: #778dd6; }
+.category-9 { fill: #48b8ec; stroke: #48b8ec; }
+
+.tooltip {
+  background-color: rgba(242, 242, 242, .6);
+  position: absolute;
+  padding: 5px;
+}
+
+
+    </style>
+</head>
+<body>
+
+
+<navi active="/admin/domains/"></navi>
+
+<div class="container" ng-controller="DomainController">
+
+  <ol class="breadcrumb">
+    <li><a href="../../">Home</a></li>
+    <li><a href="../">Domains</a></li>
+    <li class="active">@{{domain}}</li>
+  </ol>
+
+  <div class="row">
+    <div class="col-md-3">
+      <img src="" ng-src="{{domain_img_url}}" alt="{{domain}}" width="200" height="150">
+    </div>
+    <div class="col-md-5">
+      <!-- <small class="pull-right">#{{user.user_id}}</small> -->
+      <h1 title="Email domain">@{{domain}}</h1>
+      <p ng-show="domain_url"><a href="{{domain_url}}" target="_blank">{{domain_url}}</a></p>
+    </div>
+    <div class="col-md-4">
+      <table class="table">
+        <thead>
+          <tr><th colspan="2">Subscription type</th></tr>
+        </thead>
+        <tbody>
+          <tr><th>Freemium:</th><td>{{stats.subscription_freemium}}</td></tr>
+          <tr><th>Trial:</th><td>{{stats.subscription_trial}}</td></tr>
+          <tr><th>User:</th><td>{{stats.subscription_user}}</td></tr>
+          <tr><th>Company:</th><td>{{stats.subscription_company}}</td></tr>
+          <tr><th>Sponsored:</th><td>{{stats.subscription_sponsored}}</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <h2>Stats</h2>
+  <div class="row">
+    <div class="col-md-4">
+      <table class="table">
+        <tbody>
+          <tr><th>Users:</th><td>{{stats.users}}</td></tr>
+          <tr><th>TOS Accepted:</th><td>{{stats.tos_accepted}}</td></tr>
+          <tr><th>Appdirect:</th><td>{{stats.appdirect}}</td></tr>
+          <tr><th>Quickmeet:</th><td>{{stats.quickmeet}}</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="col-md-4">
+      <table class="table">
+        <tbody>
+          <tr><th>Meet Me:</th><td>{{stats.meet_me}}</td></tr>
+          <tr><th>iOS:</th><td>{{stats.ios_users}}</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="col-md-4">
+      <table class="table">
+        <tbody>
+          <tr><th>Meetings Created:</th><td>{{stats.meetings_created}}</td></tr>
+          <tr><th>Real Meetings Created:</th><td>{{stats.real_meetings_created}}</td></tr>
+          <tr><th>Invites Sent:</th><td>{{stats.invites_sent}}</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+
+
+  <h2>Meeting details</h2>
+  <p>Showing "real meetings" where at least a user from this domain has participated and meeting has start, end time and duration that is less than 12 hours.</p>
+
+<ul class="nav nav-tabs" role="tablist">
+  <li class="active"><a href="#pies-tab" role="tab" data-toggle="tab">Pies</a></li>
+  <li><a href="#parsets-tab" role="tab" data-toggle="tab">Parallel sets</a></li>
+</ul>
+<div class="tab-content">
+  <div class="tab-pane active" id="pies-tab">
+
+    <div class="row">
+      <div class="col-md-4">
+        <h3>Source</h3>
+        <div id="meetings_created_pie" class="piechart"></div>
+        <ul id="meetings_created_summary" class="list-unstyled"></ul>
+      </div>
+      <div class="col-md-4">
+        <h3>Hosted by</h3>
+        <div id="meetings_by_domain_pie" class="piechart"></div>
+        <ul id="meetings_by_domain_summary" class="list-unstyled"></ul>
+      </div>
+      <div class="col-md-4">
+        <h3>Weekday</h3>
+        <div id="meetings_weekday_pie" class="piechart"></div>
+        <ul id="meetings_weekday_summary" class="list-unstyled"></ul>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-4">
+        <h3>Type</h3>
+        <div id="meetings_internal_pie" class="piechart"></div>
+        <ul id="meetings_internal_summary" class="list-unstyled"></ul>
+      </div>
+      <div class="col-md-4">
+        <h3>Participant count</h3>
+        <div id="meetings_count_pie" class="piechart"></div>
+        <ul id="meetings_count_summary" class="list-unstyled"></ul>
+      </div>
+      <div class="col-md-4">
+        <h3>Duration</h3>
+        <div id="meetings_duration_pie" class="piechart"></div>
+        <ul id="meetings_duration_summary" class="list-unstyled"></ul>
+      </div>
+    </div>
+
+  </div>
+  <div class="tab-pane" id="parsets-tab">
+
+    <div id="parsets"></div>
+    <form class="form-inline">
+      <div class="checkbox pull-right"><label><input type="checkbox" id="curved"> Curves</label></div>
+      <div id="parsets_dimensions">
+        <div class="checkbox"><label><input type="checkbox" value="Source" checked> Source</label></div>
+        <div class="checkbox"><label><input type="checkbox" value="Hosted By" checked> Hosted By</label></div>
+        <div class="checkbox"><label><input type="checkbox" value="Participants" checked> Participants</label></div>
+        <div class="checkbox"><label><input type="checkbox" value="Weekday" checked> Weekday</label></div>
+        <div class="checkbox"><label><input type="checkbox" value="Participant Count"> Participant Count</label></div>
+        <div class="checkbox"><label><input type="checkbox" value="Duration"> Duration</label></div>
+      </div>
+    </form>
+
+  </div>
+</div>
+
+
+  <h2>Users</h2>
+  <label class="pull-right"><input type="checkbox" name="global_regex" id="global_regex"> Search using regex</label>
+  <table id="users" class="table table-striped">
+  </table>
+
+
+  <div class="alert alert-warning loadWeekMap">
+    <p>
+      Too many meatings for loading heatmap automatically.
+      <button id="loadWeekMap" class="btn btn-success">Load hourly heatmap</button>
+    </p>
+
+  </div>
+
+  <h2>Weekly meeting focus</h2>
+  <div class="row">
+    <div class="col-md-4">
+      <h3>All meetings</h3>
+      <p>At least one @{{domain}} user is participating</p>
+      <div id="weekchart"></div>
+    </div>
+    <div class="col-md-4">
+      <h3>Internal meetings</h3>
+      <p>Created by @{{domain}} user</p>
+      <div id="weekchart_internal"></div>
+    </div>
+    <div class="col-md-4">
+      <h3>External meetings</h3>
+      <p>Created by a non @{{domain}} user</p>
+      <div id="weekchart_external"></div>
+    </div>
+  </div>
+
+  <h2>Meeting history</h2>
+  <div id="meeting_history"></div>
+
+  <h2>Invites within domain</h2>
+  <div id="tree"></div>
+
+
+
+
+</div>
+
+<script src="//code.jquery.com/jquery-1.10.2.min.js"></script>
+<script src="/_script/lib/bootstrap/bootstrap.min.js"></script>
+<script src="/admin/_script/common.js"></script>
+
+<script src="/_script/lib/phoneformat/phoneformat.js"></script>
+<script src="/_script/lib/lang/lang.js"></script>
+<script src="/_script/lib/momentjs/moment.min.js"></script>
+<script src="/_script/lib/momentjs/moment-timezone.js"></script>
+
+<script src="//cdn.datatables.net/1.10.1/js/jquery.dataTables.js"></script>
+<script src="//cdn.datatables.net/plug-ins/725b2a2115b/integration/bootstrap/3/dataTables.bootstrap.js"></script>
+<script src="//cdn.datatables.net/colvis/1.1.1/js/dataTables.colVis.min.js"></script>
+
+<script type="text/javascript" src="/_script/lib/d3/d3.js"></script>
+<script type="text/javascript" src="/_script/lib/d3/jsonp.js"></script>
+<script type="text/javascript" src="/_script/lib/d3/d3.parsets.js"></script>
+<script type="text/javascript" src="/_script/lib/cal-heatmap/cal-heatmap.min.js"></script>
+<script type="text/javascript" src="/admin/_script/domain.js"></script>
+
+<script>
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+// Week hour heatmap
+var meetings_url = getSQLUrl('sql','domain_meeting_stats',query_domain,query_domain);
+
+
+function loadWeekMap(){
+  $('.loadWeekMap').hide();
+  $.ajax(
+    meetings_url,
+    {
+      "dataType": "jsonp",
+      "success": function(data){
+        prepareMeetingStats(data);
+      }
+    }
+  );
+}
+
+
+function prepareMeetingStats(data){
+
+
+  //Initialize week
+  // var weekHours = new Array(60*24*7+1).join('0').split('').map(parseFloat);
+  var weekHours = new Array(24*7+1).join('0').split('').map(parseFloat);
+  var weekHours_internal = new Array(24*7+1).join('0').split('').map(parseFloat);
+  var weekHours_external = new Array(24*7+1).join('0').split('').map(parseFloat);
+
+  //Filter empty dates out
+  //Add timezoned times
+  //Push data to
+  var filtered = [];
+  for(var i=0,l=data.length;i<l;i++){
+    if(data[i].begin_date !== "0" && data[i].end_date !== "0"){
+
+      data[i].begin_obj = getTimeObj(data[i].begin_date*1000, data[i].timezone)
+
+      weekHours = addWeekHours(weekHours, data[i].begin_obj, (data[i].end_date - data[i].begin_date));
+      if(data[i].is_internal==="1"){
+        weekHours_internal = addWeekHours(weekHours_internal, data[i].begin_obj, (data[i].end_date - data[i].begin_date));
+      }else{
+        weekHours_external = addWeekHours(weekHours_external, data[i].begin_obj, (data[i].end_date - data[i].begin_date));
+      }
+
+    }else{
+      data[i].filtered=true;
+    }
+  }
+
+  var hours = countHours(weekHours);
+  var hours_internal = countHours(weekHours_internal);
+  var hours_external = countHours(weekHours_external);
+
+
+  var maxScale = d3.max(hours, function (d) { return d.value; });
+  drawMeetingStats(hours,"#weekchart",maxScale);
+  drawMeetingStats(hours_internal,"#weekchart_internal",maxScale);
+  drawMeetingStats(hours_external,"#weekchart_external",maxScale);
+
+  drawMeetingYear(clearYearData(data),"#meeting_history");
+}
+
+function countHours(countingHours){
+  var hours = [];
+  for(var day=0;day<7;day++){
+    for(var hour=0;hour<24;hour++){
+      var count = 0;
+      count += countingHours[ day*24 + hour ];
+      hours.push({
+        day: (day==0)?7:day,
+        hour: hour+1,
+        value: Math.floor(count)
+      })
+    }
+  }
+  return hours;
+}
+
+function getTimeObj(time,tz){
+  var time_tz = moment(time).tz(tz);
+  return {
+    day: time_tz.day(),
+    year: time_tz.year(),
+    date: time_tz.date(),
+    month: time_tz.month(),
+    hour: time_tz.hour(),
+    minute: time_tz.minute(),
+    second: time_tz.second(),
+    tz: time_tz.tz(),
+    unix: time_tz.unix(),
+    dateString: time_tz.format("YYYY-MM-DD")
+  }
+}
+
+function addWeekHours(week, begin_obj, duration_sec){
+  var weekHour = Math.floor(begin_obj.day*24 + begin_obj.hour + begin_obj.minute/60);
+  var durHour = Math.floor(duration_sec/(60*60));
+
+
+  //Lets not count over 24 hour meetings
+  if(durHour>12||durHour<=0||begin_obj.tz.toLowerCase()==="utc"){
+    return week
+  }
+
+  //Creates an arr with 0-values for each hour from start of week until meeting starts
+  var prefixArr = new Array(weekHour+1).join('0').split('').map(parseFloat);
+  //Creates and arr with 1-values for each meeting duration minute
+  var durArr = new Array(durHour+1).join('1').split('').map(parseFloat);
+  var joinArr = prefixArr.concat(durArr);
+  var overflowArr = [];
+
+  if(joinArr.length > week.length){
+    overflowArr = joinArr.slice(week.length);
+    joinArr = joinArr.slice(0,week.length);
+  }
+
+  for(var i=0,l=Math.max(overflowArr.length,joinArr.length);i<l;i++){
+    if(joinArr[i]){
+      week[i] += joinArr[i];
+    }
+    if(overflowArr[i]){
+      week[i] += overflowArr[i];
+    }
+  }
+  return week
+}
+
+function drawMeetingStats(data,target,maxScale){
+
+  var heat_margin = { top: 50, right: 0, bottom: 100, left: 30 };
+  var heat_height = 700 - heat_margin.top - heat_margin.bottom;
+  var heat_gridSize = Math.floor(heat_height / 24);
+  var heat_width = (heat_gridSize*1.8+7*heat_gridSize*2) - heat_margin.left - heat_margin.right;
+
+  var buckets = 9;
+  // var colors = ["#ffffd9","#edf8b1","#c7e9b4","#7fcdbb","#41b6c4","#1d91c0","#225ea8","#253494","#081d58"];
+  var colors = ['#ffffff', '#caf6f6', '#99e8f3', '#7be1ef', '#5bc7e3', '#51a1d3', '#4f86bd', '#4a5abb', '#26129d'];
+  // alternatively colorbrewer.YlGnBu[9]
+  var heat_days = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
+  var heat_times = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24"];
+  var legendElementWidth = (heat_width-10)/colors.length;
+
+
+  function drawWeekChart(data,target,maxScale) {
+    var colorScale = d3.scale.quantile()
+        .domain([0, buckets - 1, maxScale])
+        .range(colors);
+
+    var svg = d3.select(target).append("svg")
+        .attr("width", heat_width + heat_margin.left + heat_margin.right)
+        .attr("height", heat_height + heat_margin.top + heat_margin.bottom)
+        .append("g")
+        .attr("transform", "translate(" + heat_margin.left + "," + heat_margin.top + ")");
+
+    var dayLabels = svg.selectAll(".dayLabel")
+        .data(heat_days)
+        .enter().append("text")
+          .text(function (d) { return d; })
+          .attr("x", function (d, i) { return i * heat_gridSize*2; })
+          .attr("y", 0)
+          .style("text-anchor", "middle")
+          .attr("transform", "translate(" + heat_gridSize*2 / 2 + ", -6)")
+          .attr("class", function (d, i) { return ((i >= 0 && i <= 4) ? "dayLabel mono axis axis-workweek" : "dayLabel mono axis"); });
+
+    var timeLabels = svg.selectAll(".timeLabel")
+        .data(heat_times)
+        .enter().append("text")
+          .text(function(d) { return d; })
+          .attr("x", 0)
+          .attr("y", function(d, i) { return i * heat_gridSize; })
+          .style("text-anchor", "end")
+          .attr("transform", "translate(-6," + heat_gridSize / 1.5 + ")")
+          .attr("class", function(d, i) { return ((i >= 7 && i <= 16) ? "timeLabel mono axis axis-worktime" : "timeLabel mono axis"); });
+
+    var heatMap = svg.selectAll(".hour")
+        .data(data)
+        .enter().append("rect")
+        .attr("x", function(d) { return (d.day - 1) * heat_gridSize*2; })
+        .attr("y", function(d) { return (d.hour - 1) * heat_gridSize; })
+        .attr("rx", 4)
+        .attr("ry", 4)
+        .attr("class", "hour bordered")
+        .attr("width", heat_gridSize*2)
+        .attr("height", heat_gridSize)
+        .style("fill", colors[0]);
+
+    heatMap.transition().duration(1000)
+        .style("fill", function(d) { return colorScale(d.value); });
+
+    heatMap.append("title").text(function(d) { return d.value; });
+
+    var legend = svg.selectAll(".legend")
+        .data([0].concat(colorScale.quantiles()), function(d) { return d; })
+        .enter().append("g")
+        .attr("class", "legend");
+
+    legend.append("rect")
+      .attr("x", function(d, i) { return legendElementWidth * i; })
+      .attr("y", heat_height)
+      .attr("width", legendElementWidth)
+      .attr("height", heat_gridSize / 2)
+      .style("fill", function(d, i) { return colors[i]; });
+
+    legend.append("text")
+      .attr("class", "mono")
+      .text(function(d) { return "" + Math.round(d); })
+      .attr("x", function(d, i) { return legendElementWidth * i; })
+      .attr("y", heat_height + heat_gridSize);
+  }
+
+
+  drawWeekChart(data,target,maxScale);
+}
+
+function clearYearData(data){
+  var filtered = {};
+  for(var i=0,l=data.length;i<l;i++){
+    if(!data[i].filtered){
+      if(!filtered[data[i].begin_obj.dateString]){
+        filtered[data[i].begin_obj.dateString] = {all:1,internal:0,external:0,year:data[i].begin_obj.year};
+        if(data[i].is_internal==="1"){
+          filtered[data[i].begin_obj.dateString].internal++;
+        }else{
+          filtered[data[i].begin_obj.dateString].external++;
+        }
+      }else{
+        filtered[data[i].begin_obj.dateString].all++;
+        if(data[i].is_internal==="1"){
+          filtered[data[i].begin_obj.dateString].internal++;
+        }else{
+          filtered[data[i].begin_obj.dateString].external++;
+        }
+      }
+    }
+  }
+  var cleared = [];
+  for(i in filtered){
+    cleared.push(
+      {
+        date:i,
+        all:filtered[i].all,
+        internal:filtered[i].internal,
+        external:filtered[i].external,
+        year:filtered[i].year
+      }
+    )
+  }
+
+  return cleared
+}
+
+
+
+var ccc;
+
+//#meeting_history
+function drawMeetingYear(datas,target){
+  var minYear = d3.min(datas, function (d) { return d.year; });
+  var maxYear = d3.max(datas, function (d) { return d.year; })+1;
+  var minValue = d3.min(datas, function (d) { return d.all; });
+  var maxValue = d3.max(datas, function (d) { return d.all; });
+
+var scale = 13;
+  // var width = 960,
+  //     height = 136,
+  var width = 136/17*scale,
+      height = 960/17*scale,
+      cellSize = scale; // cell size
+
+  var day = function(d){
+              var day = d3.time.format("%w")(d)-1;
+              if(day===-1){
+                day = 6
+              }
+              return day;
+            },
+      week = d3.time.format("%W"),
+      percent = d3.format(".1%"),
+      format = d3.time.format("%Y-%m-%d");
+
+  var dayStyle = function(d){
+    var today = "";
+    if(moment(d).format("YYYY-MM-DD") == moment().format("YYYY-MM-DD")){
+      today+=" today"
+    }else if(d == moment().format("YYYY-MM-DD")){
+      today+=" today"
+    }
+    return moment(d).format('d')+today;
+  }
+
+  var color = d3.scale.quantize()
+      .domain([minValue, maxValue])
+      .range(d3.range(9).map(function(d) { return "q" + d + "-9"; }));
+
+  var svg = d3.select(target).selectAll("svg")
+      .data(d3.range(minYear, maxYear))
+    .enter().append("svg")
+      .attr("width", width )
+      .attr("height", height )
+      .attr("class", "RdYlGn")
+    .append("g")
+      //.attr("transform", "translate(" + ((width - cellSize * 53) / 2) + "," + (height - cellSize * 7 - 1) + ")");
+      .attr("transform", "translate(" + ((width - cellSize * 7 - 1 )) + "," + (height - cellSize * 53)/2 + ")");
+
+  svg.append("text")
+      .attr("transform", "translate(" + cellSize * 3.5 + ",-6)")//rotate(-90)
+      .style("text-anchor", "middle")
+      .text(function(d) { return d; });
+
+  var rect = svg.selectAll(".day")
+      .data(function(d) { return d3.time.days(new Date(d, 0, 1), new Date(d + 1, 0, 1)); })
+    .enter().append("rect")
+      .attr("class", function(d){return "day weekday_"+dayStyle(d);})
+      .attr("width", cellSize)
+      .attr("height", cellSize)
+      .attr("x", function(d) { return day(d) * cellSize; })
+      .attr("y", function(d) { return week(d) * cellSize; })
+      .datum(format);
+
+  rect.append("title")
+      .text(function(d) { return d; });
+
+  svg.selectAll(".month")
+      .data(function(d) { return d3.time.months(new Date(d, 0, 1), new Date(d + 1, 0, 1)); })
+    .enter().append("path")
+      .attr("class", "month")
+      .attr("d", monthPath);
+
+
+  var data = d3.nest()
+      .key(function(d) { return d.date; })
+      .rollup(function(d) {return d[0].all; })
+      .map(datas);
+
+  rect.filter(function(d) { return d in data; })
+        .attr("class", function(d) { return "day weekday_"+dayStyle(d)+" " + color(data[d]); })
+      .select("title")
+        .text(function(d) { return d + ": " + data[d] +" meetings"; });
+
+  ccc = color;
+
+  function monthPath(t0) {
+    var t1 = new Date(t0.getFullYear(), t0.getMonth() + 1, 0);
+    var d0 = +day(t0);
+    var d1 = +day(t1);
+    var w0 = +week(t0);
+    var w1 = +week(t1);
+
+    var path =
+      "M" + d0 * cellSize + "," + (w0 + 1) * cellSize
+        + "V" + w0 * cellSize + "H" + 7 * cellSize
+        + "V" + w1 * cellSize + "H" + (d1 + 1) * cellSize
+        + "V" + (w1 + 1) * cellSize + "H" + 0
+        + "V" + (w0 + 1) * cellSize + "Z";
+
+    return path;
+  }
+
+
+}
+
+</script>
+
+<script>
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+// Week hour heatmap
+var meeting_sources_url = getSQLUrl('sql','domain_meetings',query_domain,query_domain);
+
+
+
+$.ajax(
+  meeting_sources_url,
+  {
+    "dataType": "jsonp",
+    "success": function(data){
+      createMeetingPie(
+        getMeetingTypePieData(data),
+        '#meetings_created_pie',
+        '#meetings_created_summary',
+        data.length);
+      createMeetingPie(getMeetingInternalPieData(data),
+       '#meetings_internal_pie',
+       '#meetings_internal_summary',
+       data.length);
+      createMeetingPie(getMeetingDomainCreatedPieData(data),
+       '#meetings_by_domain_pie',
+       '#meetings_by_domain_summary',
+       data.length);
+      createMeetingPie(getMeetingParticipantCountPieData(data),
+       '#meetings_count_pie',
+       '#meetings_count_summary',
+       data.length);
+      createMeetingPie(getMeetingDayPieData(data),
+       '#meetings_weekday_pie',
+       '#meetings_weekday_summary',
+       data.length);
+      createMeetingPie(getMeetingDurationPieData(data),
+       '#meetings_duration_pie',
+       '#meetings_duration_summary',
+       data.length);
+
+      createParsets(data)
+    }
+  }
+);
+
+function getMeetingTypePieData(raw_data){
+  var all_meetings = raw_data.length;
+  var followups = 0;
+  var matchmaking = 0;
+  var meetme = 0;
+  var partners = 0;
+  var normal = 0;
+  var suggestions = 0;
+
+  for(var i=0,
+    l=raw_data.length;i<l;i++){
+    if(raw_data[i].normal === "1"){normal++;}
+    if(raw_data[i].followup === "1"){followups++;}
+    if(raw_data[i].suggestion === "1"){suggestions++;}
+    if(raw_data[i].meetme === "1"){meetme++;}
+    if(raw_data[i].partner === "1"){partners++;}
+    if(raw_data[i].matchmaking === "1"){matchmaking++;}
+  }
+
+  var data = [
+    {label:"Selfmade",                   num: normal,       portion: Math.round(1000*normal/all_meetings)/10 },
+    {label:"From MeetMe pages",          num: meetme,       portion: Math.round(1000*meetme/all_meetings)/10 },
+    {label:"From calendar suggestions",  num: suggestions,  portion: Math.round(1000*suggestions/all_meetings)/10 },
+    {label:"As a follow up meeting",     num: followups,    portion: Math.round(1000*followups/all_meetings)/10 },
+    {label:"For events",                 num: matchmaking,  portion: Math.round(1000*matchmaking/all_meetings)/10 },
+    {label:"By partners",                num: partners,     portion: Math.round(1000*partners/all_meetings)/10 },
+  ]
+  return data;
+}
+
+function getMeetingInternalPieData(raw_data){
+  var all_meetings = raw_data.length;
+  var internal = 0;
+  var external = 0;
+
+  for(var i=0,l=raw_data.length;i<l;i++){
+    if(raw_data[i].is_internal === "1"){internal++;}
+    else{external++;}
+  }
+
+  var data = [
+    {label:"Internal only",  num: internal,  portion: Math.round(1000*internal/all_meetings)/10 },
+    {label:"Internal and external",  num: external,  portion: Math.round(1000*external/all_meetings)/10 },
+  ]
+  return data;
+}
+
+function getMeetingDomainCreatedPieData(raw_data){
+  var all_meetings = raw_data.length;
+  var by_domain = 0;
+  var by_non_domain = 0;
+
+  for(var i=0,l=raw_data.length;i<l;i++){
+    if(raw_data[i].created_by_domain === "1"){by_domain++;}
+    else{by_non_domain++;}
+  }
+
+  var data = [
+    {label:"Users in domain",  num: by_domain,  portion: Math.round(1000*by_domain/all_meetings)/10 },
+    {label:"Users not in domain",  num: by_non_domain,  portion: Math.round(1000*by_non_domain/all_meetings)/10 },
+  ]
+  return data;
+}
+
+function getMeetingParticipantCountPieData(raw_data){
+  var all_meetings = raw_data.length;
+  var counts = {1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0,'9+':0};
+
+  for(var i=0,l=raw_data.length;i<l;i++){
+    if(!counts[raw_data[i].participant_count]){
+      counts[raw_data[i].participant_count] = 1;
+    }else{
+      counts[raw_data[i].participant_count]++;
+    }
+  }
+
+  var data = [
+    {label:"= 1 user",  num:counts["1"],  portion: Math.round(1000*counts["1"]/all_meetings)/10 },
+    {label:"= 2 users", num:counts["2"],  portion: Math.round(1000*counts["2"]/all_meetings)/10 },
+    {label:"= 3 users", num:counts["3"],  portion: Math.round(1000*counts["3"]/all_meetings)/10 },
+    {label:"= 4 users", num:counts["4"],  portion: Math.round(1000*counts["4"]/all_meetings)/10 },
+    {label:"= 5 users", num:counts["5"],  portion: Math.round(1000*counts["5"]/all_meetings)/10 },
+    {label:"= 6 users", num:counts["6"],  portion: Math.round(1000*counts["6"]/all_meetings)/10 },
+    {label:"= 7 users", num:counts["7"],  portion: Math.round(1000*counts["7"]/all_meetings)/10 },
+    {label:"= 8 users", num:counts["8"],  portion: Math.round(1000*counts["8"]/all_meetings)/10 },
+    {label:"≥ 9 users", num:counts["9+"],  portion: Math.round(1000*counts["9+"]/all_meetings)/10 },
+  ]
+  return data;
+}
+
+function getMeetingDayPieData(raw_data){
+  var all_meetings = raw_data.length;
+  var weekdays  = [0,0,0,0,0,0,0]
+
+  for(var i=0,l=raw_data.length;i<l;i++){
+    weekdays[moment(raw_data[i].begin_date*1000).tz(raw_data[i].timezone).day()]++;
+  }
+
+  var data = [
+    {label:"Monday",    num:weekdays[1], portion: Math.round(1000*weekdays[1]/all_meetings)/10 },
+    {label:"Tuesday",   num:weekdays[2], portion: Math.round(1000*weekdays[2]/all_meetings)/10 },
+    {label:"Wednesday", num:weekdays[3], portion: Math.round(1000*weekdays[3]/all_meetings)/10 },
+    {label:"Thursday",  num:weekdays[4], portion: Math.round(1000*weekdays[4]/all_meetings)/10 },
+    {label:"Friday",    num:weekdays[5], portion: Math.round(1000*weekdays[5]/all_meetings)/10 },
+    {label:"Saturday",  num:weekdays[6], portion: Math.round(1000*weekdays[6]/all_meetings)/10 },
+    {label:"Sunday",    num:weekdays[0], portion: Math.round(1000*weekdays[0]/all_meetings)/10 },
+  ]
+  return data;
+}
+
+var durationHourDivider = 4;
+
+function getMeetingDurationPieData(raw_data){
+  var all_meetings = raw_data.length;
+  var durations  = {}
+
+  for(var i=0,l=raw_data.length;i<l;i++){
+    var duration_sec = raw_data[i].end_date-raw_data[i].begin_date;
+    var duration_vartti = Math.round(duration_sec/60/(60/durationHourDivider));
+    if(!durations[duration_vartti]){durations[duration_vartti]=0;}
+    durations[duration_vartti]++;
+  }
+
+  data = [];
+  for(var i in durations){
+    data.push({label:(i/durationHourDivider)+" hours", num:durations[i], portion: Math.round(1000*durations[i]/all_meetings)/10 })
+  }
+
+  return data;
+}
+
+function createMeetingPie(data,target_elem, summary_elem, all_meetings){
+
+  var width = 300,
+      height = 300,
+      radius = Math.min(width, height) / 2 - 10;
+
+  var color = d3.scale.ordinal()
+      .range(["#67cfe9", "#57c9a2", "#a5c787", "#dcd587", "#f4a87e", "#f48b7f", "#ec96aa", "#ab93c6", "#778dd6", "#48b8ec"]);
+
+  var arc = d3.svg.arc()
+      .outerRadius(radius - 10)
+      .innerRadius(radius - 100);
+
+  var pie = d3.layout.pie()
+      .sort(null)
+      .value(function(d) { return d.num; });
+
+  var svg = d3.select(target_elem).append("svg")
+      .attr("width", width)
+      .attr("height", height)
+    .append("g")
+      .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+
+    var g = svg.selectAll(".arc")
+        .data(pie(data))
+      .enter().append("g")
+        .attr("class", "arc");
+
+    g.append("path")
+        .attr("d", arc)
+        .style("fill", function(d) { return color(d.data.label); });
+
+    g.append("text")
+        .attr("transform", function(d) {
+          var c = arc.centroid(d);
+          return "translate(" + c[0]*1.32 +"," + c[1]*1.32 + ")";
+        })
+        .attr("dy", ".35em")
+        .style("text-anchor", "middle")
+        .text(function(d) {
+          if(d.data.portion<2){
+            return "";
+          }
+          return  " "+d.data.portion+"%"; });
+
+    g.append("title").text(function(d) { return d.data.label+" ( "+d.data.num+"/"+all_meetings+" ≈ "+d.data.portion+"% )"; })
+
+    var list = d3.select(summary_elem).selectAll('li')
+        .data(pie(data))
+      .enter().append('li')
+        .attr("class","pie-label")
+        .attr("style",function(d){
+          return "color:"+color(d.data.label);
+        });
+
+      list.append('i')
+          .attr('class','glyphicon glyphicon-stop');
+
+      list.append('span')
+          .text(function(d) { return d.data.label+" ( "+d.data.num+"/"+all_meetings+" ≈ "+d.data.portion+"% )"; })
+
+}
+
+function getCreatedPartial(item){
+  var mapping = {
+    normal:"Selfmade",
+    meetme:"MeetMe pages",
+    suggestion:"Calendar suggestions",
+    followup:"As a follow up meeting",
+    matchmaking:"For events",
+    partner:"By partners",
+  }
+  for(var i in mapping){
+    if(item[i] == "1"){
+      return mapping[i];
+    }
+  }
+  console.log()
+}
+
+function getCreatedByPartial(item){
+  if(item.created_by_domain == "1"){
+    return "Users in domain";
+  }
+  return "Users not in domain";
+}
+
+function getWeekdayPartial(item){
+  var weekdays = [
+    "7. Sunday",
+    "1. Monday",
+    "2. Tuesday",
+    "3. Wednesday",
+    "4. Thursday",
+    "5. Friday",
+    "6. Saturday"
+  ]
+  return weekdays[moment(item.begin_date*1000).tz(item.timezone).day()]
+}
+
+function getParticipantCountPartial(item){
+    var counts = {
+      1:"= 1 user",
+      2:"= 2 users",
+      3:"= 3 users",
+      4:"= 4 users",
+      5:"= 5 users",
+      6:"= 6 users",
+      7:"= 7 users",
+      8:"= 8 users",
+      '9+':"≥ 9 users"};
+    return counts[item.participant_count]
+}
+
+function getTypePartial(item){
+  if(item.is_internal == "1"){
+    return "Internal only";
+  }
+  return "Internal and external";
+}
+
+
+function getDurationPartial(item){
+  var duration_sec = item.end_date-item.begin_date;
+  var duration_vartti = Math.round(duration_sec/60/(60/durationHourDivider));
+  return (duration_vartti/durationHourDivider)+" hours"
+}
+
+function createParsets(data){
+
+  var data_par = [];
+  for(var i=0,l=data.length;i<l;i++){
+    var item = {};
+    item["Source"] = getCreatedPartial(data[i]);
+    item["Hosted By"] = getCreatedByPartial(data[i]);
+    item["Weekday"] = getWeekdayPartial(data[i]);
+    item["Participants"] = getTypePartial(data[i]);
+    item["Participant Count"] = getParticipantCountPartial(data[i]);
+    item["Duration"] = getDurationPartial(data[i]);
+    data_par.push(item)
+  }
+
+  $('#parsets_dimensions input').on("change",function(){drawParsets();});
+  $('#curved').on("change",function(){drawParsets();});
+
+  drawParsets(data_par)
+}
+
+var parsets_data = [];
+var parsets_target_elem = "#parsets";
+function drawParsets( data, target_elem){
+  if(data){ parsets_data = data }
+  if(target_elem){ parsets_target_elem = target_elem }
+
+  var parsets_dimensions = [];
+  var checkboxes = $('#parsets_dimensions input:checked');
+  for(var i=0,l=checkboxes.length;i<l;i++){
+    parsets_dimensions.push(checkboxes[i].value);
+  }
+
+  var parsets_tension = ($('#curved')[0].checked)?0.5:1;
+
+  $(parsets_target_elem+" svg").remove();
+  var chart = d3.parsets()
+      .dimensions(parsets_dimensions)
+      .width(1140)
+      .height(700)
+      .tension(parsets_tension)
+
+  var vis = d3.select(parsets_target_elem).append("svg")
+      .attr("width", chart.width())
+      .attr("height", chart.height());
+
+  vis.datum(parsets_data).call(chart);
+}
+
+</script>
+
+</body>
+</html>

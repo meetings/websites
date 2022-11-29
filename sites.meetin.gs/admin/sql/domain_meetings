@@ -1,0 +1,40 @@
+SELECT
+--  meeting.extra_participant_count,
+--  COUNT(domain_users.user_id) AS domain_participant_count,
+-- Meeting day calculations
+  meeting.begin_date,
+  meeting.end_date,
+  creator_users.timezone,
+-- Participant count
+  CASE WHEN meeting.extra_participant_count > 8 THEN '9+' ELSE meeting.extra_participant_count END AS participant_count,
+-- Meeting creation source
+  IF(meeting.note_previous_meeting_id IS NOT NULL,1,0) AS followup,
+  IF(meeting.note_created_from_suggestion IS NOT NULL,1,0) AS suggestion,
+  IF(meeting.note_created_from_matchmaker_id IS NOT NULL,1,0) AS meetme,
+  IF(meeting.note_created_by_partner_id IS NOT NULL,1,0) AS partner,
+  IF(meeting.note_attached_to_matchmaking_event_id != 0,1,0) AS matchmaking,
+  IF( meeting.note_previous_meeting_id IS NOT NULL
+    OR meeting.note_created_from_suggestion IS NOT NULL
+    OR meeting.note_created_from_matchmaker_id IS NOT NULL
+    OR meeting.note_created_by_partner_id IS NOT NULL
+    OR meeting.note_attached_to_matchmaking_event_id != 0
+    ,0,1
+  ) AS normal,
+-- Created by domain
+  CASE WHEN creator_users.extra_email_domain = '%s' THEN 1 ELSE 0 END AS created_by_domain,
+-- Is internal
+  IF(meeting.extra_participant_count = COUNT(domain_users.user_id), 1, 0) AS is_internal
+FROM meeting_participant
+  LEFT JOIN user AS domain_users ON domain_users.user_id = meeting_participant.user_id
+  LEFT JOIN meeting ON meeting_participant.event_id = meeting.event_id
+  LEFT JOIN user AS creator_users ON creator_users.user_id = meeting.creator_id
+WHERE
+  LENGTH(domain_users.email) > 0
+  AND meeting.extra_is_real IS NOT NULL
+  AND meeting.extra_is_real != 0
+  AND meeting.begin_date != 0
+  AND meeting.end_date != 0
+  AND domain_users.extra_email_domain = '%s'
+  AND meeting.end_date > meeting.begin_date
+  AND meeting.end_date - meeting.begin_date < 12*60*60
+GROUP BY meeting.event_id

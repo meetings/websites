@@ -1,0 +1,207 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>Meetin.gs Example</title>
+     
+        <script type="text/javascript" src="https://meetingstats.dicole.net/js/stats/jsonv/total_users_who_have_created_a_real_meeting_by_month.jsonv"></script>
+        <script type="text/javascript" src="https://meetingstats.dicole.net/js/stats/jsonv/total_users_who_have_created_3_real_meetings_by_month.jsonv"></script>
+        <script type="text/javascript" src="https://meetingstats.dicole.net/js/stats/jsonv/total_users_who_have_created_5_real_meetings_by_month.jsonv"></script>
+		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+		<script type="text/javascript">
+$(function () {
+    
+    var a_real_meeting_by_month = [];
+
+    var three_real_meetings_by_month =[];
+
+    var five_real_meetings_by_month = [];
+
+
+
+    var with_agenda_an_ap =[];
+
+    var with_agenda = [];
+
+
+    var data = [];
+
+    var data2= [];
+
+    var month = [];
+
+
+
+
+
+    for (var key in total_users_who_have_created_a_real_meeting_by_month) {
+   var obj = total_users_who_have_created_a_real_meeting_by_month[key];
+   for (var prop in obj) {
+
+      if (prop == "count"){
+        a_real_meeting_by_month.push(obj[prop]);
+
+      }
+
+      console.log(prop + " = " + obj[prop]);
+   }
+}
+
+
+    for (var key in total_users_who_have_created_3_real_meetings_by_month) {
+   var obj = total_users_who_have_created_3_real_meetings_by_month[key];
+   for (var prop in obj) {
+
+      if (prop == "count"){
+        three_real_meetings_by_month.push(obj[prop]);
+
+      }
+   
+    if (prop == "month"){
+        month.push(obj[prop]);
+
+      }  
+
+      console.log(prop + " = " + obj[prop]);
+   }
+}
+
+ for (var key in total_users_who_have_created_5_real_meetings_by_month) {
+   var obj = total_users_who_have_created_5_real_meetings_by_month[key];
+   for (var prop in obj) {
+
+      if (prop == "count"){
+        five_real_meetings_by_month.push(obj[prop]);
+
+      }
+  
+    if (prop == "month"){
+        month.push(obj[prop]);
+
+      }  
+
+      console.log(prop + " = " + obj[prop]);
+   }
+}
+
+    //prepare arrays to be shown cumulatively
+    //
+    console.log(a_real_meeting_by_month)
+    console.log(three_real_meetings_by_month)
+    console.log(five_real_meetings_by_month)
+   for (var i = 0; i < a_real_meeting_by_month.length; i++){
+        console.log(a_real_meeting_by_month)
+        three_real_meetings_by_month[i] = three_real_meetings_by_month[i]-five_real_meetings_by_month[i];
+
+        a_real_meeting_by_month[i] = a_real_meeting_by_month[i] - three_real_meetings_by_month[i] - five_real_meetings_by_month[i];
+        console.log(a_real_meeting_by_month[i]);
+
+    }
+
+
+
+    $(document).ready(function() {
+       
+        
+
+
+        chart = new Highcharts.Chart({
+            chart: {
+                renderTo: 'container',
+                type: 'area',
+                zoomType: 'x',
+                spacingRight: 20,
+                backgroundColor:'#00a0cd'
+            },
+            title: {
+                text: 'Registered organizers, cumulative',
+                style: {
+                  color: '#FFFFFF'
+                }
+            },
+            subtitle: {
+                text: 'Source: Meetin.gs',
+                style: {
+                  color: '#FFFFFF'
+                }
+            },
+            xAxis: {
+                categories: month,
+                style: {
+                  color: '#FFFFFF'
+                },
+                labels: {
+                style: {
+                    color: 'white'
+                }
+            }
+            },
+            yAxis: {
+                title: {
+                    text: '',
+                    style: {
+                  color: '#FFFFFF'
+                }
+                },
+                labels: {
+                style: {
+                    color: 'white'
+                }
+            }
+            },
+            tooltip: {
+                enabled: true,
+                formatter: function() {
+                    return '<b>'+ this.series.name +'</b><br/>'+
+                       + this.y + '' ;
+                }
+            },
+            plotOptions: {
+                area: {
+                    dataLabels: {
+                        borderWidth: 0,
+                        enabled: true,
+                        style: {
+                        fontWeight:'bold'
+                         }
+                    },
+                    stacking: 'normal',
+                    lineColor: '#666666',
+                    lineWidth: 0,
+                    marker: {
+                        lineWidth: 1,
+                        lineColor: '#666666'
+                    },
+                    fillOpacity: 1.0
+                }
+            },
+            series: [{
+                color: '#d6edf5',
+                name: 'organized five',
+                data: five_real_meetings_by_month,
+                dataLabels: {x: 0, y:0,color: 'black'}
+            },{ color: '#7bc8e1',
+                name: 'organized three',
+                data: three_real_meetings_by_month,
+                dataLabels: {x: -13, y:9,color: 'white'}
+            },{ 
+                color: '#6c6c6c',
+                name: 'organized one',
+                data: a_real_meeting_by_month,
+                dataLabels: {x: 20, y:9,color: 'white'}
+
+            }]
+        });
+    });
+    
+});
+		</script>
+	</head>
+	<body>
+<script src="http://code.highcharts.com/highcharts.js"></script>
+<script src="http://code.highcharts.com/modules/exporting.js"></script>
+
+<div id="container" style="min-width: 400px; height: 500px; margin: 0 auto"></div>
+
+	</body>
+</html>

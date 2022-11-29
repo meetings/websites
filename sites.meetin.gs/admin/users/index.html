@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="myApp">
+<head>
+  <meta charset="UTF-8">
+  <title>Users</title>
+
+  <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.1/css/jquery.dataTables.css">
+  <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/colvis/1.1.1/css/dataTables.colVis.css">
+  <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/tabletools/2.2.2/css/dataTables.tableTools.css">
+  <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/plug-ins/725b2a2115b/integration/bootstrap/3/dataTables.bootstrap.css">
+
+  <link rel="stylesheet"  type="text/css" href="/admin/_style/css/main.css" />
+
+  <script src="/_script/lib/angular/angular.min.js"></script>
+
+</head>
+<body>
+
+
+<navi active="/admin/users/"></navi>
+
+<div class="container">
+
+  <p class="well bg-info text-center">
+    <span id="notice">Downloading data..</span>
+    <button class="btn btn-info btn-sm" onclick="refreshData();">Refresh</button>
+  </p>
+
+  <label class="pull-right"><input type="checkbox" name="global_regex" id="global_regex"> Search using regex</label>
+  <table id="users" class="table table-striped">
+    <tfoot>
+      <tr class="filters">
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+      </tr>
+    </tfoot>
+  </table>
+
+
+</div>
+
+
+<script src="//code.jquery.com/jquery-1.10.2.min.js"></script>
+<script src="/_script/lib/bootstrap/bootstrap.min.js"></script>
+<script src="/admin/_script/common.js"></script>
+
+<script src="/_script/lib/momentjs/moment.min.js"></script>
+<script src="/_script/lib/phoneformat/phoneformat.js"></script>
+<script src="/_script/lib/jszip/jszip.js"></script>
+
+<script src="//cdn.datatables.net/1.10.1/js/jquery.dataTables.js"></script>
+<script src="//cdn.datatables.net/plug-ins/725b2a2115b/integration/bootstrap/3/dataTables.bootstrap.js"></script>
+<script src="//cdn.datatables.net/colvis/1.1.1/js/dataTables.colVis.min.js"></script>
+<script src="//cdn.datatables.net/tabletools/2.2.2/js/dataTables.tableTools.min.js"></script>
+
+
+<script>
+
+var sql_url = getSQLUrl('sql','users_basic');
+
+function refreshData(){
+  localStorage.setItem('all_users', "");
+  localStorage.setItem('all_users_timestamp', "");
+  window.location.href = window.location.href;
+}
+function updateNotice(){
+  $('#notice').html("This is a local copy downloaded at "+localStorage.getItem('all_users_timestamp'))
+}
+var maxEmailLength = 53;
+function prepareData(data){
+  $('#global_regex').prop('checked', $('#users').DataTable().settings()[0].oSavedState.search.regex )
+  for ( var i=0, ien=data.length ; i<ien ; i++ ) {
+    if(data[i]["id"]){
+      data[i]["id"] = '<a href="user/?id='+data[i]["id"]+'">'+data[i]["id"]+'</a>';
+    }
+    data[i]["email_orig"] = data[i]["email"];
+    if(data[i]["email"]){
+      if(data[i]["email"].length>maxEmailLength){
+        data[i]["email"] = data[i]["email"].substring(0,maxEmailLength);
+      }
+    }
+
+    var types = [
+        'Freemium',
+        'Trial',
+        'User',
+        'Company',
+        'Sponsored',
+        'Weird'
+      ]
+    data[i]["type"] = types[data[i]["type"]];
+
+    if(data[i]["cc"]){
+      data[i]["cc_original"] = data[i]["cc"];
+      data[i]["cc"] = '<span class="nowrap">'+countryFlagHtml(data[i]["cc"])+'</span>';
+    }
+
+    for(j in data[i]){
+      if(!data[i][j]){
+        data[i][j] = "-";
+      }
+    }
+  }
+
+  var savedCols = $('#users').DataTable().settings()[0].oSavedState.columns;
+  for(var i=0,l=savedCols.length;i<l;i++){
+    if($('#users .filters th input')[i]){
+      $('#users .filters th input')[i].value = $('#users').DataTable().settings()[0].oSavedState.columns[i].search.search;
+    }
+  }
+  return data
+}
+
+function addEmailEllipses(data, type, full){
+  var title ="";
+  if(full.email_orig.length > maxEmailLength-3){
+    title = full.email_orig;
+  }
+  return '<span class="col_ellipses" title="'+title+'">'+data+'</span>';
+}
+var regexSearch;
+var table;
+$(document).ready( function () {
+  regexSearch = $('#global_regex').prop('checked');
+  $('#global_regex').on("change",function(){
+    regexSearch = $('#global_regex').prop('checked');
+    $('#users').DataTable().search($('#users').DataTable().search(),regexSearch,!regexSearch).draw()
+  })
+
+  // Setup - add a text input to each footer cell
+  $('#users .filters th').each( function () {
+      $(this).html( '<input type="text" class="filter" />' );
+  } );
+
+  table = $('#users').DataTable({
+      "order":[0,'asc'],
+      "lengthMenu": [[10, 25, 50, 100, 250, 500, 1000, 5000], [10, 25, 50, 100, 250, 500, 1000, 5000]],
+      "dom": 'T<"clear">lCfrtip',
+      "sAjaxDataProp":"",
+      "deferRender": true,
+      "stateSave": true,
+      // "bAutoWidth": false,
+      "ajax": function(data, callback, settings){
+        var oldData = localStorage.getItem('all_users');
+        if(oldData){
+          updateNotice();
+          var unzip = new JSZip();
+          // unzip.load(oldData,{base64:true})
+          unzip.load(oldData)
+          oldData = unzip.file('all_users').asText();
+          oldData = jQuery.parseJSON(oldData);
+          oldData = prepareData(oldData);
+          callback(oldData);
+        }else{
+          $.ajax(
+            sql_url,
+            {
+              "dataType": "jsonp",
+              "success": function(json){
+
+                var string = JSON.stringify(json);
+
+                var zip = new JSZip();
+                zip.file('all_users',string);
+                var zipped = zip.generate({compression:"DEFLATE",type:'string'})
+
+                localStorage.setItem('all_users', zipped);
+                localStorage.setItem('all_users_timestamp', moment().format('YYYY-MM-DD HH:mm:ss'))
+                updateNotice();
+                callback(prepareData(json));
+              }
+            }
+          );
+        }
+      },
+
+
+      columnDefs: [
+        {  mData: "id",            title: "ID",            targets: 0 },
+        {  mData: "email",         title: "Email",         targets: 1,  sClass: "td_email", mRender:addEmailEllipses },
+        {  mData: "first_name",    title: "First",         targets: 2 },
+        {  mData: "last_name",     title: "Last",          targets: 3 },
+        {  mData: "type",          title: "Type",          targets: 4 },
+        {  mData: "cc",            title: "Country",       targets: 5 },
+        {  mData: "organization",  title: "Organization",  targets: 6 },
+        {  visible: false,         targets: [6] },
+        {  orderable: false,       targets: [] },
+      ],
+
+      "tableTools":{
+        "sSwfPath": "/_script/lib/datatables.net/copy_csv_xls.swf",
+        "aButtons": [
+          {
+            "sExtends": "copy",
+            "sButtonText": "Copy",
+            "oSelectorOpts":{
+              "filter": 'applied'
+            }
+          },
+          {
+            "sExtends": "xls",
+            "sButtonText": "xls",
+            "oSelectorOpts":{
+              "filter": 'applied'
+            }
+          }
+        ],
+
+      }
+    });
+
+    // Apply the search
+    table.columns().eq( 0 ).each( function ( colIdx ) {
+      $( 'input.filter', table.column( colIdx ).footer() ).on( 'keyup change', function () {
+        table
+          .column( colIdx )
+          .search( this.value, regexSearch, !regexSearch )
+          .draw();
+      } );
+    } );
+
+
+
+} );
+
+</script>
+</body>
+</html>

@@ -1,0 +1,1203 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="myApp">
+<head>
+	<meta charset="UTF-8">
+	<title>User</title>
+
+	<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.1/css/jquery.dataTables.css">
+	<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/colvis/1.1.1/css/dataTables.colVis.css">
+	<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/tabletools/2.2.2/css/dataTables.tableTools.css">
+	<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/plug-ins/725b2a2115b/integration/bootstrap/3/dataTables.bootstrap.css">
+
+	<link rel="stylesheet"  type="text/css" href="/admin/_style/css/main.css" />
+
+	<script src="/_script/lib/angular/angular.min.js"></script>
+
+</head>
+<body>
+
+<navi active="/admin/users/"></navi>
+
+<div class="container" ng-controller="UserController">
+
+	<ol class="breadcrumb">
+		<li><a href="../../">Home</a></li>
+		<li><a href="../">Users</a></li>
+		<li class="active">#{{user.user_id}} {{full_name}}</li>
+	</ol>
+
+	<div class="row">
+		<div class="col-md-2">
+			<img src="" ng-src="{{avatar_url}}" alt="{{full_name}}" width="144" height="144">
+		</div>
+		<div class="col-md-6">
+			<!-- <small class="pull-right">#{{user.user_id}}</small> -->
+			<h1><span title="First name">{{user.first_name}}</span> <span title="Last name">{{user.last_name}}</span></h1>
+
+			<h2 ng-show="extra_is_temporary_user && !extra_is_abandoned_temporary_user" class="temporary_user">Temporary user</h2>
+			<h2 ng-show="extra_is_abandoned_temporary_user" class="temporary_abandoned_user">Abandoned temporary user</h2>
+			<h2 ng-show="note_deleted_user" class="deleted_user">Deleted user</h2>
+
+			<p title="Profile title">{{user.extra_profile_title}}</p>
+			<p title="Profile organization">{{user.extra_profile_organization}}</p>
+		</div>
+		<div class="col-md-4">
+			<table class="table">
+				<tr><th>Language:</th><td>{{language_name}} ({{user.language}})</td></tr>
+				<tr>
+					<th>Country:</th>
+					<td>
+						<span ng-show="country_code">
+							<img ng-src="{{country_flag_url}}" alt="{{country_name}}"> {{country_name}}
+						</span>
+						<span ng-hide="country_code">-</span>
+					</td>
+				</tr>
+				<tr><th>Timezone:</th><td>{{user.timezone}}</td></tr>
+				<tr>
+					<th>Mixpanel:</th>
+					<td>
+						<a href="https://mixpanel.com/report/542187/explore/#user?distinct_id={{user.user_id}}">Live</a>
+						(<a href="https://mixpanel.com/report/542193/explore/#user?distinct_id={{user.user_id}}">Beta</a>)
+					</td>
+				</tr>
+				<tr>
+					<th>Errors:</th>
+					<td>
+						<a href="https://app.getsentry.com/meetings-oy/swipetomeet-live/?sentry%3Auser=id%3A{{user.user_id}}">Sentry</a>
+					</td>
+				</tr>
+
+				<tr>
+					<th>Invited by:</th>
+					<td>
+						<span ng-show="user.extra_first_inviter_id != 0">
+							<a href="?id={{user.extra_first_inviter_id}}">
+								<img ng-src="{{extra_first_inviter_img_url}}" width="18" height="18" alt="{{user.extra_first_inviter_name}}" onError="this.src='//dev.meetin.gs/images/meetings/new_profile.png';" >
+								{{user.extra_first_inviter_name}}
+							</a>
+						</span>
+						<span ng-hide="user.extra_first_inviter_id != 0">-</span>
+					</td>
+				</tr>
+				<tr>
+					<th>Invited</th>
+					<td>
+						{{invitees}} users
+						<button class="btn btn-default btn-xs" ng-click="invitees_visible = !invitees_visible">
+							<span ng-hide="invitees_visible">Show</span>
+							<span ng-show="invitees_visible">Hide</span>
+						</button>
+					</td>
+				</tr>
+
+			</table>
+		</div>
+	</div>
+
+
+<div ng-show="invitees_visible">
+	<h2>Invited users</h2>
+
+	<table class="table">
+		<tr ng-repeat="row in invited | partition:3">
+			<td ng-repeat="invitee in row">
+				<a href="?id={{invitee.id}}">
+				<img ng-if="invitees_visible" ng-src="{{invitee.image_url}}" width="18" height="18" alt="{{invitee.first_name}} {{invitee.last_name}}">
+				{{invitee.first_name}} {{invitee.last_name}} &lt;{{invitee.email}}&gt;
+			</a>
+			</td>
+		</tr>
+	</table>
+</div>
+
+<ul id="editortab" class="nav nav-tabs" role="tablist">
+	<li><a href="#preview" role="tab" data-toggle="tab">Notes</a></li>
+	<li class="active"><a href="#edit" role="tab" data-toggle="tab">Edit</a></li>
+	<li><a href="#guide" role="tab" data-toggle="tab">Markdown guide</a></li>
+</ul>
+<div class="tab-content">
+	<div class="tab-pane" id="preview">
+		<div id="epiceditor-preview"></div>
+	</div>
+	<div class="tab-pane active" id="edit">
+		<div id="epiceditor"></div>
+	</div>
+	<div class="tab-pane" id="guide">
+<pre>
+Try copying this stuff to the editor..
+
+# Heading level 1
+## Heading level 2
+### Heading level 3
+#### Heading level 4
+
+This is a paragraph, it's separated with an empty line from other paragraphs. Text can be styled *italic*, **bold**, `monospaced`,
+
+line break: 2+ trailing spaces before
+new line
+
+Mikko says:
+> Roses are `#ff0000`,
+> blockquotes are wonderful
+
+Unordered list marking styles:
+
+- List item
+* List item
+	* Sub item
+	* Sub item
++ List item
+
+Ordered list marking styles:
+
+1. List item
+1. List item to show that numbering can all be "1."
+	1. Sub item
+	2. Sub item
+2. List item
+
+````
+// Codeblock can be shown like this.
+alert("Hello world");
+````
+
+Horizontal rule:
+
+----------------------------------------------------------------------
+
+http://meetin.gs
+[Link description](http://meetin.gs)
+![Image alt text](https://mobile.meetin.gs/images/ico/favicon-32.png)
+&lt;info@meetin.gs&gt; should work as an email link
+</pre>
+	</div>
+</div>
+<br>
+<button class="btn btn-primary" id="saveNotes">Save notes</button>
+<hr>
+
+<h2>Account</h2>
+<div class="row">
+	<div class="col-md-6">
+		<table class="table">
+			<thead><tr><th>&nbsp;</th><th>&nbsp;</th></tr></thead>
+			<tbody>
+				<tr>
+					<th>Type:</th>
+					<td class="account_type">
+						<span ng-show="user.extra_subscription_type">{{user.extra_subscription_type}}</span>
+						<span ng-hide="user.extra_subscription_type">Freemium</span>
+					</td>
+				</tr>
+				<tr ng-show="user.subscription_type=='trial'">
+					<th>Trial expires:</th>
+					<td>{{user.subscription_trial_expires_epoch_humanized}}</td>
+				</tr>
+				<tr ng-show="user.subscription_type=='user'">
+					<th>User admin url:</th>
+					<td>{{user.subscription_user_admin_url}}</td>
+				</tr>
+				<tr ng-show="user.subscription_type=='company'">
+					<th>Company name:</th>
+					<td>{{user.subscription_company_name}}</td>
+				</tr>
+				<tr ng-show="user.subscription_type=='company'">
+					<th>Company admin:</th>
+					<td>{{user.subscription_company_admin_name}}</td>
+				</tr>
+				<tr ng-show="user.subscription_type=='company'">
+					<th>Company admin url:</th>
+					<td>{{user.subscription_company_admin_url}}</td>
+				</tr>
+
+				<tr><th>Created:</th><td>{{note_creation_time_humanized}}</td></tr>
+				<tr><th>TOS accepted:</th><td>{{note_tos_accepted_humanized}}</td></tr>
+				<tr ng-hide="user.extra_latest_activity_epoch!=0"><th>Latest desktop activity:</th><td>{{latest_desktop_activity_humanized}}</td></tr>
+				<tr ng-show="user.extra_latest_activity_epoch!=0"><th>Latest activity:</th><td>{{latest_activity_humanized}}</td></tr>
+				<tr ng-show="user.note_deleted_user"><th>Account deleted:</th><td>{{user.note_deleted_user}}</td></tr>
+			</tbody>
+		</table>
+	</div>
+	<div class="col-md-6">
+		<table class="table">
+			<thead>
+				<tr>
+					<th></th>
+					<th>Started</th>
+					<th>Expires</th>
+					<th>Status</th>
+				</tr>
+			</thead>
+			<tbody>
+				<!-- <tr>
+					<th>Trial:</th>
+					<td>{{trial_pro_humanized}}</td>
+					<td>{{trial_pro_expires_humanized}}</td>
+					<td>{{trial_pro_status}}</td>
+					<td></td>
+				</tr> -->
+				<tr>
+					<th>Free trial:</th>
+					<td>{{free_trial_humanized}}</td>
+					<td>{{free_trial_expires_humanized}}</td>
+					<td>{{free_trial_status}}</td>
+				</tr>
+				<tr>
+					<th>Pro:</th>
+					<td>{{pro_humanized}}</td>
+					<td>{{pro_expires_humanized}}</td>
+					<td>{{pro_status}}</td>
+				</tr>
+				<tr>
+					<th>Beta pro:</th>
+					<td>{{beta_pro_humanized}}</td>
+					<td>{{beta_pro_expires_humanized}}</td>
+					<td>{{beta_pro_status}}</td>
+				</tr>
+				<tr>
+					<th>Startup pro:</th>
+					<td>{{startup_pro_humanized}}</td>
+					<td>{{startup_pro_expires_humanized}}</td>
+					<td>{{startup_pro_status}}</td>
+				</tr>
+			</tbody>
+		</table>
+
+	</div>
+</div>
+
+
+<h2>Contact</h2>
+
+<div class="row">
+	<div class="col-md-6">
+		<table class="table">
+			<tr><th>Email:</th><td><a href="mailto:{{user.email}}">{{user.email}}</a></td></tr>
+			<tr><th>Domain:</th><td><a href="/admin/domains/domain/?domain={{user.domain}}" ng-show="user.domain">@{{user.domain}}</a></td></tr>
+			<tr ng-show="user.alternative_emails">
+				<th>Alternative emails:</th>
+				<td>
+					<div ng-repeat="email in user.alternative_emails"><a href="mailto:{{email}}">{{email}}</a></div>
+				</td>
+			</tr>
+			<tr>
+				<th>Phone:</th>
+				<td>
+					<a href="tel:{{user.phone}}" ng-show="user.phone">
+						<img ng-if="phone_flag_url" ng-src="{{phone_flag_url}}" alt="{{phone_country_name}}" title="{{phone_country_name}}" style="vertical-align:baseline" width="16" height="11">
+						{{user.phone}}
+					</a>
+				</td>
+			</tr>
+			<tr>
+				<th>Profile phone:</th>
+				<td>
+					<a href="tel:{{user.extra_profile_phone}}" ng-show="user.extra_profile_phone">
+						<img ng-if="profile_phone_flag_url" ng-src="{{profile_phone_flag_url}}" alt="{{profile_phone_country_name}}" title="{{profile_phone_country_name}}" style="vertical-align:baseline" width="16" height="11">
+						{{user.extra_profile_phone}}
+					</a>
+				</td>
+			</tr>
+		</table>
+	</div>
+	<div class="col-md-6">
+		<table class="table">
+			<tr><th>Skype:</th><td><a href="skype:{{user.extra_profile_skype}}">{{user.extra_profile_skype}}</a></td></tr>
+			<tr><th>LinkedIn:</th><td><a href="{{user.extra_profile_linkedin}}" target="_blank">{{user.extra_profile_linkedin}}</a></td></tr>
+			<tr><th>Facebook:</th><td><a href="https://www.facebook.com/profile.php?id={{user.facebook_user_id}}" ng-show="user.facebook_user_id" target="_blank"><img ng-src="{{facebook_photo_url}}" alt="Facebook" width="18" height="18"> {{user.facebook_user_id}}</a></td></tr>
+		</table>
+	</div>
+</div>
+
+
+<h3>Meet Me page</h3>
+<p ng-hide="user.extra_meet_me_path">-</p>
+<div ng-show="user.extra_meet_me_path">
+	<p>
+		<a href="http://meetin.gs/meet/{{user.extra_meet_me_path}}" target="_blank">http://meetin.gs/meet/{{user.extra_meet_me_path}}</a>
+	</p>
+	<div class="row">
+		<div class="col-md-4">
+			<table class="table">
+				<thead>
+					<tr>
+						<th>Standard</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="item in matchmaker | meetmeFilter:1">
+						<td title="{{item.note_duration}}min, {{item.note_time_zone}}">
+							<a href="http://meetin.gs/meet/{{user.extra_meet_me_path}}/{{item.vanity_url_path}}" ng-show="item.note_direct_link_enabled == '1'" target="_blank">{{item.name}}</a>
+							<span ng-hide="item.note_direct_link_enabled == '1'">{{item.name}}</span>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<div class="col-md-4">
+			<table class="table">
+				<thead>
+					<tr>
+						<th>Private</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="item in matchmaker | meetmeFilter:2">
+						<td title="{{item.note_duration}}min, {{item.note_time_zone}}">
+							<a href="http://meetin.gs/meet/{{user.extra_meet_me_path}}/{{item.vanity_url_path}}" ng-show="item.note_direct_link_enabled == '1'" target="_blank">{{item.name}}</a>
+							<span ng-hide="item.note_direct_link_enabled == '1'">{{item.name}}</span>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<div class="col-md-4">
+			<table class="table">
+				<thead>
+					<tr>
+						<th>Event</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="item in matchmaker | meetmeFilter:3">
+						<td title="{{item.note_duration}}min, {{item.note_time_zone}}">
+							<a href="http://meetin.gs/meet/{{user.extra_meet_me_path}}/{{item.vanity_url_path}}" ng-show="item.note_direct_link_enabled == '1'" target="_blank">{{item.name}}</a>
+							<span ng-hide="item.note_direct_link_enabled == '1'">{{item.name}}</span>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+
+<!--
+<h2>Devices</h2>
+<span class="unfinished">Not implemented yet</span>
+ <div class="row">
+	<div class="col-md-12">
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th>Device</th>
+					<th>App</th>
+					<th>Version</th>
+					<th>Push</th>
+					<th>Latest sync</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>iPhone 5S</td>
+					<td>iOS</td>
+					<td>2.3.0</td>
+					<td>Off</td>
+					<td>2014-08-28 14:19:01</td>
+				</tr>
+				<tr>
+					<td>Samsung Galaxy S5</td>
+					<td>Android Connector</td>
+					<td>1.0.0</td>
+					<td>On</td>
+					<td>2014-08-28 14:19:01</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</div>
+-->
+
+<div class="row">
+	<div class="col-md-6">
+
+		<h2>Payment history</h2>
+		<table class="table" id="payments">
+			<tfoot>
+				<tr>
+					<th>Filtered<br>( Total )</th>
+					<th></th>
+					<th></th>
+				</tr>
+			</tfoot>
+		</table>
+
+	</div>
+	<div class="col-md-6">
+
+		<h2>Statistics</h2>
+		<table class="table">
+			<tr>
+				<th>Meetings created total:</th>
+				<td>{{user.extra_meetings_created}}</td>
+			</tr>
+			<tr>
+				<th>Real meetings created (non-drafts):</th>
+				<td>{{user.extra_real_meetings_created}}</td>
+			</tr>
+			<tr>
+				<th>Meetings participated:</th>
+				<td>{{user.extra_meetings_participated}}</td>
+			</tr>
+			<tr>
+				<th>Meeting suggestions:</th>
+				<td>{{user.extra_meeting_suggestion_count}}</td>
+			</tr>
+			<tr>
+				<th>Upcoming meeting suggestion count:</th>
+				<td>{{user.extra_upcoming_meeting_suggestion_count}}</td>
+			</tr>
+			<tr>
+				<th>Invites sent:</th>
+				<td>{{user.extra_invites_sent}}</td>
+			</tr>
+			<tr>
+				<th>Invites sent distinct event:</th>
+				<td>{{user.extra_invites_sent_distinct_event}}</td>
+			</tr>
+			<tr>
+				<th>Invites sent distinct user:</th>
+				<td>{{user.extra_invites_sent_distinct_user}}</td>
+			</tr>
+		</table>
+
+	</div>
+</div>
+
+<h2>Schedulings</h2>
+<table id="schedulings" class="table"></table>
+
+<h2>Activity</h2>
+<table id="activity" class="table"></table>
+
+
+<div>
+	<button class="btn btn-default" ng-click="commands_visible = !commands_visible"><span ng-hide="commands_visible">Show</span><span ng-show="commands_visible">Hide</span> commands</button>
+</div>
+<div ng-show="commands_visible">
+	<h2>Commands</h2>
+	<p>You should be logged in with your Meetin.gs account to be able to use these.</p>
+
+	<p>Remember that commands happen instantly, but you do not see the change here until next day. (This data is from Miner that gets updated nightly)</p>
+
+	<p>Be careful what you click here. These buttons do real things on the production server!</p>
+
+	<p>These details can be found from the <a href="https://docs.google.com/a/dicole.com/document/d/1cTwtadyct8MQ_o1iQmd4X_EYhXaw0MW_yvit7e0KylY/edit#heading=h.j1b8eyxik0ul" target="_blank">Meetin.gs Testing notes & instructions</a> in Meetin.gs Google Docs</p>
+
+	<table class="table">
+		<thead>
+			<tr>
+				<th></th>
+				<th>Help</th>
+				<th>Status</th>
+				<th></th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<th>Summary guide</th>
+				<td>If the user has dismissed this guide, you can reactivate it.</td>
+				<td>{{user.note_rudolf_greeting_dismissed ? "Dismissed" : "Active"}}</td>
+				<td class="text-right"><a href="https://meetin.gs/meetings_global/reset_rudolf?email={{toggle_url_email}}" class="btn btn-default" disabled="!user.note_rudolf_greeting_dismissed" target="_blank">Activate</a></td>
+			</tr>
+			<tr>
+				<th>Meeting page admin guide</th>
+				<td>If the user has dismissed this guide, you can reactivate it.<span class="unfinished">(DOES NOT WORK HERE)</span></td>
+				<td>{{user.note_meetings_admin_guide_dismissed ? "Dismissed" : "Active"}}</td>
+				<td class="text-right"><a href="https://meetin.gs/meetings_global/reset_guide?guide=admin_guide?email={{toggle_url_email}}" class="btn btn-default" target="_blank" disabled>Activate</a></td>
+			</tr>
+			<tr>
+				<th>Meeting page new user guide</th>
+				<td>If the user has dismissed this guide, you can reactivate it.<span class="unfinished">(DOES NOT WORK HERE)</span></td>
+				<td>{{user.note_meetings_new_user_guide_dismissed ? "Dismissed" : "Active"}}</td>
+				<td class="text-right"><a href="https://meetin.gs/meetings_global/reset_guide?guide=admin_guide?email={{toggle_url_email}}" class="btn btn-default" target="_blank" disabled>Activate</a></td>
+			</tr>
+			<tr>
+				<th>Developer status</th>
+				<td>Adds some tracing information to all requests</td>
+				<td>{{user.note_developer ? "Active" : "Inactive"}}</td>
+				<td class="text-right"><a href="https://meetin.gs/meetings_global/make_user_developer?email={{toggle_url_email}}" class="btn btn-default" target="_blank">Toggle</a></td>
+			</tr>
+			<tr>
+				<th>Send RSVP reminders prematurely</th>
+				<td>Sends upcoming rsvp reminders for user immediately even if not enough time has passed</td>
+				<td>-</td>
+				<td class="text-right"><a href="https://meetin.gs/meetings_global/flush_user_rsvp_reminders?email={{toggle_url_email}}" class="btn btn-default" target="_blank">Send now</a></td>
+			</tr>
+			<tr>
+				<th>Send scheduling reminders prematurely</th>
+				<td>Sends upcoming scheduling reminders for user immediately even if not enough time has passed</td>
+				<td>-</td>
+				<td class="text-right"><a href="https://meetin.gs/meetings_global/flush_user_scheduling_reminders?email={{toggle_url_email}}" class="btn btn-default" target="_blank">Send now</a></td>
+			</tr>
+			<tr>
+				<th>Fake that user is in Utrecht</th>
+				<td>Makes it possible to get location suggestions even when not in Netherlands.</td>
+				<td>{{user.note_meetings_force_ip}}</td>
+				<td class="text-right"><a href="http://meetin.gs/meetings_global/force_user_ip?ip=143.121.189.109?email={{toggle_url_email}}" class="btn btn-default" target="_blank">Fake now</a></td>
+			</tr>
+			<tr>
+				<th>Clear free trials</th>
+				<td>Clears free_trial_30 trials. Can not be brought back. Use with care!</td>
+				<td>?</td>
+				<td class="text-right"><a href="https://meetin.gs/meetings_global/clear_free_trials?email={{toggle_url_email}}" class="btn btn-default" target="_blank">Clear</a></td>
+			</tr>
+			<tr>
+				<th>Expire free trials</th>
+				<td>Expires free_trial_30 trials. Can not be undone - only cleared with the one above.</td>
+				<td>?</td>
+				<td class="text-right"><a href="https://meetin.gs/meetings_global/expire_free_trials?email={{toggle_url_email}}" class="btn btn-default" target="_blank">Expire</a></td>
+			</tr>
+			<tr>
+				<th>Give N-day trials as gifts</th>
+				<td>Requires you to be logged in Meetin.gs so that gifter can be recorded <span class="unfinished">(DOES NOT WORK YET)</span></td>
+				<td class="form-inline" colspan="2">
+					<table style="width:180px;">
+						<tr>
+							<td>
+								<div class="input-group">
+									<input type="number" class="form-control" ng-model="gift_days">
+									<span class="input-group-addon">days</span>
+								</div>
+							</td>
+							<td>&nbsp;</td>
+							<td class="text-right">
+								<a href="https://dev.meetin.gs/meetings_global/gift_trial?days={{gift_days}}&email={{toggle_url_email}}" class="btn btn-default btn-disabled" target="_blank" disabled>Gift</a>
+							</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+</div>
+
+<button class="btn btn-default" ng-click="debug = !debug"><span ng-hide="debug">Show</span><span ng-show="debug">Hide</span> debug data</button>
+<table class="table table-striped" ng-show="debug">
+	<thead>
+		<tr>
+			<th>Key</th>
+			<th>Value</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr ng-repeat="(id, user) in user">
+			<th>{{id}}</th>
+			<td>{{user}}</td>
+		</tr>
+	</tbody>
+</table>
+
+
+
+<!--
+<h1>Feature specs:</h1>
+<hr>
+
+
+<ul>
+	<li>Onko mobiili asennettuna</li>
+	<li>Onko kalentereita linkitettynä</li>
+	<li>Onko MeetMe alasivuja</li>
+	<li>Auth tokenin generointi, tänä henkilönä sisäänkirjautumista varten</li>
+</ul> -->
+
+</div>
+
+<script src="//code.jquery.com/jquery-1.10.2.min.js"></script>
+<script src="/_script/lib/bootstrap/bootstrap.min.js"></script>
+<script src="/admin/_script/common.js"></script>
+
+<script src="/_script/lib/lang/lang.js"></script>
+<script src="/_script/lib/momentjs/moment.min.js"></script>
+<script src="/_script/lib/moment-duration-format/moment-duration-format.js"></script>
+<script src="/_script/lib/phoneformat/phoneformat.js"></script>
+<script src="/_script/lib/ua-parser/ua-parser.min.js"></script>
+
+<script src="//cdn.datatables.net/1.10.1/js/jquery.dataTables.js"></script>
+<script src="//cdn.datatables.net/plug-ins/725b2a2115b/integration/bootstrap/3/dataTables.bootstrap.js"></script>
+<script src="//cdn.datatables.net/colvis/1.1.1/js/dataTables.colVis.min.js"></script>
+
+<script>
+
+var query_user_id = getQueryVariable("id")
+
+var user_all_url     = getSQLUrl('sql','user_all',query_user_id);
+var meetme_sql_url   = getSQLUrl('sql','matchmaker',query_user_id);
+var invitees_sql_url = getSQLUrl('sql','invitees',query_user_id);
+
+
+
+app.controller('UserController', ['$scope', '$http', '$window', function($scope, $http, $window) {
+	$http({
+		method: 'JSONP',
+		url: user_all_url + '&callback=JSON_CALLBACK'
+	}).success(function(data, status) {
+		var user = data[0];
+		$scope.user = user;
+		$scope.invited_visible = false;
+		$scope.debug = false;
+		$scope.toggle_url_email = user.email;
+		$scope.gift_days = 30;
+		if(user.facebook_user_id){
+			$scope.facebook_photo_url = 'https://graph.facebook.com/'+user.facebook_user_id+'/picture?type=square&width=18';
+		}
+
+		$scope.phone_country_code = countryForE164Number(user.phone).toLowerCase();
+		if($scope.phone_country_code){
+			$scope.phone_flag_url = "/_img/lib/famfamfam_flag_icons/png/"+$scope.phone_country_code+".png";
+			$scope.phone_country_name = countryCodeToName($scope.phone_country_code);
+		}
+
+		$scope.profile_phone_country_code = countryForE164Number(user.extra_profile_phone).toLowerCase();
+		if($scope.profile_phone_country_code){
+			$scope.profile_phone_flag_url = "/_img/lib/famfamfam_flag_icons/png/"+$scope.profile_phone_country_code+".png";
+			$scope.profile_phone_country_name = countryCodeToName($scope.profile_phone_country_code);
+		}
+
+		$scope.full_name = user.first_name+' '+user.last_name;
+		$window.document.title = 'User: '+$scope.full_name;
+		if(user.extra_profile_image_is_set != "no"){
+			$scope.avatar_url = "https://meetin.gs/networking_raw/image/0/"+user.user_id+"/140/140/portrait.png";
+		}else{
+			$scope.avatar_url = "https://dev.meetin.gs/images/meetings/new_profile.png";
+		}
+
+		var countryCode = user.note_meetings_presumed_country_code;
+		if(countryCode){
+			countryCode = countryCode.toLowerCase();
+			$scope.country_code = countryCode;
+			$scope.country_flag_url = '/_img/lib/famfamfam_flag_icons/png/'+countryCode+'.png';
+			$scope.country_name = countryCodeToName(countryCode);
+		}
+
+		$scope.language_name = getLanguageName(user.language);
+
+
+		$scope.trial_pro_humanized = humanizeSubscription(user.note_meetings_trial_pro);
+		$scope.trial_pro_expires_humanized = humanizeSubscription(user.note_meetings_trial_pro_expires);
+
+		$scope.free_trial_humanized = humanizeSubscription(user.note_meetings_trial_pro);
+		$scope.free_trial_expires_humanized = humanizeSubscription(user.note_meetings_free_trial_expires);
+		$scope.free_trial_status = getSubscriptionStatus(user.note_meetings_trial_pro,user.note_meetings_free_trial_expires)
+
+		$scope.pro_humanized = humanizeSubscription(user.note_meetings_pro);
+		$scope.pro_expires_humanized = humanizeSubscription(user.note_meetings_pro_expires);
+		$scope.pro_status = getSubscriptionStatus(user.note_meetings_pro,user.note_meetings_pro_expires)
+
+
+		$scope.beta_pro_humanized = humanizeSubscription(user.note_meetings_beta_pro);
+		$scope.beta_pro_expires_humanized = "-";
+		$scope.beta_pro_status = getSubscriptionStatus(user.note_meetings_beta_pro,"0");
+
+		$scope.startup_pro_humanized = humanizeSubscription(user.note_startup_pro_enabled);
+		$scope.startup_pro_expires_humanized = "-";
+		$scope.startup_pro_status = getSubscriptionStatus(user.note_startup_pro_enabled,"0");
+
+
+
+		$scope.note_creation_time_humanized = humanizeDate(user.note_creation_time);
+
+		$scope.note_tos_accepted_humanized = humanizeDate(user.note_tos_accepted);
+		$scope.note_meetings_pro_calculated_humanized = humanizeDate(user.note_meetings_pro_calculated);
+		$scope.latest_desktop_activity_humanized = humanizeDate(user.extra_latest_desktop_activity_epoch);
+		$scope.latest_activity_humanized = humanizeDate(user.extra_latest_activity_epoch);
+
+		$scope.extra_first_inviter_img_url = "https://meetin.gs/networking_raw/image/0/"+user.extra_first_inviter_id+"/18/18/portrait.png";
+
+		initEditor('note_customer_service_notes',user.note_customer_service_notes);
+
+		//MeetMe subpages
+		$http({
+			method: 'JSONP',
+			url: meetme_sql_url +'&callback=JSON_CALLBACK'
+		}).success(function(data, status) {
+			var dataLength = data.length;
+			var order = jQuery.parseJSON(user.note_meetme_order) || [];
+			var orderLength = order.length;
+			for(var i=0,l=dataLength;i<l;i++){
+				data[i].sortby = orderLength+(data[i].id*1)
+			}
+			for(var i=0,l=orderLength;i<l;i++){
+				for(var j=0,l2=dataLength;j<l2;j++){
+					if(data[j].id+"" == order[i]){
+						data[j].sortby = i;
+						break;
+					}
+				}
+			}
+			data.sort(function compare(a,b) {if (a.sortby < b.sortby) return -1; if (a.sortby > b.sortby) return 1; return 0; } )
+
+			$scope.matchmaker = data;
+		}).error(function(data, status) {
+			alert("Some error occurred in matchmaker");
+		});
+
+	}).error(function(data, status) {
+		alert("Some error occurred in base data");
+	});
+
+	$scope.invitees_visible = false;
+
+	//Invitees
+	$http({
+		method: 'JSONP',
+		url: invitees_sql_url +'&callback=JSON_CALLBACK'
+	}).success(function(data, status) {
+		$scope.invited = [];
+		$scope.invitees = data.length;
+		for(var i=0,l=data.length;i<l;i++){
+			data[i].image_url = 'https://dev.meetin.gs/images/meetings/new_profile.png';
+			if(data[i].image_is_set == "yes"){
+				data[i].image_url = 'https://meetin.gs/networking_raw/image/0/'+data[i].id+'/18/18/portrait.png';
+			}
+
+			$scope.invited.push(data[i]);
+		}
+	}).error(function(data, status) {
+		alert("Some error occurred in invitees");
+	});
+
+}]);
+
+app.filter('partition', function() {
+	var cache = {};
+	var filter = function(arr, size) {
+		if (!arr) { return; }
+		var newArr = [];
+		for (var i=0; i<arr.length; i+=size) {
+			newArr.push(arr.slice(i, i+size));
+		}
+		var arrString = JSON.stringify(arr);
+		var fromCache = cache[arrString+size];
+		if (JSON.stringify(fromCache) === JSON.stringify(newArr)) {
+			return fromCache;
+		}
+		cache[arrString+size] = newArr;
+		return newArr;
+	};
+	return filter;
+});
+
+app.filter('meetmeFilter', function() {
+		return function(input, mode) {
+			mode = mode || 1;
+			input = input || [];
+			var standard = [];
+			var privat = [];
+			var events = [];
+			for(var i=0,l=input.length;i<l;i++){
+				if(input[i].note_duration != null){
+					if(input[i].matchmaking_event_id != "0"){
+						events.push(input[i]);
+					}else{
+						if(input[i].note_meetme_visible == "1"){
+							standard.push(input[i]);
+						}else{
+							privat.push(input[i]);
+						}
+					}
+				}
+			}
+			switch(mode){
+				case 1:
+					return standard;
+				case 2:
+					return privat;
+				case 3:
+					return events
+			}
+		};
+	})
+
+</script>
+
+<script>
+var scheduling_sql_url = getSQLUrl('sql','user_scheduling', query_user_id);
+
+$(document).ready( function () {
+
+	function titleWrap(text,title){
+		return '<span title="'+title+'">'+text+'</span>';
+	}
+
+	function prepareData(data){
+		for ( var i=0, ien=data.length ; i<ien ; i++ ) {
+			data[i]['id'] = '<a href="../../schedulings/scheduling/?meeting='+data[i]['meeting_id'];
+			data[i]['id'] += '&scheduling=' + data[i]['scheduling_id'] + '">';
+			data[i]['id'] += data[i]['meeting_id'] + "/" + data[i]['scheduling_id']+ '</a>';
+
+			var name = data[i]['creator_name'];
+			if(!name){
+				name = data[i]['creator_first_name']+" "+data[i]['creator_last_name']
+			}
+
+			data[i]['creator'] = '<a href="?id='+data[i]['creator_id']+'">'+data[i]['creator_id']+' '+name+'</a>'
+			data[i]['created_date'] = moment(data[i]['created']*1000).format('YYYY-MM-DD HH:mm');
+
+			data[i]['status'] = data[i]['note_failed_epoch']*1 > 0 ? 'failed' :
+							 data[i]['completed_date']*1 > 0 ? 'completed' :
+							 data[i]['cancelled_date']*1 > 0 ? 'cancelled' :
+							 data[i]['note_started_epoch']*1 > 0 ? 'started' :
+							 'created';
+
+		data[i]["completed_in"] = {};
+		var completeTime = 0;
+		if(data[i]['note_started_epoch']*1 == 0){ //Not started
+			data[i]["completed_in"]._ = "-"
+			data[i]["completed_in"].sort = 0
+		}else{ // Started
+			var prefix = "";
+			var suffix = "";
+			if(data[i]['completed_date']*1 > 0){ // Done
+				prefix = "= ";
+				completeTime = data[i]['completed_date']*1 - data[i]['note_started_epoch']*1;
+			}else if(data[i]['cancelled_date']*1 > 0){ // Cancelled
+				prefix = "= ";
+				completeTime = data[i]['cancelled_date']*1 - data[i]['note_started_epoch']*1;
+			}else if(data[i]['note_failed_epoch']*1 > 0){//Failed
+				prefix = "= ";
+				completeTime = data[i]['note_failed_epoch']*1 - data[i]['note_started_epoch']*1;
+			}else{ //Running
+				prefix = "> ";
+				completeTime = Math.floor(new Date()/1000 - data[i]['note_started_epoch']*1);
+			}
+			data[i]["completed_in"]._ = prefix;
+			data[i]["completed_in"]._ += moment.duration(completeTime, "seconds").format("d [days] h:mm:ss")
+			data[i]["completed_in"]._ += suffix
+			data[i]["completed_in"].sort = completeTime
+		}
+		data[i]["completed_in"].sort += 1000000000;
+
+			// data[i]['country_orig'] = data[i]['country'];
+			// data[i]['country'] = countryFlagHtml(data[i]['country']);
+			// data[i]['ua_browser'] = titleWrap(ua.browser.name+' '+ua.browser.major, ua.browser.version);
+			// data[i]['ua_engine'] =  titleWrap(ua.engine.name, ua.engine.version);
+			// data[i]['ua_os'] =      ua.os.name +' '+ua.os.version;
+			// data[i]['ua_device'] =  (ua.device.vendor)?ua.device.vendor +' '+ua.device.model:null;
+			// data[i]['ua_cpu'] =  (ua.cpu.architecture)?ua.cpu.architecture:null;
+		}
+		return data
+	}
+
+	var table = $('#schedulings').DataTable({
+			"order":[0,'asc'],
+			"lengthMenu": [[10, 25, 50, 100, 250, 500, 1000, -1], [10, 25, 50, 100, 250, 500, 1000, "All"]],
+			"dom": 'T<"clear">lCfrtip',
+			"sAjaxDataProp":"",
+			"deferRender": true,
+			"stateSave": true,
+			// "bAutoWidth": false,
+			"ajax": function(data, callback, settings){
+				$.ajax(
+					scheduling_sql_url,
+					{
+						"dataType": "jsonp",
+						"success": function(json){
+							callback(prepareData(json));
+						}
+					}
+				);
+			},
+
+
+			columnDefs: [
+				{ mData: "id",         title: '#',         targets: 0 },
+				{ mData: "creator",         title: 'Admin',         targets: 1 },
+				{ mData: "created_date",            title: 'Created',            targets: 2 },
+				{ mData: "status",            title: 'Status',            targets: 3 },
+				{ mData: "participants",       title: 'Participants',       targets: 4 },
+				{ mData: "duration",           title: 'duration',           targets: 5 },
+				{ mData: 'completed_in',        title: 'Run time',     targets:[6], render:{ _:'_', sort:'sort'}},
+				// { mData: "created_date",       title: 'created_date',       targets: 9 },
+				// { mData: "completed_date",     title: 'completed_date',     targets: 10 },
+				// { mData: "cancelled_date",     title: 'cancelled_date',     targets: 11 },
+				{ visible: false,   targets: [] },
+				{ orderable: false, targets: [] },
+			],
+
+		});
+
+
+});
+</script>
+<script>
+
+var activity_url = getSQLUrl('sql','activity', query_user_id);
+
+$(document).ready( function () {
+
+	function titleWrap(text,title){
+		return '<span title="'+title+'">'+text+'</span>';
+	}
+
+	function prepareData(data){
+		for ( var i=0, ien=data.length ; i<ien ; i++ ) {
+
+			data[i]['date'] = moment(data[i]['floored_date']*1000).format('YYYY-MM-DD HH:mm');
+
+			var parser = new UAParser();
+			parser.setUA(data[i]['user_agent']);
+			var ua = parser.getResult()
+
+			data[i]['country_orig'] = data[i]['country'];
+			data[i]['country'] = countryFlagHtml(data[i]['country']);
+			data[i]['ua_browser'] = titleWrap(ua.browser.name+' '+ua.browser.major, ua.browser.version);
+			data[i]['ua_engine'] =  titleWrap(ua.engine.name, ua.engine.version);
+			data[i]['ua_os'] =      ua.os.name +' '+ua.os.version;
+			data[i]['ua_device'] =  (ua.device.vendor)?ua.device.vendor +' '+ua.device.model:null;
+			data[i]['ua_cpu'] =  (ua.cpu.architecture)?ua.cpu.architecture:null;
+		}
+		return data
+	}
+
+	var table = $('#activity').DataTable({
+			"order":[0,'asc'],
+			"lengthMenu": [[10, 25, 50, 100, 250, 500, 1000, -1], [10, 25, 50, 100, 250, 500, 1000, "All"]],
+			"dom": 'T<"clear">lCfrtip',
+			"sAjaxDataProp":"",
+			"deferRender": true,
+			"stateSave": true,
+			// "bAutoWidth": false,
+			"ajax": function(data, callback, settings){
+				$.ajax(
+					activity_url,
+					{
+						"dataType": "jsonp",
+						"success": function(json){
+							callback(prepareData(json));
+						}
+					}
+				);
+			},
+
+			columnDefs: [
+				{  mData: "date",          title: 'Date',       targets: 0 },
+				{  mData: "country",       title: 'Country',    targets: 1 },
+				{  mData: "ip",            title: 'IP',         targets: 2 },
+				{  mData: "app_version",   title: 'App',        targets: 3 },
+				{  mData: "device",        title: 'Device',     targets: 4 },
+				{  mData: "ua_device",     title: 'UA Device',  targets: 5 },
+				{  mData: "ua_browser",    title: 'UA Browser', targets: 6 },
+				{  mData: "ua_os",         title: 'UA OS',      targets: 7 },
+				{  mData: "ua_engine",     title: 'UA Engine',  targets: 8 },
+				{  mData: "ua_cpu",        title: 'UA CPU',     targets: 9 },
+				{  visible: false,         targets: [8,9] },
+				{  orderable: false,       targets: [] },
+			],
+
+		});
+
+
+});
+</script>
+<script>
+
+
+var payments_url = getSQLUrl('sql','payments_user', query_user_id);
+
+$(document).ready( function () {
+
+
+	function prepareData(data){
+		for ( var i=0, ien=data.length ; i<ien ; i++ ) {
+
+			data[i]['date'] = moment(data[i]['payment_date']*1000).format('YYYY-MM-DD HH:mm');
+
+			data[i]['amount'] = data[i]['note_amount']+'$';
+
+			data[i]['country'] = countryFlagHtml(data[i]['note_country']);
+		}
+		return data
+	}
+
+	var table = $('#payments').DataTable({
+			"order":[0,'asc'],
+			"lengthMenu": [[10, 25, 50, 100, 250, 500, 1000, -1], [10, 25, 50, 100, 250, 500, 1000, "All"]],
+			"dom": 'T<"clear">rtip',
+			"sAjaxDataProp":"",
+			"deferRender": true,
+			"stateSave": true,
+			// "bAutoWidth": false,
+			"ajax": function(data, callback, settings){
+				$.ajax(
+					payments_url,
+					{
+						"dataType": "jsonp",
+						"success": function(json){
+							callback(prepareData(json));
+						}
+					}
+				);
+			},
+
+			columnDefs: [
+				{  mData: "date",          title: 'Date',       targets: 0 },
+				{  mData: "amount",        title: 'Amount',     targets: 1 },
+				{  mData: "country",       title: 'Country',    targets: 2 },
+				{  visible: false,         targets: [] },
+				{  orderable: false,       targets: [] },
+			],
+			"footerCallback": function ( row, data, start, end, display ) {
+						var api = this.api(), data;
+
+						// Remove the formatting to get integer data for summation
+						var intVal = function ( i ) {
+								return typeof i === 'string' ?
+										i.replace(/[\$,]/g, '')*1 :
+										typeof i === 'number' ?
+												i : 0;
+						};
+
+						function totals(col){
+							// Total over all pages
+							data = api.column( col ).data();
+							total = data.length ?
+									data.reduce( function (a, b) {
+													return intVal(a) + intVal(b);
+									} ) :
+									0;
+
+							// Total over this page
+							data = api.column( col, { page: 'current'} ).data();
+							pageTotal = data.length ?
+									data.reduce( function (a, b) {
+													return intVal(a) + intVal(b);
+									} ) :
+									0;
+
+							// Update footer
+							$( api.column( col ).footer() ).html(
+									'$'+pageTotal +'<br>(&nbsp;$'+ total +'&nbsp;)'
+							);
+
+						}
+						totals(1);
+				},
+		});
+
+
+});
+</script>
+<script src="/_script/lib/epiceditor/epiceditor.min.js"></script>
+<script>
+var opts = {
+	container: 'epiceditor',
+	textarea: null,
+	basePath: '/_script/lib/epiceditor/',
+	clientSideStorage: false,
+	localStorageName: 'epiceditor',
+	useNativeFullscreen: true,
+	parser: marked,
+	file: {
+		name: 'note_customer_service_notes',
+		defaultContent: '',
+		autoSave: 100
+	},
+	theme: {
+		base: 'themes/base/epiceditor.css',
+		preview: 'themes/preview/github.css',
+		editor: 'themes/editor/epic-light.css'
+	},
+	// button: {
+	//   preview: true,
+	//   fullscreen: false,
+	//   bar: true
+	// },
+	button: {
+		preview: false,
+		fullscreen: false,
+		bar: false
+	},
+	focusOnLoad: false,
+	shortcut: {
+		modifier: 18,
+		fullscreen: 70,
+		preview: 80
+	},
+	string: {
+		togglePreview: 'Toggle Preview Mode',
+		toggleEdit: 'Toggle Edit Mode',
+		toggleFullscreen: 'Enter Fullscreen'
+	},
+	autogrow: {
+		minHeight: 40,
+		maxHeight: 1000,
+		scroll: true
+	}
+
+}
+var editor = new EpicEditor(opts);
+editor.on('open', function(){
+	if(editor.exportFile(null, 'text') != ''){
+		window.setTimeout(
+				function(){$('#editortab a:first').tab('show')},
+				200
+			);
+	}
+})
+editor.on('update', function () {
+	if(this.exportFile(null,'text') == savedNotes){
+		$('#saveNotes').attr('disabled','disabled');
+	}else{
+		$('#saveNotes').removeAttr('disabled');
+	}
+	document.querySelector('#epiceditor-preview').innerHTML = this.exportFile(null, 'html');
+}).emit('update');
+
+$('#saveNotes').on("click",function(){
+	$('#saveNotes').attr('disabled','disabled');
+
+	var content = editor.exportFile(null,'text');
+
+	var notes_url = getSQLUrl('sql','save_note',  content, query_user_id);
+
+	console.log(notes_url)
+
+	var permanent_url = "https://meetin.gs/meetings_jsonp/update_user_customer_service_notes?user_id="+encodeURIComponent(query_user_id)+"&notes="+encodeURIComponent(content)
+
+	$.ajax(
+		notes_url,
+		{
+			"dataType": "jsonp",
+			"success": function(result){
+				if(result.error){
+					alert("Error in saving to miner:\n"+result.error);
+				}
+			}
+		}
+	);
+	$.ajax(
+		permanent_url,
+		{
+			"dataType": "jsonp",
+			"success": function(result){
+				console.log('Permanent result:',result);
+				if(result.error){
+					alert("Error in saving to live\n\n"+
+						"Are you sure you are logged in to meetin.gs as @dicole.com or @meetin.gs user?\n\n"+
+						"Error: "+result.error);
+				}
+				savedNotes = content;
+			}
+		}
+	);
+
+})
+var savedNotes = "";
+function initEditor(filename,content){
+	editor.importFile(filename,content);
+	savedNotes = content
+	$('#saveNotes').attr('disabled','disabled');
+}
+
+
+editor.load();
+</script>
+<style>
+#epiceditor{
+	border:1px solid #c4c4c4;
+}
+</style>
+</body>
+</html>

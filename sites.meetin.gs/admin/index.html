@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="myApp">
+<head>
+  <meta charset="UTF-8">
+  <title>Administration</title>
+  <link rel="stylesheet"  type="text/css" href="/admin/_style/css/main.css" />
+
+  <script src="/_script/lib/angular/angular.min.js"></script>
+</head>
+<body>
+
+
+<navi active="/admin/"></navi>
+
+<div class="container">
+<h1>Admin interface</h1>
+<p>All the data seen on this site is updated every night from a backup done sometime the day before. This means that the data you see is about a day old.</p>
+
+<div class="row">
+  <div class="col-md-6">
+    <h2>Users</h2>
+    <p>This is the full user listing of all users. Because it's big, we have to limit the columns and store the data in local storage. To update the downloaded local storage data, please press the refresh button.</p>
+    <div class="text-center"><a href="/admin/users/" class="btn btn-primary">Users</a></div>
+  </div>
+  <div class="col-md-6">
+    <h2>Domains</h2>
+    <p>Created from the user email address. This is just a quess of the real company user uses. The domain may be a common email provider like gmail. Use with caution. :)</p>
+    <div class="text-center"><a href="/admin/domains/" class="btn btn-primary">Domains</a></div>
+  </div>
+</div>
+
+</div>
+
+<script charset="utf8" src="//code.jquery.com/jquery-1.10.2.min.js"></script>
+<script src="/_script/lib/bootstrap/bootstrap.min.js"></script>
+<script src="/admin/_script/common.js"></script>
+
+</body>
+</html>

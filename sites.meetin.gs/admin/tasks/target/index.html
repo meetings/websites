@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="myApp">
+<head>
+  <meta charset="UTF-8">
+  <title>Target users</title>
+
+  <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.1/css/jquery.dataTables.css">
+  <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/colvis/1.1.1/css/dataTables.colVis.css">
+  <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/tabletools/2.2.2/css/dataTables.tableTools.css">
+  <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/plug-ins/725b2a2115b/integration/bootstrap/3/dataTables.bootstrap.css">
+
+  <link rel="stylesheet"  type="text/css" href="/admin/_style/css/main.css" />
+
+  <script src="/_script/lib/angular/angular.min.js"></script>
+
+</head>
+<body>
+
+
+<navi active="/admin/tasks/"></navi>
+
+<div class="container_wide">
+
+  <h2>Target users</h2>
+  <p>Please be patient, downloading all this data takes time..</p>
+  <label class="pull-right"><input type="checkbox" name="globak_regex" id="global_regex"> Search using regex</label>
+  <table id="target_users" class="display">
+    <tbody>
+
+    </tbody>
+    <tfoot>
+      <tr class="filters">
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+      </tr>
+    </tfoot>
+  </table>
+
+
+</div>
+
+<script src="//code.jquery.com/jquery-1.10.2.min.js"></script>
+<script src="/_script/lib/bootstrap/bootstrap.min.js"></script>
+<script src="/admin/_script/common.js"></script>
+
+<script src="/_script/lib/phoneformat/phoneformat.js"></script>
+<script src="/_script/lib/lang/lang.js"></script>
+<script src="/_script/lib/momentjs/moment.min.js"></script>
+
+<script src="//cdn.datatables.net/1.10.1/js/jquery.dataTables.js"></script>
+<script src="//cdn.datatables.net/plug-ins/725b2a2115b/integration/bootstrap/3/dataTables.bootstrap.js"></script>
+<script src="//cdn.datatables.net/colvis/1.1.1/js/dataTables.colVis.min.js"></script>
+<script src="//cdn.datatables.net/tabletools/2.2.2/js/dataTables.tableTools.min.js"></script>
+
+
+<script>
+
+var sql_url = getSQLUrl('sql','target_users');
+
+
+// TOS Accepted date
+// Real meetings created
+// Montako scheduleria on tehnyt
+// Subscription type
+// ios käyttäjä?
+// Milloin viimeisin REAL meeting on järjestetty?
+
+function prepareData(data){
+  for ( var i=0, ien=data.length ; i<ien ; i++ ) {
+    data[i]['user'] = '<a href="/admin/users/user/?id='+data[i]['user_id']+'">'+data[i]['user_id']+'</a>';
+    data[i]['note_tos_accepted_humanized'] = humanizeDate(data[i]['note_tos_accepted']);
+    data[i]['amount'] = "$"+data[i]['note_amount'];
+    data[i]['country'] = countryFlagHtml(data[i]['note_meetings_presumed_country_code']);
+    data[i]['extra_subscription_type'] = (data[i]['extra_subscription_type'] == "")?"Freemium":data[i]['extra_subscription_type'];
+    data[i]['ios_activated'] = (data[i]['ios_activated']==="1")?"Yes":"No";
+
+    data[i]["email_orig"] = data[i]["email"];
+    if(data[i]["email"]){
+      if(data[i]["email"].length>maxEmailLength){
+        data[i]["email"] = data[i]["email"].substring(0,maxEmailLength);
+      }
+    }
+
+    if(data[i]["trial_expires_in_days"] == "-0"){
+      data[i]["trial_expires_in_days"] = "0";
+    }
+
+    for(j in data[i]){
+      if(!data[i][j]){
+        data[i][j] = "-";
+      }
+    }
+  }
+
+  var savedCols = $('#target_users').DataTable().settings()[0].oSavedState.columns;
+  for(var i=0,l=savedCols.length;i<l;i++){
+    if($('#target_users .filters th input')[i]){
+      $('#target_users .filters th input')[i].value = $('#target_users').DataTable().settings()[0].oSavedState.columns[i].search.search;
+    }
+  }
+  return data
+}
+var maxEmailLength = 63;
+function addEmailEllipses(data, type, full){
+  var title ="";
+  if(full.email_orig.length > maxEmailLength-3){
+    title = full.email_orig;
+  }
+  return '<span class="col_ellipses" title="'+title+'">'+data+'</span>';
+}
+
+$(document).ready( function () {
+  var regexSearch = $('#global_regex').prop('checked');
+  $('#global_regex').on("change",function(){
+    regexSearch = $('#global_regex').prop('checked');
+    var searchString = $('#target_users').DataTable().search();
+    $('#target_users').DataTable().search(searchString,regexSearch,!regexSearch).draw()
+  })
+
+  // Setup - add a text input to each footer cell
+  $('#target_users .filters th').each( function () {
+      $(this).html( '<input type="text" class="filter" />' );
+  } );
+
+  var table = $('#target_users').DataTable({
+      "order":[0,'asc'],
+      "lengthMenu": [[10, 25, 50, 100, 250, 500, 1000, 5000], [10, 25, 50, 100, 250, 500, 1000, 5000]],
+      "dom": 'T<"clear">lCfrtip',
+      "sAjaxDataProp":"",
+      "deferRender": true,
+      "stateSave": true,
+      // "bAutoWidth": false,
+      "ajax": function(data, callback, settings){
+        $.ajax(
+          sql_url,
+          {
+            "dataType": "jsonp",
+            "success": function(json_data){
+
+              regexSearch = $('#global_regex').prop('checked');
+              if($('#target_users').DataTable().settings()[0].oLoadedState){
+                regexSearch = $('#target_users').DataTable().settings()[0].oLoadedState.search.regex
+              }
+              $('#global_regex').prop('checked', regexSearch )
+              callback(prepareData(json_data));
+            }
+          }
+        );
+      },
+
+
+      columnDefs: [
+        {  mData: 'user',                         title: 'User',            targets:[0] },
+        {  mData: 'first_name',                   title: 'First name',      targets:[1] },
+        {  mData: 'last_name',                    title: 'Last name',       targets:[2] },
+        {  mData: 'email',                        title: 'Email',           targets:[3],  sClass: "td_email", mRender:addEmailEllipses  },
+        {  mData: 'extra_profile_title',          title: 'Title',           targets:[4] },
+        {  mData: 'country',                      title: 'Country',         targets:[5] },
+
+        {  mData: 'extra_profile_organization',   title: 'Organization',    targets:[6] },
+        {  mData: 'extra_subscription_type',      title: 'Type',            targets:[7] },
+        {  mData: 'note_tos_accepted_humanized',  title: 'TOS Accepted',    targets:[8] },
+        {  mData: 'extra_real_meetings_created',  title: 'Real Meetings',   targets:[9] },
+        {  mData: 'ios_activated',                title: 'iOS Activated',   targets:[10] },
+        {  mData: 'trial_expires_in_days',        title: 'Trial expires in',targets:[11] },
+        {  mData: 'extra_creating_partner_name',  title: 'Creating partner',targets:[12] },
+
+        {  visible: false,                        targets: [] },
+        {  orderable: false,                      targets: [] },
+      ],
+
+      "footerCallback": function ( row, data, start, end, display ) {
+            var api = this.api(), data;
+
+            // Remove the formatting to get integer data for summation
+            var intVal = function ( i ) {
+                return typeof i === 'string' ?
+                    i.replace(/[\$,]/g, '')*1 :
+                    typeof i === 'number' ?
+                        i : 0;
+            };
+
+            function totals(col){
+              // Total over all pages
+              data = api.column( col ).data();
+              total = data.length ?
+                  data.reduce( function (a, b) {
+                          return intVal(a) + intVal(b);
+                  } ) :
+                  0;
+
+              // Total over this page
+              data = api.column( col, { page: 'current'} ).data();
+              pageTotal = data.length ?
+                  data.reduce( function (a, b) {
+                          return intVal(a) + intVal(b);
+                  } ) :
+                  0;
+
+              // Update footer
+              $( api.column( col ).footer() ).html(
+                  ''+pageTotal +'<br>(&nbsp;'+ total +'&nbsp;)'
+              );
+
+            }
+            // totals(1);
+            // totals(2);
+            // totals(3);
+            // totals(4);
+            // totals(5);
+            // totals(6);
+            // totals(7);
+            // totals(8);
+            // totals(9);
+            // totals(10);
+            // totals(11);
+            // totals(12);
+            // totals(13);
+            // totals(14);
+        },
+
+      "tableTools":{
+        "sSwfPath": "/_script/lib/datatables.net/copy_csv_xls.swf",
+        "aButtons": [
+          {
+            "sExtends": "copy",
+            "sButtonText": "Copy",
+            "oSelectorOpts":{
+              "filter": 'applied'
+            }
+          },
+          {
+            "sExtends": "xls",
+            "sButtonText": "xls",
+            "oSelectorOpts":{
+              "filter": 'applied'
+            }
+          }
+        ]
+      }
+    });
+
+    // Apply the search
+    table.columns().eq( 0 ).each( function ( colIdx ) {
+      $( 'input.filter', table.column( colIdx ).footer() ).on( 'keyup change', function () {
+        table
+          .column( colIdx )
+          .search( this.value, regexSearch, !regexSearch )
+          .draw();
+      } );
+    } );
+
+
+
+} );
+
+</script>
+</body>
+</html>

@@ -1,0 +1,30 @@
+  <!-- Static navbar -->
+  <div class="navbar navbar-default navbar-static-top" role="navigation">
+    <div class="container">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="/admin/">Meetin.gs Administration</a>
+      </div>
+      <div class="navbar-collapse collapse">
+        <ul class="nav navbar-nav">
+          <li ng-repeat="item in navi_items" ng-class="{dropdown:item.type == 'dropdown', active:item.url == active}">
+            <a href="{{item.url}}" ng-show="item.type == 'link'">{{item.name}}</a>
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" ng-show="item.type == 'dropdown'">{{item.name}} <span class="caret"></span></a>
+            <ul class="dropdown-menu" role="menu" ng-show="item.type == 'dropdown'">
+              <li ng-repeat="subitem in item.children" ng-class="{divider:subitem.type == 'divider'}">
+                <a href="{{subitem.url}}" ng-if="subitem.type == 'link'">{{subitem.name}}</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="#" onclick="logoutMagic();">Logout</a></li>
+        </ul>
+      </div><!--/.nav-collapse -->
+    </div>
+  </div>

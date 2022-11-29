@@ -1,0 +1,197 @@
+<html>
+<head>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js" type="text/javascript"></script>
+<script src="highcharts/js/highcharts.js" type="text/javascript"></script>
+<script>
+charts = [];
+$(document).ready(function() {
+
+    $.ajax( {
+        url : "http://meetin.gs/meetings_jsonp/invite_cohorts?mode=monthly&months=6",
+        dataType : "jsonp" ,
+        success : function(ret){
+            ret.cohorts.reverse();
+            var series = [ {
+                name : ret.total.name + " (" + ret.total.count + ")",
+                data : ret.total.average_slots_array
+            } ];
+            $.each( ret.cohorts, function(a,b) {
+                series.push( {
+                    name : b.name + " (" + b.count + ")",
+                    data : b.average_slots_array
+                } ); 
+            } );
+            charts.push( new Highcharts.Chart({
+                chart: { renderTo: 'tm' },
+                title: { text : 'Average invites sent per month after first active participation' },
+                plotOptions : { line : { marker: { enabled : false, } } },
+                series : series
+            }) );
+        }
+    } );
+
+    $.ajax( {
+        url : "http://meetin.gs/meetings_jsonp/invite_cohorts?mode=weekly&months=6",
+        dataType : "jsonp" ,
+        success : function(ret){
+            ret.cohorts.reverse();
+            var series = [ {
+                name : ret.total.name + " (" + ret.total.count + ")",
+                data : ret.total.average_slots_array
+            } ];
+            $.each( ret.cohorts, function(a,b) {
+                series.push( {
+                    name : b.name + " (" + b.count + ")",
+                    data : b.average_slots_array
+                } );
+            } );
+            charts.push( new Highcharts.Chart({
+                chart: { renderTo: 'tw' },
+                title: { text : 'Average invites sent per week after first active participation' },
+                plotOptions : { line : { marker: { enabled : false, } } },
+                series : series
+            }) );
+        }
+    } );
+
+    var funnel_types = [
+        ['cfa', 'cfb', "http://meetin.gs/meetings_jsonp/funnel_cohorts?months=10", 'ALL users' ],
+        ['sfa', 'sfb', "http://meetin.gs/meetings_jsonp/funnel_cohorts?months=10&user_type=signup", 'SIGNED UP users' ],
+        ['pfa', 'pfb', "http://meetin.gs/meetings_jsonp/funnel_cohorts?months=10&user_type=participant", 'INVITED users' ],
+    ];
+
+$.each( funnel_types, function( xxx, funnel_type ) {
+    
+    $.ajax( {
+        url : funnel_type[2],
+        dataType : "jsonp" ,
+        success : function(ret){
+            ret.cohorts.reverse();
+            ret.cohorts.unshift( ret.total );
+
+            var cohort_names = [];
+            $.each( ret.cohorts, function(a,b) {
+                cohort_names.push(b.name  + " (" + b.slots.contact + ")" );
+            } );
+
+            var series1 = [];
+            var series2 = [];
+
+            var points = ret.data_points;
+            for ( var i = 0; i < points.length; i++ ) {
+                var point = points[i];
+                point.prev = i > 0 ? points[ i-1 ] : false;
+                point.next = i < points.length - 1 ? points[i+1] : false;
+            }
+
+            $.each( points, function( a, point ) {
+                var cohort_data = [];
+                var cohort_changes = [];
+
+                $.each( ret.cohorts, function( a, cohort ) {
+                    var value = cohort.slots[ point.id ] || 0;
+                    var next_value = point.next ? cohort.slots[ point.next.id ] || 0 : 0;
+                    cohort_data.push( next_value ? value - next_value : value );
+
+                    if ( point.prev ) {
+                        var prev_value = cohort.slots[ point.prev.id ] || 0;
+                        cohort_changes.push( prev_value ? Math.floor( 10000 * value / prev_value ) / 100 : 0 );
+                    }
+                } );
+
+                series1.push( { type : 'column', name : point.name, data : cohort_data } );
+
+                if ( point.prev ) {
+                    series2.push( { type : 'column', name : '% from ' + point.prev.name +' to '+ point.name, data : cohort_changes } );
+                }
+            } );
+
+            charts.push( new Highcharts.Chart({
+                chart: { renderTo: funnel_type[0] },
+                title: { text : 'Percentage of '+ funnel_type[3] +' moving ahead on funnel stages' },
+                xAxis: { categories: cohort_names },                
+                series : series2
+            }) );
+
+            charts.push( new Highcharts.Chart({
+                chart: { renderTo: funnel_type[1] },
+                title: { text : 'Percentage of '+ funnel_type[3] +' dropping after each part of the funnel' },
+                plotOptions : { column : { stacking: 'percent' } },
+                tooltip: { formatter: function() { return ''+ this.series.name +': '+ this.y +' ('+ Math.round(this.percentage) +'%)'; } },
+                xAxis: { categories: cohort_names },                
+                series : series1
+            }) );
+
+        }
+    } );
+
+} );
+
+/**
+    $.ajax( {
+        url : "http://meetin.gs/meetings_jsonp/cohorts_for_meeting_creation_behaviour_after_first?mode=monthly&months=6",
+        dataType : "jsonp" ,
+        success : function(ret){
+            ret.cohorts.reverse();
+            var series = [ {
+                name : ret.total.name + " (" + ret.total.count + ")",
+                data : ret.total.average_slots_array
+            } ];
+            $.each( ret.cohorts, function(a,b) {
+                series.push( {
+                    name : b.name + " (" + b.count + ")",
+                    data : b.average_slots_array
+                } ); 
+            } );
+            tm_chart = new Highcharts.Chart({
+                chart: { renderTo: 'tm' },
+                title: { text : 'Average number of meetings created per following 30 day period after the first created meeting' },
+//                plotOptions : { line : { marker: { enabled : false, } } },
+                series : series
+            });
+        }
+    } );
+
+    $.ajax( {
+        url : "http://meetin.gs/meetings_jsonp/cohorts_for_meeting_creation_behaviour_after_first?mode=weekly&months=6",
+        dataType : "jsonp" ,
+        success : function(ret){
+            ret.cohorts.reverse();
+            var series = [ {
+                name : ret.total.name + " (" + ret.total.count + ")",
+                data : ret.total.average_slots_array
+            } ];
+            $.each( ret.cohorts, function(a,b) {
+                series.push( {
+                    name : b.name + " (" + b.count + ")",
+                    data : b.average_slots_array
+                } ); 
+            } );
+            tw_chart = new Highcharts.Chart({
+                chart: { renderTo: 'tw' },
+                title: { text : 'Average number of meetings created per following week after the first created meeting' },
+                plotOptions : { line : { marker: { enabled : false, } } },
+                series : series
+            });
+        }
+    } );
+**/
+
+} );
+
+</script>
+<style>
+    body { padding: 20px;}
+</style>
+</head>
+<body>
+<div id="tm"></div>
+<div id="tw"></div>
+<div id="cfa"></div>
+<div id="cfb"></div>
+<div id="sfa"></div>
+<div id="sfb"></div>
+<div id="pfa"></div>
+<div id="pfb"></div>
+</body>
+</html>

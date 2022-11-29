@@ -1,0 +1,14 @@
+SELECT
+  user.email AS email,
+  user.extra_email_domain AS domain,
+  user.user_id AS id,
+  user.note_creation_time AS creation_time,
+  user.first_name AS first_name,
+  user.last_name AS last_name,
+  user.extra_profile_organization AS organization,
+  user.extra_profile_title AS title,
+  user.extra_profile_phone AS phone,
+  CASE WHEN user.note_ios_device_available IS NOT NULL THEN 1 ELSE 0 END AS push_enabled
+FROM
+  user
+WHERE user.user_id = %d

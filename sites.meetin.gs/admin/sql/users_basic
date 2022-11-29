@@ -1,0 +1,22 @@
+SELECT
+    user.user_id AS id,
+    user.first_name AS first_name,
+    user.last_name AS last_name,
+    user.email AS email,
+    --user.extra_profile_title AS title,
+    user.extra_profile_organization AS organization,
+    user.note_meetings_presumed_country_code AS cc,
+    CASE user.extra_subscription_type
+        WHEN ''          THEN 0
+        WHEN 'trial'     THEN 1
+        WHEN 'user'      THEN 2
+        WHEN 'company'   THEN 3
+        WHEN 'sponsored' THEN 4
+        WHEN 'weird'     THEN 5
+      ELSE 0
+    END
+      AS type
+FROM user
+WHERE
+  user.email != ''
+  AND user.user_id != 104349

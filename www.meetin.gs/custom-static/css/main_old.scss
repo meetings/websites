@@ -1,0 +1,659 @@
+@import "reset","mixins","colorbox";
+html,body{height:100%;}
+a{text-decoration:none;}
+body{
+    background:url("/ws-static/img/bg_strip.png") top left repeat-x #323232;
+    text-align: center;
+    color:#ffffff;
+    font-family: "museo-sans-n5", "museo-sans", Helvetica, Arial, Arial;
+}
+div#wrapper{
+    //min-height: 100%;
+    //height: auto !important;
+    //height: 100%;
+    //margin: 0 auto -30px;
+}
+.push{height:30px;}
+
+div#header-wrapper{
+    width:100%;
+    text-align:center;
+
+    div#header{
+        margin:0 auto 0 auto;
+        padding:0px 0px 0px 0px;
+        height:64px;
+        width:964px;
+        text-align:left;
+        position:relative;
+
+        h1{
+            display:block;
+            font-size:18px;
+            padding: 20px 0 0 0;
+            a{
+                color:#fff;
+                font:bold 24px "museo-sans-n5", "museo-sans", Helvetica, Arial;
+            }
+        }
+
+        div#header-buttons{
+            text-align:right;
+            position:absolute;
+            top:0px;
+            right:10px;
+            width:200px;
+            height:20px;
+            a{
+                display:inline-block;
+                @include gradient-signup;
+                padding:5px;
+                @include rounded-bottom(5px);
+                font:13px "museo-sans-n5", "museo-sans", Helvetica, Arial;
+            }
+            a.login{
+                color:#14abd8;
+            }
+            a.login:hover{
+                color:#0e7fa1;
+            }
+            a.signup{
+                color:#db4cb6;
+            }
+            a.signup:hover{
+                color:#a82e89;
+            }
+        }
+
+        div#header-nav{
+            position:absolute;
+            bottom:1px;
+            right:10px;
+            ul{
+                list-style: none;
+                padding: 0;
+                margin: 0;
+
+                li{
+                    border-left:1px solid #fcfcfc;
+                    border-right:1px solid #cbcbcb;
+                    float: left;
+                    padding: 3px 20px 5px 20px;
+                    font: 14px "museo-sans-n5", "museo-sans", Helvetica, Arial;
+                    a{color:#14abd8;}
+                    a:hover{color:#0e7fa1;}
+                    a.signup{color:#db4cb6;}
+                    a.signup:hover{color:#a82e89;}
+                    span{color:#aaf;}
+                }
+                li.active{background:url("/ws-static/img/selected.png") no-repeat center 19px;}
+                li.first{border-left:none;}
+                li.last{border-right:none; padding-right:0px}
+            }
+        }
+    }
+}
+
+div#pitch-wrapper{
+    width:100%;
+    text-align:center;
+    background: url("/ws-static/img/meeting_room_bg.jpg") no-repeat center center #008fb4;
+    //background: -moz-linear-gradient(top, #C6D2D3 13%, #ABB5B6 100%);
+    //background: -webkit-gradient(linear, left top, left bottom, color-stop(13%,#C6D2D3), color-stop(100%,#ABB5B6));
+    //filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#C6D2D3', endColorstr='#ABB5B6',GradientType=0 );
+
+    div#pitch{
+        position:relative;
+        background: url("/ws-static/img/meetings_screenshot.png") no-repeat bottom center;
+        margin:0 auto 0 auto;
+        height:552px;
+        width:964px;
+        text-align:left;
+        z-index:1;
+
+        #show-video {
+            height: 63px;
+            left: 802px;
+            position: absolute;
+            bottom: 420px;
+            width: 123px;
+            background: url("/ws-static/img/video.png") no-repeat top left;
+            z-index:2;
+        }
+
+        a#show-video2 {
+            height: 404px;
+            width: 874px;
+            left: 44px;
+            position: absolute;
+            top:148px;
+            z-index:2;
+        }
+        img#mouse-over-indicator{
+            position:absolute;
+            left:-10px;
+            top:200px;
+            z-index:2;
+        }
+        img#we-love-startups{
+            left: -19px;
+            position: absolute;
+            top: 114px;
+            z-index: 2;
+        }
+        img#we-love-startups-glow{
+            display:none;
+            left: -19px;
+            position: absolute;
+            top: 114px;
+            z-index: 3;
+        }
+        div.guide-image{
+            display:none;
+            position:absolute;
+            width:875px;
+            height:404px;
+            left:44px;
+            top:148px;
+            z-index:2;
+        }
+        div.guide{
+            cursor:pointer;
+            position:absolute;
+            display:block;
+            z-index:100;
+        }
+
+        div#guide-image-1{background:url("/ws-static/img/guides/guide1.png") no-repeat top left;}
+        div#guide-image-2{background:url("/ws-static/img/guides/guide2.png") no-repeat top left;}
+        div#guide-image-3{background:url("/ws-static/img/guides/guide3.png") no-repeat top left;}
+        div#guide-image-4{background:url("/ws-static/img/guides/guide4.png") no-repeat top left;}
+        div#guide-image-5{background:url("/ws-static/img/guides/guide5.png") no-repeat top left;}
+        div#guide-image-6{background:url("/ws-static/img/guides/guide6.png") no-repeat top left;}
+
+        div#guide1{width:310px; height:73px; top:198px; left:108px;}
+        div#guide2{width:240px; height:250px; top:276px; left:115px;}
+        div#guide3{width:484px; height:250px; top:285px; left:360px;}
+        div#guide4{width:292px; height:250px; top:285px; left:595px;}
+        div#guide5{width:306px; height:50px; top:148px; left:552px;}
+        div#guide6{width:180px; height:50px; top:148px; left:101px;}
+
+        input#js_email{
+            position:absolute;
+            top:157px;
+            left:526px;
+            width:230px;
+            font:16px Arial;
+            color:#7f7e7e;
+            padding:4px;
+            border:none;
+            background:transparent;
+        }
+        strong{
+            text-transform:uppercase;
+            font-size:20px;
+            font-weight:normal;
+        }
+        h2#slogan{
+            text-transform:uppercase;
+            margin:0 auto 0 auto;
+            text-align:left;
+            font: 48px "museo-sans-n7", "museo-sans", Helvetica, Arial;
+            font-weight:700;
+            color:#fff;
+            text-shadow: 1px 1px 2px #666;
+            padding:15px 0 0 43px;
+        }
+        h3#sub_slogan{
+            margin:0 auto 0 auto;
+            text-align:left;
+            font: 26px "museo-sans-n5", "museo-sans", Helvetica, Arial;
+            font-weight:500;
+            color:#fff;
+            text-shadow: 1px 1px 2px #666;
+            padding:0 0 0 43px;
+            span{
+                //margin:0 auto;
+                height:2px;
+                width:81%;
+                display:block;
+                background: url("/ws-static/img/seetrough_border.png") repeat-x top left;
+                margin-bottom:5px;
+            }
+        }
+        p{
+            font:18px "museo-sans-n5", "museo-sans", Helvetica, Arial;
+            color:#333;
+            text-shadow: 1px 1px 2px #666;
+        }
+
+        div#signup{
+            position:absolute;
+            bottom:0px;
+            left:333px;
+            width:260px;
+            height:37px;
+            a{
+                display:block;
+                background:url("/ws-static/img/sprite.png") no-repeat left -211px;
+                width:260px;
+                height:37px;
+            }
+            a:hover{background:url("/ws-static/img/sprite.png") no-repeat left -173px;}
+        }
+    }
+}
+
+// Tos && Privacy
+div#simple-text-wrapper
+{
+    border-top:1px solid #eee;
+    width: 100%;
+    text-align: center;
+    background: #C6D2D3;
+    //background: -moz-linear-gradient(top, #ccc 13%, #fff 100%);
+    //background: -webkit-gradient(linear, left top, left bottom, color-stop(13%,#ccc), color-stop(100%,#fff));
+    //filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ccc', endColorstr='#fff',GradientType=0 );
+
+    div#simple-text{
+        position:relative;
+        margin:0 auto 0 auto;
+        width: 920px;
+        padding:20px;
+        background:#fff;
+        min-height:380px;
+        h2{margin: 0 0 20px 0; color:#666; font:20px "museo-sans-n5", "museo-sans", Helvetica; text-align:left;}
+        h3{margin: 0 0 15px 0; color:#666; font:16px "museo-sans-n5", "museo-sans", Helvetica; text-align:left;}
+        p{margin: 10px 0 10px 0; color:#999; font:12px Helvetica, Arial; text-align:left;}
+    }
+}
+
+div#key-action-wrapper
+{
+    width: 100%;
+    text-align: center;
+    //background: #C6D2D3;
+    //background: -moz-linear-gradient(top, #ccc 13%, #fff 100%);
+    //background: -webkit-gradient(linear, left top, left bottom, color-stop(13%,#ccc), color-stop(100%,#fff));
+    //filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ccc', endColorstr='#fff',GradientType=0 );
+
+    div#key-action{
+        position:relative;
+        margin:0 auto;
+        width:964px;
+        padding-top:10px;
+        height:65px;
+
+        h3.fact{
+            text-align:left;
+            font: 18px "museo-sans-n5", "museo-sans", Helvetica, Arial;
+            color:#51a1b7;
+            float:left;
+            display:inline;
+            margin:0;
+            padding:10px 0 10px 50px;
+            height:44px;
+        }
+        h3#fact1{
+            width:175px;
+            margin-left:80px;
+            background:url("/ws-static/img/kello.png") no-repeat 0px 14px;
+            border-right:1px solid #b5d4de;
+        }
+        h3#fact2{
+            width:200px;
+            padding:10px 35px 10px 80px;
+            background:url("/ws-static/img/sininuoli.png") no-repeat 35px 16px;
+            border-left:1px solid #ffffff;
+            border-right:1px solid #b5d4de;
+        }
+        div#signup-button{
+            border-left:1px solid #ffffff;
+            float:left;
+            display:inline;
+            width:320px;
+            height:59px;
+            padding-top:5px;
+            a#js_signup{
+            }
+        }
+    }
+}
+
+div#endorsements-wrapper{
+    margin-top:22px;
+    width:100%;
+    text-align:center;
+    background-color:#f5f5f5;
+    div#endorsements{
+        width:964px;
+        height:98px;
+        margin:0 auto;
+        padding-bottom:10px;
+        div.endorsement{
+            padding:0 0 30px 0;
+            float:left;
+            display:inline;
+            width:320px;
+            p{
+                font:16px "museo-sans-n3", "museo-sans";
+                font-weight:300;
+                color:#646464;
+            }
+        }
+        div#ed1{
+            background:url("/ws-static/img/lifehacker.png") no-repeat bottom center;
+        }
+        div#ed2{
+            background:url("/ws-static/img/agbeat.png") no-repeat bottom center;
+        }
+        div#ed3{
+            background:url("/ws-static/img/arcticstartup.png") no-repeat bottom center;
+        }
+    }
+}
+
+div#facebook-wrapper{
+    width:100%;
+    text-align:center;
+    background-color:#ebebeb;
+    padding:8px 0 6px 0;
+    div#facebook-recommend{
+        margin:0 auto;
+        width:834px;
+        height:25px;
+        overflow:hidden;
+        text-align:left;
+    }
+}
+
+div#footer-wrapper{
+    height:100px;
+    width:100%;
+    padding: 20px 0 0 0;
+    text-align:center;
+
+    div#footer{
+        margin:0 auto 0 auto;
+        width:964px;
+        text-align:left;
+        a:hover{text-decoration:underline;}
+        div#footer-left{
+            position:relative;
+            display:inline;
+            float:left;
+
+            div#pages{position:absolute; top:15px; left: 165px; width:600px;}
+            div#community{position:absolute; top:45px; left:165px; width:400px;}
+            img{position:absolute; top:10px; left:15px;}
+
+            h3{float:left; color:#cfcfcf; font:14px "museo-sans-n5", "museo-sans", Helvetica, Arial; margin-right:25px; width:90px;}
+            ul{
+                margin:0 0 0 0;
+                float:left;
+                list-style: none;
+                padding: 0;
+
+                li{
+                    line-height:11px;
+                    border-left:1px solid #cfcfcf;
+                    float: left;
+                    padding: 0px 7px 0px 7px;
+                    a{
+                        color:#cfcfcf;
+                        font: 12px Arial, Helvetica, Arial;
+                    }
+                    span{color:#A9014B;}
+                }
+                li.active{background:url("/ws-static/img/selected.png") no-repeat bottom center;}
+                li.first{border-left:none;}
+            }
+        }
+        div#footer-right{
+            float:right;
+            margin-right:15px;
+            p{
+                font:12px Arial, Helvetica;
+                color:#cfcfcf;
+                padding:15px 0 0 0;
+                a{color:#cfcfcf;}
+            }
+            p#copyleft{
+                text-align:right;
+            }
+            p#policies{
+                color:#9e9e9e;
+                a{color:#9e9e9e;}
+            }
+        }
+    }
+}
+
+
+// STartups popup
+div#startups-popup{
+    padding:30px 45px 0px 65px;
+    span#freebie-badge{
+        position:absolute;
+        top:-60px;
+        left:-60px;
+        display:block;
+        background:url('/ws-static/startups/freebie_badge.png') no-repeat top left;
+        width:117px;
+        height:118px;
+    }
+    h1{
+        background:url('/ws-static/startups/we_love_startups.png') no-repeat center top;
+        min-width:359px;
+        height:50px;
+    }
+    p.first{
+        margin:20px 0 30px 0;
+        font:16px "museo-sans-n3", "museo-sans",Helvetica, Arial;
+        font-weight:300;
+        color:#474747;
+        span.bold{
+            font:18px "museo-sans-n5", "museo-sans",Helvetica, Arial;
+            font-weight:500;
+        }
+    }
+    p.second{
+        margin:20px 0 30px 0;
+        font:14px "museo-sans-n3", "museo-sans",Helvetica, Arial;
+        font-weight:300;
+        color:#474747;
+    }
+    p.third{
+        margin:20px 0 30px 0;
+        font:12px "museo-sans-n3", "museo-sans",Helvetica, Arial;
+        font-weight:300;
+        color:#8f8f8f;
+    }
+    div#startup-submit-wrapper{
+        height:40px;
+        margin:10px 0px;
+        a#submit-startup{
+            font:16px "museo-sans-n3", "museo-sans",Helvetica, Arial;
+            font-weight:500;
+            text-transform:none;
+        }
+        p{
+            margin:0px;
+            text-align:center;
+            font:14px "museo-sans-n3", "museo-sans",Helvetica, Arial;
+            font-weight:300;
+        }
+        p.error{
+            color:red;
+        }
+        p.success{
+            color:green;
+        }
+    }
+    form{
+        div.form-row{
+            clear:both;
+            float:left;
+            width:100%;
+            margin-bottom:10px;
+        }
+        label.text{
+            text-align:left;
+            width:100px;
+            display:block;
+            float:left;
+            font:14px "museo-sans-n3", "museo-sans",Helvetica, Arial;
+            font-weight:300;
+            color:#474747;
+        }
+        label.check{
+            font:14px "museo-sans-n3", "museo-sans",Helvetica, Arial;
+            font-weight:300;
+            color:#474747;
+        }
+        textarea,input.text{
+            font-size:14px;
+            font-family: arial, helvetica;
+            color:#474747;
+            margin:0;
+            padding: 5px;
+            border:solid 1px #b4b3b3;
+            width:238px;
+            @include rounded(4px);
+        }
+        input.check{
+        }
+    }
+}
+
+// Pink arrow
+a#pink-arrow{
+    display:none;
+    position:absolute;
+    top:0px;
+    left:0px;
+    background:url("/ws-static/img/pinkkinuoli.png") no-repeat top left;
+    width:115px;
+    height:71px;
+    z-index:100;
+}
+
+/// Login container
+div#cboxClose{color:#bbb; font: 12px "museo-sans-n5", "museo-sans", Helvetica; position:absolute; top:5px; right:5px;}
+div#features-container{
+    background: #fff;
+    text-align:left;
+}
+
+// Button
+.button{
+    position:relative;
+    display:inline-block;
+    outline:none;
+    cursor:pointer;
+    text-align:center;
+    text-decoration:none;
+    font:18px "museo-sans-n7","museo-sans",Arial, Helvetica, sans-serif;
+    font-weight:700;
+    text-transform:uppercase;
+    padding:9px 26px;
+    @include rounded(4px);
+    box-shadow:0 1px 2px rgba(0,0,0,.2);
+    color:#fff;
+    $color1:#f47ad4;
+    $color2:#b73997;
+    background:#e153bc;
+    background: -webkit-gradient(linear, left top, left bottom, from($color1), to($color2));
+    background: -moz-linear-gradient(top,  $color1,  $color2);
+    background: -o-linear-gradient($color1, $color2);
+    -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr='#{$color1}', endColorstr='#{$color2}')";
+    filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='#{$color1}', endColorstr='#{$color2}');
+    background: linear-gradient(top, $color1, $color2);
+}
+.button:hover {
+    color:#fff;
+    $color1:darken(#f47ad4, 10%);
+    $color2:darken(#b73997, 10%);
+    background:darken(#e153bc, 10%);
+    background: -webkit-gradient(linear, left top, left bottom, from($color1), to($color2));
+    background: -moz-linear-gradient(top,  $color1,  $color2);
+    background: -o-linear-gradient($color1, $color2);
+    -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr='#{$color1}', endColorstr='#{$color2}')";
+    filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='#{$color1}', endColorstr='#{$color2}');
+    background: linear-gradient(top, $color1, $color2);
+}
+.button span.text{
+    display:block;
+    font:11px "museo-sans-n3","museo-sans",Arial, Helvetica, sans-serif;
+    font-weight:300;
+}
+.button span.free{
+    position:absolute;
+    top:0px;
+    right:0px;
+    width:33px;
+    height:33px;
+    background:url("/ws-static/img/free.png") top right no-repeat;
+}
+
+// Whitelisting styles
+table#white-list-instructions{
+    h1{
+        color:#0E7FA1;
+        font:24px "museo-sans-n3", "museo-sans",Helvetica, Arial;
+        font-weight:300;
+    }
+    h3{
+        margin:30px 0 0 0px;
+        padding:0px;
+        color:#0E7FA1;
+        font:20px "museo-sans-n3", "museo-sans",Helvetica, Arial;
+        font-weight:300;
+        span.toc{
+            float:right;
+            font-size:11px;
+        }
+    }
+    h4{
+        margin:15px 0 5px 0px;
+        padding:0px;
+        color:#0E7FA1;
+        font:16px "museo-sans-n3", "museo-sans",Helvetica, Arial;
+        font-weight:300;
+    }
+    a{
+        text-decoration:underline;
+        color:#0E7FA1;
+        font:14px "museo-sans-n3", "museo-sans",Helvetica, Arial;
+        font-weight:300;
+    }
+    p{
+        margin:15px 0px;
+        color:#646464;
+        font:14px "museo-sans-n3", "museo-sans",Helvetica, Arial;
+        font-weight:300;
+    }
+    ol{
+        list-style-type:decimal;
+        margin:0 0 15px 0;
+        padding:0 0 0 20px;
+        li{
+        color:#646464;
+        font:14px "museo-sans-n3", "museo-sans",Helvetica, Arial;
+        font-weight:300;
+        }
+    }
+    ul{
+        list-style-type:disc;
+        margin:0 0 15px 0;
+        padding:0 0 0 20px;
+        li{
+        color:#646464;
+        font:14px "museo-sans-n3", "museo-sans",Helvetica, Arial;
+        font-weight:300;
+        }
+    }
+    span{
+        color:#646464;
+    }
+}

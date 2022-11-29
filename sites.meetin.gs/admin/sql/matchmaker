@@ -1,0 +1,12 @@
+SELECT
+  id,
+  vanity_url_path,
+  name,
+  matchmaking_event_id,
+  note_direct_link_enabled,
+  note_duration,
+  note_meetme_visible,
+  note_time_zone
+FROM   matchmaker
+WHERE  creator_id = %d
+AND disabled_date = 0

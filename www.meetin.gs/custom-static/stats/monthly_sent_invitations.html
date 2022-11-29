@@ -1,0 +1,268 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>Meetin.gs Example</title>
+     
+        <script type="text/javascript" src="https://meetingstats.dicole.net/js/stats/jsonv/monthly_sent_friend_invitations.jsonv"></script>
+        <script type="text/javascript" src="https://meetingstats.dicole.net/js/stats/jsonv/monthly_sent_invitations.jsonv"></script>
+        <script type="text/javascript" src="https://meetingstats.dicole.net/js/stats/jsonv/monthly_sent_invitations_to_new_users.jsonv"></script>
+        <script type="text/javascript" src="https://meetingstats.dicole.net/js/stats/jsonv/monthly_sent_invitations_to_users_with_no_real_meetings_created.jsonv"></script>
+
+		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+		<script type="text/javascript">
+$(function () {
+    
+    var sent_friend_invitations = [];
+
+    var sent_invitations =[];
+
+    var sent_invitations_to_new_users = [];
+
+    var sent_invitations_to_existing_users = [];
+
+    var sent_invitations_to_users_with_no_real_meetings = [];
+
+    var with_agenda_an_ap =[];
+
+    var with_agenda = [];
+
+
+    var data = [];
+
+    var data2= [];
+
+    var month = [];
+
+
+
+
+
+    for (var key in monthly_sent_friend_invitations) {
+   var obj = monthly_sent_friend_invitations[key];
+   for (var prop in obj) {
+
+      if (prop == "count"){
+        sent_friend_invitations.push(obj[prop]);
+
+      }
+
+   /* if (prop == "with_agenda_an_ap"){
+        with_agenda_an_ap.push(obj[prop]);
+
+      }
+
+    if (prop == "with_agenda"){
+        with_agenda.push(obj[prop]);
+
+      }  
+   */
+      console.log(prop + " = " + obj[prop]);
+   }
+}
+
+
+    for (var key in monthly_sent_invitations) {
+   var obj = monthly_sent_invitations[key];
+   for (var prop in obj) {
+
+      if (prop == "count"){
+        sent_invitations.push(obj[prop]);
+
+      }
+    /*
+    if (prop == "former_real_meeting_participants"){
+        data2.push(obj[prop]);
+
+      }
+    */
+    if (prop == "month"){
+        month.push(obj[prop]);
+
+      }  
+
+      console.log(prop + " = " + obj[prop]);
+   }
+}
+
+ for (var key in monthly_sent_invitations_to_new_users) {
+   var obj = monthly_sent_invitations_to_new_users[key];
+   for (var prop in obj) {
+
+      if (prop == "count"){
+        sent_invitations_to_new_users.push(obj[prop]);
+
+      }
+    /*
+    if (prop == "former_real_meeting_participants"){
+        data2.push(obj[prop]);
+
+      }
+    */
+    if (prop == "month"){
+        month.push(obj[prop]);
+
+      }  
+
+      console.log(prop + " = " + obj[prop]);
+   }
+}
+
+for (var key in monthly_sent_invitations_to_users_with_no_real_meetings_created) {
+   var obj = monthly_sent_invitations_to_users_with_no_real_meetings_created[key];
+   for (var prop in obj) {
+
+      if (prop == "count"){
+        sent_invitations_to_users_with_no_real_meetings.push(obj[prop]);
+
+      }
+    /*
+    if (prop == "former_real_meeting_participants"){
+        data2.push(obj[prop]);
+
+      }
+    */
+    if (prop == "month"){
+        month.push(obj[prop]);
+
+      }  
+
+      console.log(prop + " = " + obj[prop]);
+   }
+}
+
+
+
+    //prepare arrays to be shown cumulatively
+    //
+    console.log(sent_friend_invitations)
+    console.log(sent_invitations)
+    console.log(sent_invitations_to_new_users)
+    console.log(sent_invitations_to_users_with_no_real_meetings)
+   for (var i = 0; i < sent_friend_invitations.length; i++){
+       // console.log(sent_friend_invitations)
+
+       //console.log(sent_invitations[i])
+       sent_invitations_to_existing_users[i] = sent_invitations[i]- sent_invitations_to_new_users[i]-sent_invitations_to_users_with_no_real_meetings[i];
+       // sent_invitations[i] = sent_invitations[i]-sent_invitations_to_new_users[i];
+    //   console.log(sent_invitations_to_existing_users[i])
+       // sent_friend_invitations[i] = sent_friend_invitations[i] - sent_invitations[i] - sent_invitations_to_new_users[i];
+       // console.log(sent_friend_invitations[i]);
+
+    }
+    console.log(sent_invitations_to_existing_users)
+    //console.log(data);
+    //console.log(data2);
+    //console.log(month);
+    //data = []
+
+    $(document).ready(function() {
+       
+        // function combined_monthly_first_real_meeting_creators_callback(){}
+
+
+        chart = new Highcharts.Chart({
+            chart: {
+                renderTo: 'container',
+                type: 'area',
+                zoomType: 'x',
+                spacingRight: 20,
+                backgroundColor:'#00a0cd'
+            },
+            title: {
+                text: 'Monthly sent meeting invitations',
+                style: {
+                  color: '#FFFFFF'
+                }
+            },
+            subtitle: {
+                text: 'Source: Meetin.gs',
+                style: {
+                  color: '#FFFFFF'
+                }
+            },
+            xAxis: {
+                categories: month,
+                labels: {
+                style: {
+                    color: 'white'
+                }
+            }
+            },
+            yAxis: {
+                title: {
+                    text: '',
+                    style: {
+                  color: '#FFFFFF'
+                }
+                },
+                labels: {
+                style: {
+                    color: 'white'
+                }
+            }
+            },
+            tooltip: {
+                enabled: true,
+                formatter: function() {
+                    return '<b>'+ this.series.name +'</b><br/>'+
+                       + this.y + '' ;
+                }
+            },
+            plotOptions: {
+                area: {
+                    dataLabels: {
+                        borderWidth: 0,
+                        enabled: true,
+                        style: {
+                        fontWeight:'bold'
+                         }
+                    },
+                    stacking: 'normal',
+                    lineColor: '#666666',
+                    lineWidth: 0,
+                    marker: {
+                        lineWidth: 1,
+                        lineColor: '#666666'
+                    },
+                    fillOpacity: 1.0
+                }
+            },
+            series: [{ 
+                color: '#acacac',
+                name: 'sent friend invitations',
+                data: sent_friend_invitations,
+                dataLabels: {x: 20, y:9},
+                dataLabels: {x: 0, y:-8}
+
+            },
+            { color: '#d6edf5',
+                name: 'sent invitations to existing users',
+                data: sent_invitations_to_existing_users,
+                dataLabels: {x: -16, y:15}
+            },{ 
+                color: '#7bc8e1',
+                name: 'sent_invitations_to_users_with_no_real_meetings',
+                data: sent_invitations_to_users_with_no_real_meetings,
+                dataLabels: {x: 20, y:9}
+
+            },{
+                color: '#6c6c6c',
+                name: 'sent invitations to new users',
+                data: sent_invitations_to_new_users,
+                dataLabels: {x: 0, y:0,color: 'white'}
+            }]
+        });
+    });
+    
+});
+		</script>
+	</head>
+	<body>
+<script src="http://code.highcharts.com/highcharts.js"></script>
+<script src="http://code.highcharts.com/modules/exporting.js"></script>
+
+<div id="container" style="min-width: 400px; height: 500px; margin: 0 auto"></div>
+
+	</body>
+</html>
